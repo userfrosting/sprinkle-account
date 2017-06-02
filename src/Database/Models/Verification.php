@@ -3,18 +3,17 @@
  * UserFrosting (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/UserFrosting
- * @copyright Copyright (c) 2013-2016 Alexander Weissman
  * @license   https://github.com/userfrosting/UserFrosting/blob/master/licenses/UserFrosting.md (MIT License)
  */
-namespace UserFrosting\Sprinkle\Account\Model;
+namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use UserFrosting\Sprinkle\Core\Model\UFModel;
+use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
- * Password Reset Class
+ * Verification Class
  *
- * Represents a password reset request for a specific user.
+ * Represents a pending email verification for a new user account.
  * @author Alex Weissman (https://alexanderweissman.com)
  * @property int user_id
  * @property hash token
@@ -22,12 +21,12 @@ use UserFrosting\Sprinkle\Core\Model\UFModel;
  * @property datetime expires_at
  * @property datetime completed_at
  */
-class PasswordReset extends UFModel
+class Verification extends Model
 {
     /**
      * @var string The name of the table for the current model.
      */
-    protected $table = "password_resets";
+    protected $table = "verifications";
 
     protected $fillable = [
         "user_id",
@@ -38,7 +37,7 @@ class PasswordReset extends UFModel
     ];
 
     /**
-     * @var bool Enable timestamps for PasswordResets.
+     * @var bool Enable timestamps for Verifications.
      */
     public $timestamps = true;
 
@@ -47,17 +46,11 @@ class PasswordReset extends UFModel
      */
     protected $token;
 
-    /**
-     * @return string
-     */
     public function getToken()
     {
         return $this->token;
     }
 
-    /**
-     * @param string $value
-     */
     public function setToken($value)
     {
         $this->token = $value;
@@ -65,7 +58,7 @@ class PasswordReset extends UFModel
     }
 
     /**
-     * Get the user associated with this reset request.
+     * Get the user associated with this verification request.
      */
     public function user()
     {

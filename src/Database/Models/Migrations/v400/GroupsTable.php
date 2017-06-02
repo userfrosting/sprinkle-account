@@ -3,15 +3,14 @@
  * UserFrosting (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/UserFrosting
- * @copyright Copyright (c) 2013-2016 Alexander Weissman
  * @license   https://github.com/userfrosting/UserFrosting/blob/master/licenses/UserFrosting.md (MIT License)
  */
 namespace UserFrosting\Sprinkle\Account\Model\Migrations\v400;
 
-use UserFrosting\System\Bakery\Migrations\UFMigration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Builder;
-use UserFrosting\Sprinkle\Account\Model\Group;
+use UserFrosting\Sprinkle\Account\Database\Models\Group;
+use UserFrosting\System\Bakery\Migrations\UFMigration;
 
 /**
  * Groups table migration

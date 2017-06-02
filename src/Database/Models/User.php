@@ -3,18 +3,17 @@
  * UserFrosting (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/UserFrosting
- * @copyright Copyright (c) 2013-2017 Alexander Weissman
  * @license   https://github.com/userfrosting/UserFrosting/blob/master/licenses/UserFrosting.md (MIT License)
  */
-namespace UserFrosting\Sprinkle\Account\Model;
+namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use UserFrosting\Sprinkle\Account\Model\Collection\UserCollection;
 use UserFrosting\Sprinkle\Account\Util\Password;
+use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
-use UserFrosting\Sprinkle\Core\Model\UFModel;
 
 /**
  * User Class
@@ -22,7 +21,6 @@ use UserFrosting\Sprinkle\Core\Model\UFModel;
  * Represents a User object as stored in the database.
  *
  * @author Alex Weissman (https://alexanderweissman.com)
- * @see http://www.userfrosting.com/tutorials/lesson-3-data-model/
  * @property int id
  * @property string user_name
  * @property string first_name
@@ -39,7 +37,7 @@ use UserFrosting\Sprinkle\Core\Model\UFModel;
  * @property string password
  * @property timestamp deleted_at
  */
-class User extends UFModel
+class User extends Model
 {
     use SoftDeletes;
 

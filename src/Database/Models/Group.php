@@ -3,13 +3,12 @@
  * UserFrosting (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/UserFrosting
- * @copyright Copyright (c) 2013-2016 Alexander Weissman
  * @license   https://github.com/userfrosting/UserFrosting/blob/master/licenses/UserFrosting.md (MIT License)
  */
-namespace UserFrosting\Sprinkle\Account\Model;
+namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use UserFrosting\Sprinkle\Core\Model\UFModel;
+use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
  * Group Class
@@ -25,7 +24,7 @@ use UserFrosting\Sprinkle\Core\Model\UFModel;
  * @property string description
  * @property string icon
  */
-class Group extends UFModel
+class Group extends Model
 {
     /**
      * @var string The name of the table for the current model.
