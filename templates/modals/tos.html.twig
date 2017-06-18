@@ -1,4 +1,4 @@
-{% extends 'layouts/modal.html.twig' %}
+{% extends 'modals/modal.html.twig' %}
 
 {% block modal_title %}
     {{translate("TOS_FOR", {title: site.title})}}
@@ -6,8 +6,8 @@
 
 {% block modal_body %}
     <div class="text-left">
-        {% include 'components/legal.html.twig' %}
-        {% include 'components/privacy.html.twig' %}
+        {% include 'pages/partials/legal.html.twig' %}
+        {% include 'pages/partials/privacy.html.twig' %}
     </div>
 {% endblock %}
 
