@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * UserFrosting (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/UserFrosting
@@ -7,10 +8,10 @@
  * @license   https://github.com/userfrosting/UserFrosting/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Tests\Unit;
+namespace UserFrosting\Sprinkle\Account\Tests\Unit\Authenticate;
 
 use UserFrosting\Sprinkle\Account\Authenticate\Hasher;
-use UserFrosting\Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests the password Hasher class.

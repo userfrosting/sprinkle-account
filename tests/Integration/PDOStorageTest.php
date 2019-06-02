@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * UserFrosting (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/UserFrosting
@@ -7,7 +8,7 @@
  * @license   https://github.com/userfrosting/UserFrosting/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Tests\Unit;
+namespace UserFrosting\Sprinkle\Account\Tests\Integration;
 
 use Birke\Rememberme\Storage\StorageInterface;
 use Carbon\Carbon;
@@ -103,7 +104,7 @@ class PDOStorageTest extends TestCase
             'user_id'          => $this->testUser->id,
             'token'            => 'dummy',
             'persistent_token' => 'dummy',
-            'expires_at'       => null
+            'expires_at'       => null,
         ]);
         $persistence->save();
         $this->storage->cleanAllTriplets($this->testUser->id);
@@ -126,7 +127,7 @@ class PDOStorageTest extends TestCase
             'user_id'          => $this->testUser->id,
             'token'            => 'dummy',
             'persistent_token' => 'dummy',
-            'expires_at'       => Carbon::now()->subHour(1)
+            'expires_at'       => Carbon::now()->subHour(1),
         ]);
         $persistence->save();
         $this->assertEquals(2, Persistence::count());
@@ -144,7 +145,7 @@ class PDOStorageTest extends TestCase
             'user_id'          => $this->testUser->id,
             'token'            => $this->validDBToken,
             'persistent_token' => $this->validDBPersistentToken,
-            'expires_at'       => $this->expire
+            'expires_at'       => $this->expire,
         ]);
         $persistence->save();
 
