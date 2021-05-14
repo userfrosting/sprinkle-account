@@ -16,14 +16,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Core\Bakery\Helper\DatabaseTest;
-use UserFrosting\System\Bakery\BaseCommand;
+use UserFrosting\Bakery\CommandReceipe;
 
 /**
  * Create root user CLI command.
  *
  * @author Alex Weissman (https://alexanderweissman.com)
  */
-class CreateAdminUser extends BaseCommand
+class CreateAdminUser extends CommandReceipe
 {
     use DatabaseTest;
 

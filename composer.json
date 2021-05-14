@@ -20,10 +20,27 @@
             "homepage": "https://djmm.me"
         }
     ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../sprinkle-core"
+        }
+    ],
     "require": {
         "birke/rememberme" : "^2.0",
-        "nikic/php-parser" : "^4.2.2"
+        "nikic/php-parser" : "^4.2.2",
+        "userfrosting/framework": "dev-develop-5.0",
+        "userfrosting/sprinkle-core": "*"
     },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.13",
+        "phpunit/phpunit": "^9.5",
+        "mockery/mockery": "^1.2",
+        "league/factory-muffin": "^3.0",
+        "league/factory-muffin-faker": "^2.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "UserFrosting\\Sprinkle\\Account\\": "src/"

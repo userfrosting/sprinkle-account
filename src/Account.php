@@ -10,20 +10,44 @@
 
 namespace UserFrosting\Sprinkle\Account;
 
-use UserFrosting\Sprinkle\Account\I18n\LocaleServicesProvider;
-use UserFrosting\System\Sprinkle\Sprinkle;
+use UserFrosting\Sprinkle\Account\Bakery\BakeCommand;
+use UserFrosting\Sprinkle\Account\Bakery\CreateAdminUser;
+use UserFrosting\Sprinkle\SprinkleReceipe;
 
-/**
- * Bootstrapper class for the 'account' sprinkle.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
- */
-class Account extends Sprinkle
+class Account implements SprinkleReceipe
 {
     /**
-     * @var string[] List of services provider to register
+     * {@inheritdoc}
      */
-    protected $servicesproviders = [
-        LocaleServicesProvider::class,
-    ];
+    public function getName(): string
+    {
+        return 'Account Sprinkle';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath(): string
+    {
+        return __DIR__;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBakeryCommands(): array
+    {
+        return [
+            new BakeCommand(),
+            new CreateAdminUser(),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSprinkles(): array
+    {
+        return [];
+    }
 }
