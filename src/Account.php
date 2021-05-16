@@ -38,8 +38,8 @@ class Account implements SprinkleReceipe
     public function getBakeryCommands(): array
     {
         return [
-            new BakeCommand(),
-            new CreateAdminUser(),
+            BakeCommand::class,
+            CreateAdminUser::class,
         ];
     }
 
