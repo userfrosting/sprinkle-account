@@ -1,11 +1,11 @@
 <?php
 
 /*
- * UserFrosting (http://www.userfrosting.com)
+ * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
- * @link      https://github.com/userfrosting/UserFrosting
- * @copyright Copyright (c) 2019 Alexander Weissman
- * @license   https://github.com/userfrosting/UserFrosting/blob/master/LICENSE.md (MIT License)
+ * @link      https://github.com/userfrosting/sprinkle-account
+ * @copyright Copyright (c) 2021 Alexander Weissman & Louis Charette
+ * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
 namespace UserFrosting\Sprinkle\Account\Bakery;
@@ -13,10 +13,10 @@ namespace UserFrosting\Sprinkle\Account\Bakery;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use UserFrosting\Bakery\CommandReceipe;
 use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Core\Bakery\Helper\DatabaseTest;
-use UserFrosting\Bakery\CommandReceipe;
 
 /**
  * Create root user CLI command.

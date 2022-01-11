@@ -1,22 +1,22 @@
 <?php
 
 /*
- * UserFrosting (http://www.userfrosting.com)
+ * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
- * @link      https://github.com/userfrosting/UserFrosting
- * @copyright Copyright (c) 2019 Alexander Weissman
- * @license   https://github.com/userfrosting/UserFrosting/blob/master/LICENSE.md (MIT License)
+ * @link      https://github.com/userfrosting/sprinkle-account
+ * @copyright Copyright (c) 2021 Alexander Weissman & Louis Charette
+ * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
+use UserFrosting\Sprinkle\Account\Database\Models\Persistence;
 use UserFrosting\Sprinkle\Account\Database\Models\Role;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Database\Models\Persistence;
 use UserFrosting\Sprinkle\Account\Database\Models\Verification;
 use UserFrosting\Sprinkle\Account\Tests\withTestUser;
-use UserFrosting\Sprinkle\Core\Tests\TestDatabase;
 use UserFrosting\Sprinkle\Core\Tests\RefreshDatabase;
+use UserFrosting\Sprinkle\Core\Tests\TestDatabase;
 use UserFrosting\Tests\TestCase;
 
 /**

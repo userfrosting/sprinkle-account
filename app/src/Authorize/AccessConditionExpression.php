@@ -1,11 +1,11 @@
 <?php
 
 /*
- * UserFrosting (http://www.userfrosting.com)
+ * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
- * @link      https://github.com/userfrosting/UserFrosting
- * @copyright Copyright (c) 2019 Alexander Weissman
- * @license   https://github.com/userfrosting/UserFrosting/blob/master/LICENSE.md (MIT License)
+ * @link      https://github.com/userfrosting/sprinkle-account
+ * @copyright Copyright (c) 2021 Alexander Weissman & Louis Charette
+ * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
 namespace UserFrosting\Sprinkle\Account\Authorize;
@@ -88,7 +88,7 @@ class AccessConditionExpression
      * The special parameter `self` is an array of the current user's data.
      * This get included automatically, and so does not need to be passed in.
      *
-     * @param string       $condition a boolean expression composed of calls to AccessCondition functions.
+     * @param string $condition a boolean expression composed of calls to AccessCondition functions.
      * @param array[mixed] $params    the parameters to be used when evaluating the expression.
      *
      * @return bool true if the condition is passed for the given parameters, otherwise returns false.
