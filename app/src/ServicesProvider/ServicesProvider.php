@@ -43,20 +43,6 @@ class ServicesProvider
     public function register(ContainerInterface $container)
     {
         /*
-         * Extend the asset manager service to see assets for the current user's theme.
-         *
-         * @return \UserFrosting\Assets\Assets
-         */
-        $container->extend('assets', function ($assets, $c) {
-            if ($c->config['per_user_theme']) {
-                // Force load the current user to add it's theme assets resources
-                $c->currentUser;
-            }
-
-            return $assets;
-        });
-
-        /*
          * Extend the 'classMapper' service to register model classes.
          *
          * Mappings added: User, Group, Role, Permission, Activity, PasswordReset, Verification

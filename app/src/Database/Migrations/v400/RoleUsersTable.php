@@ -17,17 +17,13 @@ use UserFrosting\Sprinkle\Core\Database\Migration;
  * Role_users table migration
  * Many-to-many mapping between roles and users.
  * Version 4.0.0.
- *
- * See https://laravel.com/docs/5.8/migrations#tables
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class RoleUsersTable extends Migration
 {
     /**
      * {@inheritdoc}
      */
-    public function up()
+    public function up(): void
     {
         if (!$this->schema->hasTable('role_users')) {
             $this->schema->create('role_users', function (Blueprint $table) {
@@ -50,7 +46,7 @@ class RoleUsersTable extends Migration
     /**
      * {@inheritdoc}
      */
-    public function down()
+    public function down(): void
     {
         $this->schema->drop('role_users');
     }

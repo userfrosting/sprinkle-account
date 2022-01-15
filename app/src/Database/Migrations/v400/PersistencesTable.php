@@ -17,17 +17,13 @@ use UserFrosting\Sprinkle\Core\Database\Migration;
  * Persistences table migration
  * Many-to-many mapping between roles and users.
  * Version 4.0.0.
- *
- * See https://laravel.com/docs/5.8/migrations#tables
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class PersistencesTable extends Migration
 {
     /**
      * {@inheritdoc}
      */
-    public function up()
+    public function up(): void
     {
         if (!$this->schema->hasTable('persistences')) {
             $this->schema->create('persistences', function (Blueprint $table) {
@@ -52,7 +48,7 @@ class PersistencesTable extends Migration
     /**
      * {@inheritdoc}
      */
-    public function down()
+    public function down(): void
     {
         $this->schema->drop('persistences');
     }

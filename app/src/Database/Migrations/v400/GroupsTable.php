@@ -11,24 +11,20 @@
 namespace UserFrosting\Sprinkle\Account\Database\Migrations\v400;
 
 use Illuminate\Database\Schema\Blueprint;
+use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultGroups;
 use UserFrosting\Sprinkle\Core\Database\Migration;
-use UserFrosting\Sprinkle\Core\Facades\Seeder;
 
 /**
  * Groups table migration
  * "Group" now replaces the notion of "primary group" in earlier versions of UF.  A user can belong to exactly one group.
  * Version 4.0.0.
- *
- * See https://laravel.com/docs/5.8/migrations#tables
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class GroupsTable extends Migration
 {
     /**
      * {@inheritdoc}
      */
-    public function up()
+    public function up(): void
     {
         if (!$this->schema->hasTable('groups')) {
             $this->schema->create('groups', function (Blueprint $table) {
@@ -46,15 +42,15 @@ class GroupsTable extends Migration
                 $table->index('slug');
             });
 
-            // Add default groups
-            Seeder::execute('DefaultGroups');
+            // Add default groups via seed
+            (new DefaultGroups())->run();
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function down()
+    public function down(): void
     {
         $this->schema->drop('groups');
     }

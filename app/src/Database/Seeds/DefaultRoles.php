@@ -11,17 +11,17 @@
 namespace UserFrosting\Sprinkle\Account\Database\Seeds;
 
 use UserFrosting\Sprinkle\Account\Database\Models\Role;
-use UserFrosting\Sprinkle\Core\Database\Seeder\BaseSeed;
+use UserFrosting\Sprinkle\Core\Seeder\SeedInterface;
 
 /**
  * Seeder for the default roles.
  */
-class DefaultRoles extends BaseSeed
+class DefaultRoles implements SeedInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function run()
+    public function run(): void
     {
         $roles = $this->getRoles();
 
@@ -34,9 +34,9 @@ class DefaultRoles extends BaseSeed
     }
 
     /**
-     * @return array Roles to seed
+     * @return Role[] Roles to seed
      */
-    protected function getRoles()
+    protected function getRoles(): array
     {
         return [
             new Role([

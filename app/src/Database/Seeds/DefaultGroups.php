@@ -11,17 +11,17 @@
 namespace UserFrosting\Sprinkle\Account\Database\Seeds;
 
 use UserFrosting\Sprinkle\Account\Database\Models\Group;
-use UserFrosting\Sprinkle\Core\Database\Seeder\BaseSeed;
+use UserFrosting\Sprinkle\Core\Seeder\SeedInterface;
 
 /**
  * Seeder for the default groups.
  */
-class DefaultGroups extends BaseSeed
+class DefaultGroups implements SeedInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function run()
+    public function run(): void
     {
         $groups = $this->getGroups();
 
@@ -34,9 +34,9 @@ class DefaultGroups extends BaseSeed
     }
 
     /**
-     * @return array Groups to seed
+     * @return Group[] Groups to seed
      */
-    protected function getGroups()
+    protected function getGroups(): array
     {
         return [
             new Group([

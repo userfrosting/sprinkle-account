@@ -16,17 +16,13 @@ use UserFrosting\Sprinkle\Core\Database\Migration;
 /**
  * Sessions table migration
  * Version 4.0.0.
- *
- * See https://laravel.com/docs/5.8/migrations#tables
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class ActivitiesTable extends Migration
 {
     /**
      * {@inheritdoc}
      */
-    public function up()
+    public function up(): void
     {
         if (!$this->schema->hasTable('activities')) {
             $this->schema->create('activities', function (Blueprint $table) {
@@ -49,7 +45,7 @@ class ActivitiesTable extends Migration
     /**
      * {@inheritdoc}
      */
-    public function down()
+    public function down(): void
     {
         $this->schema->drop('activities');
     }

@@ -20,6 +20,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * @author Alex Weissman (https://alexanderweissman.com)
  *
+ * @property int    $id
  * @property string $slug
  * @property string $name
  * @property string $conditions

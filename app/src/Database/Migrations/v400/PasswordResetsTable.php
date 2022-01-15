@@ -17,17 +17,13 @@ use UserFrosting\Sprinkle\Core\Database\Migration;
  * password_resets table migration
  * Manages requests for password resets.
  * Version 4.0.0.
- *
- * See https://laravel.com/docs/5.8/migrations#tables
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class PasswordResetsTable extends Migration
 {
     /**
      * {@inheritdoc}
      */
-    public function up()
+    public function up(): void
     {
         if (!$this->schema->hasTable('password_resets')) {
             $this->schema->create('password_resets', function (Blueprint $table) {
@@ -52,7 +48,7 @@ class PasswordResetsTable extends Migration
     /**
      * {@inheritdoc}
      */
-    public function down()
+    public function down(): void
     {
         $this->schema->drop('password_resets');
     }

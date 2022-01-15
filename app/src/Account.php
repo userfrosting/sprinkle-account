@@ -12,14 +12,35 @@ namespace UserFrosting\Sprinkle\Account;
 
 use UserFrosting\Sprinkle\Account\Bakery\BakeCommand;
 use UserFrosting\Sprinkle\Account\Bakery\CreateAdminUser;
-use UserFrosting\Sprinkle\SprinkleReceipe;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\ActivitiesTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\GroupsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PasswordResetsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PermissionRolesTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PermissionsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PersistencesTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\RolesTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\RoleUsersTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\UsersTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\VerificationsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v420\AddingForeignKeys;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v430\UpdateGroupsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v430\UpdateUsersTable;
+use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultGroups;
+use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultPermissions;
+use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultRoles;
+use UserFrosting\Sprinkle\Account\I18n\LocaleServicesProvider;
+use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
+use UserFrosting\Sprinkle\Core\Core;
+use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
+use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\SeedRecipe;
+use UserFrosting\Sprinkle\SprinkleRecipe;
 
-class Account implements SprinkleReceipe
+class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe
 {
     /**
      * {@inheritdoc}
      */
-    public static function getName(): string
+    public function getName(): string
     {
         return 'Account Sprinkle';
     }
@@ -27,7 +48,7 @@ class Account implements SprinkleReceipe
     /**
      * {@inheritdoc}
      */
-    public static function getPath(): string
+    public function getPath(): string
     {
         return __DIR__ . '/../';
     }
@@ -35,7 +56,7 @@ class Account implements SprinkleReceipe
     /**
      * {@inheritdoc}
      */
-    public static function getBakeryCommands(): array
+    public function getBakeryCommands(): array
     {
         return [
             // BakeCommand::class,
@@ -46,9 +67,11 @@ class Account implements SprinkleReceipe
     /**
      * {@inheritdoc}
      */
-    public static function getSprinkles(): array
+    public function getSprinkles(): array
     {
-        return [];
+        return [
+            Core::class,
+        ];
     }
 
     /**
@@ -56,9 +79,11 @@ class Account implements SprinkleReceipe
      *
      * @return string[]
      */
-    public static function getRoutes(): array
+    public function getRoutes(): array
     {
-        return [];
+        return [
+            AuthRoutes::class,
+        ];
     }
 
     /**
@@ -66,8 +91,57 @@ class Account implements SprinkleReceipe
      *
      * @return string[]
      */
-    public static function getServices(): array
+    public function getServices(): array
+    {
+        return [
+            // LocaleServicesProvider::class, // TODO
+        ];
+    }
+
+    /**
+     * Returns a list of all Middlewares classes.
+     *
+     * @return \Psr\Http\Server\MiddlewareInterface[]
+     */
+    public function getMiddlewares(): array
     {
         return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMigrations(): array
+    {
+        return [
+            // v400
+            ActivitiesTable::class,
+            GroupsTable::class,
+            PasswordResetsTable::class,
+            PermissionRolesTable::class,
+            RolesTable::class,
+            PermissionsTable::class,
+            PersistencesTable::class,
+            RoleUsersTable::class,
+            UsersTable::class,
+            // v420
+            VerificationsTable::class,
+            AddingForeignKeys::class,
+            // v430
+            UpdateGroupsTable::class,
+            UpdateUsersTable::class,
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSeeds(): array
+    {
+        return [
+            DefaultGroups::class,
+            DefaultPermissions::class,
+            DefaultRoles::class,
+        ];
     }
 }

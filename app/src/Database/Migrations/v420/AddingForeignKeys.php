@@ -22,7 +22,7 @@ use UserFrosting\Sprinkle\Core\Database\Migration;
 class AddingForeignKeys extends Migration
 {
     /**
-     * @var array List of operation to do
+     * @var string[][][] List of operation to do
      */
     protected $tables = [
         'activities' => [
@@ -54,7 +54,7 @@ class AddingForeignKeys extends Migration
     /**
      * {@inheritdoc}
      */
-    public function up()
+    public function up(): void
     {
         foreach ($this->tables as $tableName => $keys) {
             if ($this->schema->hasTable($tableName)) {
@@ -70,7 +70,7 @@ class AddingForeignKeys extends Migration
     /**
      * {@inheritdoc}
      */
-    public function down()
+    public function down(): void
     {
         /*
          * sqlite can't drop foreign key without dropping the entire table

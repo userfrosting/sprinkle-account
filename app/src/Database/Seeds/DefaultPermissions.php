@@ -12,21 +12,20 @@ namespace UserFrosting\Sprinkle\Account\Database\Seeds;
 
 use UserFrosting\Sprinkle\Account\Database\Models\Permission;
 use UserFrosting\Sprinkle\Account\Database\Models\Role;
-use UserFrosting\Sprinkle\Core\Database\Seeder\BaseSeed;
-use UserFrosting\Sprinkle\Core\Facades\Seeder;
+use UserFrosting\Sprinkle\Core\Seeder\SeedInterface;
 
 /**
  * Seeder for the default permissions.
  */
-class DefaultPermissions extends BaseSeed
+class DefaultPermissions implements SeedInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function run()
+    public function run(): void
     {
-        // We require the default roles
-        Seeder::execute('DefaultRoles');
+        // We require the default roles seed
+        (new DefaultRoles())->run();
 
         // Get and save permissions
         $permissions = $this->getPermissions();
@@ -37,9 +36,9 @@ class DefaultPermissions extends BaseSeed
     }
 
     /**
-     * @return array Permissions to seed
+     * @return Permission[] Permissions to seed
      */
-    protected function getPermissions()
+    protected function getPermissions(): array
     {
         $defaultRoleIds = [
             'user'        => Role::where('slug', 'user')->first()->id,
@@ -186,9 +185,9 @@ class DefaultPermissions extends BaseSeed
     /**
      * Save permissions.
      *
-     * @param array $permissions
+     * @param Permission[] $permissions
      */
-    protected function savePermissions(array &$permissions)
+    protected function savePermissions(array &$permissions): void
     {
         foreach ($permissions as $slug => $permission) {
 
@@ -208,9 +207,9 @@ class DefaultPermissions extends BaseSeed
     /**
      * Sync permissions with default roles.
      *
-     * @param array $permissions
+     * @param Permission[] $permissions
      */
-    protected function syncPermissionsRole(array $permissions)
+    protected function syncPermissionsRole(array $permissions): void
     {
         $roleUser = Role::where('slug', 'user')->first();
         if ($roleUser) {

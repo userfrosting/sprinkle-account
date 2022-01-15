@@ -11,16 +11,13 @@
 namespace UserFrosting\Sprinkle\Account\Database\Migrations\v430;
 
 use Illuminate\Database\Schema\Blueprint;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\GroupsTable;
 use UserFrosting\Sprinkle\Core\Database\Migration;
 
 /**
  * Groups table migration
  * Changes the `icon` column property of `default` to NULL to align with new Font Awesome 5 tag convention.
  * Version 4.3.0.
- *
- * See https://laravel.com/docs/5.4/migrations#tables
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class UpdateGroupsTable extends Migration
 {
@@ -28,13 +25,13 @@ class UpdateGroupsTable extends Migration
      * {@inheritdoc}
      */
     public static $dependencies = [
-        '\UserFrosting\Sprinkle\Account\Database\Migrations\v400\GroupsTable',
+        GroupsTable::class,
     ];
 
     /**
      * {@inheritdoc}
      */
-    public function up()
+    public function up(): void
     {
         if ($this->schema->hasTable('groups')) {
             $this->schema->table('groups', function (Blueprint $table) {
@@ -46,7 +43,7 @@ class UpdateGroupsTable extends Migration
     /**
      * {@inheritdoc}
      */
-    public function down()
+    public function down(): void
     {
         $this->schema->table('groups', function (Blueprint $table) {
             $table->string('icon', 100)->default('fa fa-user')->nullable(false)->change();
