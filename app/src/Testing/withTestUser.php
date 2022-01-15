@@ -35,7 +35,7 @@ trait withTestUser
     }
 
     /**
-     * Logout
+     * Logout.
      */
     protected function logoutCurrentUser()
     {
@@ -43,10 +43,12 @@ trait withTestUser
     }
 
     /**
-     * Create a test user with no settings/permissions for a controller test
-     * @param  bool  $isMaster Does this user have root access? Will bypass all permissions
-     * @param  bool  $login    Login this user, setting him as the currentUser
-     * @param  array $params   User account params
+     * Create a test user with no settings/permissions for a controller test.
+     *
+     * @param bool  $isMaster Does this user have root access? Will bypass all permissions
+     * @param bool  $login    Login this user, setting him as the currentUser
+     * @param array $params   User account params
+     *
      * @return User
      */
     protected function createTestUser($isMaster = false, $login = false, array $params = [])
@@ -73,8 +75,10 @@ trait withTestUser
     }
 
     /**
-     * Returns a random user id, excluding the master id
-     * @param  int $masterId
+     * Returns a random user id, excluding the master id.
+     *
+     * @param int $masterId
+     *
      * @return int
      */
     protected function getRandomUserId($masterId)
@@ -87,10 +91,12 @@ trait withTestUser
     }
 
     /**
-     * Gives a user a new test permission
-     * @param  UserInterface $user
-     * @param  string        $slug
-     * @param  string        $conditions
+     * Gives a user a new test permission.
+     *
+     * @param UserInterface $user
+     * @param string        $slug
+     * @param string        $conditions
+     *
      * @return Permission
      */
     protected function giveUserTestPermission(UserInterface $user, $slug, $conditions = 'always()')
@@ -110,10 +116,12 @@ trait withTestUser
     }
 
     /**
-     * Add the test permission to a Role, then the role to the user
-     * @param  UserInterface $user
-     * @param  Permission    $permission
-     * @return Role          The intermediate role
+     * Add the test permission to a Role, then the role to the user.
+     *
+     * @param UserInterface $user
+     * @param Permission    $permission
+     *
+     * @return Role The intermediate role
      */
     protected function giveUserPermission(UserInterface $user, Permission $permission)
     {
