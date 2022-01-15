@@ -8,7 +8,7 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Tests;
+namespace UserFrosting\Sprinkle\Account\Testing;
 
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Permission;
@@ -16,8 +16,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Role;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 
 /**
- * Helper trait to pose as user when running an integration test
- * @author Louis Charette
+ * Helper trait to pose as user when running an integration test.
  */
 trait withTestUser
 {
