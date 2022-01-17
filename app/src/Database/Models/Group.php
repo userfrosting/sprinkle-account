@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -17,16 +18,14 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents a group object as stored in the database.
  *
- * @author Alex Weissman
- *
- * @see http://www.userfrosting.com/tutorials/lesson-3-data-model/
+ * @mixin \Illuminate\Database\Query\Builder
  *
  * @property string $slug
  * @property string $name
  * @property string $description
  * @property string $icon
  */
-class Group extends Model
+class Group extends Model implements GroupInterface
 {
     /**
      * @var string The name of the table for the current model.
@@ -60,6 +59,8 @@ class Group extends Model
 
     /**
      * Lazily load a collection of Users which belong to this group.
+     *
+     * @return UserInterface
      */
     public function users()
     {

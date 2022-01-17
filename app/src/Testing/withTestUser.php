@@ -23,7 +23,7 @@ trait withTestUser
     /**
      * @param UserInterface $user
      */
-    protected function loginUser(UserInterface $user)
+    protected function loginUser(UserInterface $user): void
     {
         $this->ci->currentUser = $user;
         $this->ci->authenticator->login($user);

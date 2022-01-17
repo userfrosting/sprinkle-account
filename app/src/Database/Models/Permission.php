@@ -11,6 +11,7 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -18,7 +19,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents a permission for a role or user.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @mixin \Illuminate\Database\Query\Builder
  *
  * @property int    $id
  * @property string $slug
@@ -26,7 +27,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * @property string $conditions
  * @property string $description
  */
-class Permission extends Model
+class Permission extends Model implements PermissionInterface
 {
     /**
      * @var string The name of the table for the current model.
@@ -62,7 +63,7 @@ class Permission extends Model
     /**
      * Get a list of roles to which this permission is assigned.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return RoleInterface
      */
     public function roles()
     {
@@ -107,7 +108,7 @@ class Permission extends Model
     /**
      * Get a list of users who have this permission, along with a list of roles through which each user has the permission.
      *
-     * @return \UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough
+     * @return UserInterface
      */
     public function users()
     {

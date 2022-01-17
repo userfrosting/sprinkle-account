@@ -11,6 +11,9 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -18,13 +21,13 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents a role, which aggregates permissions and to which a user can be assigned.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @mixin \Illuminate\Database\Query\Builder
  *
  * @property string $slug
  * @property string $name
  * @property string $description
  */
-class Role extends Model
+class Role extends Model implements RoleInterface
 {
     /**
      * @var string The name of the table for the current model.
@@ -73,12 +76,12 @@ class Role extends Model
     /**
      * Get a list of permissions assigned to this role.
      */
-    public function permissions()
+    public function permissions(): BelongsToMany
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var PermissionInterface */
+        $relation = static::$ci->make(PermissionInterface::class);
 
-        return $this->belongsToMany($classMapper->getClassMapping('permission'), 'permission_roles', 'role_id', 'permission_id')->withTimestamps();
+        return $this->belongsToMany($relation::class, 'permission_roles', 'role_id', 'permission_id')->withTimestamps();
     }
 
     /**

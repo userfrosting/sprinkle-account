@@ -12,26 +12,29 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use UserFrosting\Sprinkle\Account\Database\Factories\UserFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Facades\Password;
+// use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
+use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * User Class.
  *
  * Represents a User object as stored in the database.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @mixin \Illuminate\Database\Eloquent\Builder
  *
  * @property int       $id
  * @property string    $user_name
  * @property string    $first_name
  * @property string    $last_name
+ * @property string    $full_name
  * @property string    $email
  * @property string    $locale
- * @property string    $theme
  * @property int       $group_id
  * @property bool      $flag_verified
  * @property bool      $flag_enabled
@@ -44,6 +47,7 @@ use UserFrosting\Sprinkle\Core\Facades\Debug;
 class User extends Model implements UserInterface
 {
     use SoftDeletes;
+    use HasFactory;
 
     /**
      * The name of the table for the current model.
@@ -63,7 +67,6 @@ class User extends Model implements UserInterface
         'last_name',
         'email',
         'locale',
-        'theme',
         'group_id',
         'flag_verified',
         'flag_enabled',
@@ -97,13 +100,23 @@ class User extends Model implements UserInterface
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'flag_verified' => 'boolean',
+        'flag_enabled'  => 'boolean',
+    ];
+
+    /**
      * Events used to handle the user object cache on update and deletion.
      *
      * @var array
      */
     protected $dispatchesEvents = [
-        'saved'   => Events\DeleteUserCacheEvent::class,
-        'deleted' => Events\DeleteUserCacheEvent::class,
+        // 'saved'   => Events\DeleteUserCacheEvent::class, // TODO
+        // 'deleted' => Events\DeleteUserCacheEvent::class, // TODO
     ];
 
     /**
@@ -131,18 +144,19 @@ class User extends Model implements UserInterface
      *
      * @return bool true if the property is defined, false otherwise.
      */
-    public function __isset($name)
-    {
-        if (in_array($name, [
-            'group',
-            'last_sign_in_time',
-            'avatar',
-        ])) {
-            return true;
-        } else {
-            return parent::__isset($name);
-        }
-    }
+    // TODO : Change to attribute
+    // public function __isset($name)
+    // {
+    //     if (in_array($name, [
+    //         'group',
+    //         'last_sign_in_time',
+    //         'avatar',
+    //     ])) {
+    //         return true;
+    //     } else {
+    //         return parent::__isset($name);
+    //     }
+    // }
 
     /**
      * Get a property for this object.
@@ -153,19 +167,20 @@ class User extends Model implements UserInterface
      *
      * @return string the associated property.
      */
-    public function __get($name)
-    {
-        if ($name == 'last_sign_in_time') {
-            return $this->lastActivityTime('sign_in');
-        } elseif ($name == 'avatar') {
-            // Use Gravatar as the user avatar
-            $hash = md5(strtolower(trim($this->email)));
+    // TODO : Change to attribute
+    // public function __get($name)
+    // {
+    //     if ($name == 'last_sign_in_time') {
+    //         return $this->lastActivityTime('sign_in');
+    //     } elseif ($name == 'avatar') {
+    //         // Use Gravatar as the user avatar
+    //         $hash = md5(strtolower(trim($this->email)));
 
-            return 'https://www.gravatar.com/avatar/' . $hash . '?d=mm';
-        } else {
-            return parent::__get($name);
-        }
-    }
+    //         return 'https://www.gravatar.com/avatar/' . $hash . '?d=mm';
+    //     } else {
+    //         return parent::__get($name);
+    //     }
+    // }
 
     /**
      * Get all activities for this user.
@@ -189,10 +204,11 @@ class User extends Model implements UserInterface
      */
     public function delete($hardDelete = false)
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
-
         if ($hardDelete) {
+
+            /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
+            $classMapper = static::$ci->classMapper;
+
             // Remove all role associations
             $this->roles()->detach();
 
@@ -207,13 +223,11 @@ class User extends Model implements UserInterface
             $classMapper->getClassMapping('persistence')::where('user_id', $this->id)->delete();
 
             // Delete the user
-            $result = $this->forceDelete();
-        } else {
-            // Soft delete the user, leaving all associated records alone
-            $result = parent::delete();
+            return $this->forceDelete();
         }
 
-        return $result;
+        // Soft delete the user, leaving all associated records alone
+        return parent::delete();
     }
 
     /**
@@ -231,7 +245,7 @@ class User extends Model implements UserInterface
      *
      * @return string
      */
-    public function getFullNameAttribute()
+    public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
     }
@@ -298,7 +312,9 @@ class User extends Model implements UserInterface
      */
     public function isMaster()
     {
-        $masterId = static::$ci->config['reserved_user_ids.master'];
+        /** @var Config */
+        $config = static::$ci->get(Config::class);
+        $masterId = (int) $config->get('reserved_user_ids.master');
 
         // Need to use loose comparison for now, because some DBs return `id` as a string
         return $this->id == $masterId;
@@ -508,5 +524,15 @@ class User extends Model implements UserInterface
         }
 
         return $cachedPermissions;
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 }

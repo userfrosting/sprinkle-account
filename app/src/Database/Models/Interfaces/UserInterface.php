@@ -13,9 +13,26 @@ namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * User Interface.
+ * User Model Interface.
  *
- * Represents a User object as stored in the database.
+ * @mixin \Illuminate\Database\Query\Builder
+ *
+ * @property int       $id
+ * @property string    $user_name
+ * @property string    $first_name
+ * @property string    $last_name
+ * @property string    $full_name
+ * @property string    $email
+ * @property string    $locale
+ * @property string    $theme
+ * @property int       $group_id
+ * @property bool      $flag_verified
+ * @property bool      $flag_enabled
+ * @property int       $last_activity_id
+ * @property timestamp $created_at
+ * @property timestamp $updated_at
+ * @property string    $password
+ * @property timestamp $deleted_at
  */
 interface UserInterface
 {
@@ -25,15 +42,6 @@ interface UserInterface
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function activities();
-
-    /**
-     * Delete this user from the database, along with any linked roles and activities.
-     *
-     * @param bool $hardDelete Set to true to completely remove the user and all associated objects.
-     *
-     * @return bool true if the deletion was successful, false otherwise.
-     */
-    public function delete($hardDelete = false);
 
     /**
      * Return a cache instance specific to that user.

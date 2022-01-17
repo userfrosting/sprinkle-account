@@ -17,7 +17,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents a pending email verification for a new user account.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @mixin \Illuminate\Database\Query\Builder
  *
  * @property int      $user_id
  * @property hash     $token

@@ -12,6 +12,7 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Builder;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -19,7 +20,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents a single user activity at a specified point in time.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @mixin \Illuminate\Database\Query\Builder
  *
  * @property string   $ip_address
  * @property int      $user_id
@@ -27,7 +28,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * @property datetime $occurred_at
  * @property string   $description
  */
-class Activity extends Model
+class Activity extends Model implements ActivityInterface
 {
     /**
      * @var string The name of the table for the current model.
@@ -88,7 +89,7 @@ class Activity extends Model
     /**
      * Get the user associated with this activity.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return UserInterface
      */
     public function user()
     {

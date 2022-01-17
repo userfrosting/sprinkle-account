@@ -17,7 +17,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents a password reset request for a specific user.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @mixin \Illuminate\Database\Query\Builder
  *
  * @property int      $user_id
  * @property hash     $token
@@ -73,7 +73,7 @@ class PasswordReset extends Model
     /**
      * Get the user associated with this reset request.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return UserInterface
      */
     public function user()
     {

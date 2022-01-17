@@ -11,21 +11,22 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PersistenceInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
  * Persistence db Model.
  *
- * Represents the persistences table.
+ * Represents the persistence table.
  *
- * @author Louis Charette
+ * @mixin \Illuminate\Database\Query\Builder
  *
  * @property string $user_id
  * @property string $token
  * @property string $persistent_token
  * @property string $expires_at
  */
-class Persistence extends Model
+class Persistence extends Model implements PersistenceInterface
 {
     /**
      * @var string The name of the table for the current model.
@@ -47,7 +48,7 @@ class Persistence extends Model
     /**
      * Relation with the user table.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return UserInterface
      */
     public function user()
     {

@@ -10,6 +10,9 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Persistence;
 use UserFrosting\Sprinkle\Account\Database\Models\Role;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
@@ -17,6 +20,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Verification;
 use UserFrosting\Sprinkle\Account\Testing\withTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
+use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * UserModelTest Class
@@ -24,8 +28,9 @@ use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
  */
 class UserModelTest extends AccountTestCase
 {
+    use MockeryPHPUnitIntegration;
     use RefreshDatabase;
-    use withTestUser;
+    // use withTestUser;
 
     /**
      * Setup the database schema.
@@ -35,8 +40,64 @@ class UserModelTest extends AccountTestCase
         parent::setUp();
 
         // Setup test database
-        // $this->setupTestDatabase();
         $this->refreshDatabase();
+    }
+
+    public function testUser(): void
+    {
+        // Assert Initial DB state
+        $this->assertSame(0, User::count());
+
+        $user = new User([
+            'user_name'  => 'testing',
+            'email'      => 'test@test.test',
+            'first_name' => 'Test',
+            'last_name'  => 'Ing',
+            'password'   => '', // TODO Hash in model
+        ]);
+        $user->save();
+        $this->assertInstanceOf(UserInterface::class, $user); // @phpstan-ignore-line
+
+        // Assert new state
+        $this->assertSame(1, User::count());
+
+        // Get User and assert it's properties
+        /** @var User */
+        $fetchedUser = User::find($user->id);
+        $this->assertSame('testing', $fetchedUser->user_name);
+        $this->assertSame('test@test.test', $fetchedUser->email);
+        $this->assertSame('Test', $fetchedUser->first_name);
+        $this->assertSame('Ing', $fetchedUser->last_name);
+        $this->assertSame('Test Ing', $fetchedUser->full_name);
+        $this->assertIsString($fetchedUser->password); // @phpstan-ignore-line
+        $this->assertIsString($fetchedUser->locale); // @phpstan-ignore-line
+        $this->assertIsBool($fetchedUser->flag_verified); // @phpstan-ignore-line
+        $this->assertIsBool($fetchedUser->flag_enabled); // @phpstan-ignore-line
+
+        // Delete
+        $fetchedUser->delete();
+
+        // Assert new state
+        $this->assertSame(0, User::count());
+    }
+
+    public function testUserIsMaster(): void
+    {
+        /** @var User */
+        $masterUser = User::factory()->make();
+        $masterUser->save();
+
+        /** @var User */
+        $normalUser = User::factory()->make();
+        $normalUser->save();
+
+        $config = Mockery::mock(Config::class)
+            ->shouldReceive('get')->with('reserved_user_ids.master')->times(2)->andReturn($masterUser->id)
+            ->getMock();
+        $this->ci->set(Config::class, $config);
+
+        $this->assertTrue($masterUser->isMaster());
+        $this->assertFalse($normalUser->isMaster());
     }
 
     /**
@@ -92,5 +153,34 @@ class UserModelTest extends AccountTestCase
         $this->assertSame(0, $user->roles()->count());
         $this->assertSame(0, Persistence::where('user_id', $user->id)->count());
         $this->assertSame(0, $this->ci->classMapper->staticMethod('verification', 'where', 'user_id', $user->id)->count());
+    }*/
+
+    /**
+     * Test user soft deletion.
+     */
+    /*public function testUserSoftDelete()
+    {
+        // Create a user & make sure it exist
+        $user = $this->createTestUser();
+        $this->assertInstanceOf(User::class, User::withTrashed()->find($user->id));
+
+        // Soft Delete. User won't be found using normal query, but will withTrash
+        $this->assertTrue($user->delete());
+        $this->assertNull(User::find($user->id));
+        $this->assertInstanceOf(User::class, User::withTrashed()->find($user->id));
+    }
+
+    /**
+     * Test user hard deletion.
+     */
+    /*public function testUserHardDelete()
+    {
+        // Create a user & make sure it exist
+        $user = $this->createTestUser();
+        $this->assertInstanceOf(User::class, User::withTrashed()->find($user->id));
+
+        // Force delete. Now user can't be found at all
+        $this->assertTrue($user->delete(true));
+        $this->assertNull(User::withTrashed()->find($user->id));
     }*/
 }

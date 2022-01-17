@@ -16,8 +16,6 @@ use UserFrosting\Sprinkle\Core\Facades\Config;
 
 /**
  * Event for global cache object deletion on model update.
- *
- * @author Louis Charette
  */
 class DeleteUserCacheEvent
 {
