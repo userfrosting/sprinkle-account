@@ -13,11 +13,20 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use UserFrosting\Sprinkle\Account\Database\Factories\UserFactory;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 // use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
+use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Support\Repository\Repository as Config;
 
@@ -185,14 +194,14 @@ class User extends Model implements UserInterface
     /**
      * Get all activities for this user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return ActivityInterface|HasMany
      */
     public function activities()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(ActivityInterface::class);
 
-        return $this->hasMany($classMapper->getClassMapping('activity'), 'user_id');
+        return $this->hasMany($relation, 'user_id');
     }
 
     /**
@@ -295,14 +304,14 @@ class User extends Model implements UserInterface
     /**
      * Return this user's group.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return GroupInterface|BelongsTo
      */
     public function group()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(GroupInterface::class);
 
-        return $this->belongsTo($classMapper->getClassMapping('group'), 'group_id');
+        return $this->belongsTo($relation, 'group_id');
     }
 
     /**
@@ -310,11 +319,11 @@ class User extends Model implements UserInterface
      *
      * @return bool
      */
-    public function isMaster()
+    public function isMaster(): bool
     {
         /** @var Config */
         $config = static::$ci->get(Config::class);
-        $masterId = (int) $config->get('reserved_user_ids.master');
+        $masterId = intval($config->get('reserved_user_ids.master'));
 
         // Need to use loose comparison for now, because some DBs return `id` as a string
         return $this->id == $masterId;
@@ -323,14 +332,14 @@ class User extends Model implements UserInterface
     /**
      * Get the most recent activity for this user, based on the user's last_activity_id.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return ActivityInterface|BelongsTo
      */
     public function lastActivity()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(ActivityInterface::class);
 
-        return $this->belongsTo($classMapper->getClassMapping('activity'), 'last_activity_id');
+        return $this->belongsTo($relation, 'last_activity_id');
     }
 
     /**
@@ -431,29 +440,32 @@ class User extends Model implements UserInterface
     /**
      * Get all password reset requests for this user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return PasswordResetInterface|HasMany
      */
     public function passwordResets()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(PasswordResetInterface::class);
 
-        return $this->hasMany($classMapper->getClassMapping('password_reset'), 'user_id');
+        return $this->hasMany($relation, 'user_id');
     }
 
     /**
      * Get all of the permissions this user has, via its roles.
      *
-     * @return \UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough
+     * @return PermissionInterface|BelongsToManyThrough
      */
     public function permissions()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $permissionRelation = static::$ci->get(PermissionInterface::class);
+
+        /** @var string */
+        $roleRelation = static::$ci->get(RoleInterface::class);
 
         return $this->belongsToManyThrough(
-            $classMapper->getClassMapping('permission'),
-            $classMapper->getClassMapping('role'),
+            $permissionRelation,
+            $roleRelation,
             'role_users',
             'user_id',
             'role_id',
@@ -466,14 +478,14 @@ class User extends Model implements UserInterface
     /**
      * Get all roles to which this user belongs.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return RoleInterface|BelongsToMany
      */
     public function roles()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(RoleInterface::class);
 
-        return $this->belongsToMany($classMapper->getClassMapping('role'), 'role_users', 'user_id', 'role_id')->withTimestamps();
+        return $this->belongsToMany($relation, 'role_users', 'user_id', 'role_id')->withTimestamps();
     }
 
     /**

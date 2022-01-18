@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -20,7 +21,7 @@ interface GroupInterface
     /**
      * Users which belong to this group.
      *
-     * @return UserInterface
+     * @return UserInterface|HasMany
      */
     public function users();
 }

@@ -11,6 +11,10 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 
 /**
  * User Model Interface.
@@ -39,7 +43,7 @@ interface UserInterface
     /**
      * Get all activities for this user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return ActivityInterface|HasMany
      */
     public function activities();
 
@@ -83,7 +87,7 @@ interface UserInterface
     /**
      * Return this user's group.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return GroupInterface|BelongsTo
      */
     public function group();
 
@@ -97,7 +101,7 @@ interface UserInterface
     /**
      * Get the most recent activity for this user, based on the user's last_activity_id.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return ActivityInterface|BelongsTo
      */
     public function lastActivity();
 
@@ -144,21 +148,21 @@ interface UserInterface
     /**
      * Get all password reset requests for this user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return PasswordResetInterface|HasMany
      */
     public function passwordResets();
 
     /**
      * Get all of the permissions this user has, via its roles.
      *
-     * @return \UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough
+     * @return PermissionInterface|BelongsToManyThrough
      */
     public function permissions();
 
     /**
      * Get all roles to which this user belongs.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return RoleInterface|BelongsToMany
      */
     public function roles();
 

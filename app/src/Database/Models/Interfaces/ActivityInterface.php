@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -17,5 +18,10 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  */
 interface ActivityInterface
 {
+    /**
+     * Users which belong to this activity.
+     *
+     * @return UserInterface|BelongsTo
+     */
     public function user();
 }

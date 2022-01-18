@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -20,7 +21,7 @@ interface PasswordResetInterface
     /**
      * User associated with this reset request.
      *
-     * @return UserInterface
+     * @return UserInterface|BelongsTo
      */
     public function user();
 }

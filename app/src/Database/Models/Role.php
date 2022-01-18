@@ -11,10 +11,14 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use UserFrosting\Sprinkle\Account\Database\Factories\RoleFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
+use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * Role Class.
@@ -29,6 +33,8 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  */
 class Role extends Model implements RoleInterface
 {
+    use HasFactory;
+    
     /**
      * @var string The name of the table for the current model.
      */
@@ -64,24 +70,28 @@ class Role extends Model implements RoleInterface
 
     /**
      * Get a list of default roles.
+     * 
+     * @return string[]
      */
-    public static function getDefaultSlugs()
+    public static function getDefaultSlugs(): array
     {
-        /** @var \UserFrosting\Support\Repository\Repository $config */
-        $config = static::$ci->config;
+        /** @var Config $config */
+        $config = static::$ci->get(UserInterface::class);
 
-        return array_map('trim', array_keys($config['site.registration.user_defaults.roles'], true));
+        return array_map('trim', array_keys($config->get('site.registration.user_defaults.roles'), true));
     }
 
     /**
      * Get a list of permissions assigned to this role.
+     * 
+     * @return PermissionInterface|BelongsToMany
      */
-    public function permissions(): BelongsToMany
+    public function permissions()
     {
-        /** @var PermissionInterface */
-        $relation = static::$ci->make(PermissionInterface::class);
+        /** @var string */
+        $relation = static::$ci->get(PermissionInterface::class);
 
-        return $this->belongsToMany($relation::class, 'permission_roles', 'role_id', 'permission_id')->withTimestamps();
+        return $this->belongsToMany($relation, 'permission_roles', 'role_id', 'permission_id')->withTimestamps();
     }
 
     /**
@@ -102,12 +112,24 @@ class Role extends Model implements RoleInterface
 
     /**
      * Get a list of users who have this role.
+     * 
+     * @return UserInterface|BelongsToMany
      */
     public function users()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(UserInterface::class);
 
-        return $this->belongsToMany($classMapper->getClassMapping('user'), 'role_users', 'role_id', 'user_id');
+        return $this->belongsToMany($relation, 'role_users', 'role_id', 'user_id');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return RoleFactory::new();
     }
 }

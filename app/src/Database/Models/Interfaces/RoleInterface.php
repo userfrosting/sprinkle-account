@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -19,16 +20,22 @@ interface RoleInterface
 {
     /**
      * Get a list of default roles.
+     * 
+     * @return string[]
      */
-    public static function getDefaultSlugs();
+    public static function getDefaultSlugs(): array;
 
     /**
      * Get a list of permissions assigned to this role.
+     * 
+     * @return PermissionInterface|BelongsToMany
      */
     public function permissions();
 
     /**
      * Get a list of users who have this role.
+     * 
+     * @return UserInterface|BelongsToMany
      */
     public function users();
 }

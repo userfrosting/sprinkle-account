@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -22,7 +23,7 @@ interface PersistenceInterface
     /**
      * Relation with the user table.
      *
-     * @return UserInterface
+     * @return UserInterface|HasOne
      */
     public function user();
 }

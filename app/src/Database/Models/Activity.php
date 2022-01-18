@@ -12,7 +12,9 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -89,13 +91,13 @@ class Activity extends Model implements ActivityInterface
     /**
      * Get the user associated with this activity.
      *
-     * @return UserInterface
+     * @return UserInterface|BelongsTo
      */
     public function user()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(UserInterface::class);
 
-        return $this->belongsTo($classMapper->getClassMapping('user'), 'user_id');
+        return $this->belongsTo($relation, 'user_id');
     }
 }

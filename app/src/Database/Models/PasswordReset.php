@@ -10,6 +10,8 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -73,13 +75,13 @@ class PasswordReset extends Model
     /**
      * Get the user associated with this reset request.
      *
-     * @return UserInterface
+     * @return UserInterface|BelongsTo
      */
     public function user()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(UserInterface::class);
 
-        return $this->belongsTo($classMapper->getClassMapping('user'), 'user_id');
+        return $this->belongsTo($relation, 'user_id');
     }
 }

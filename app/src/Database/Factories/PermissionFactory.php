@@ -10,15 +10,15 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Factories;
 
-use UserFrosting\Sprinkle\Account\Database\Models\User;
+use UserFrosting\Sprinkle\Account\Database\Models\Permission;
 use UserFrosting\Sprinkle\Core\Database\Factories\Factory;
 
-class UserFactory extends Factory
+class PermissionFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      */
-    protected $model = User::class;
+    protected $model = Permission::class;
 
     /**
      * Define the model's default state.
@@ -28,14 +28,10 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'first_name'    => $this->faker->firstName(),
-            'last_name'     => $this->faker->lastName(),
-            'user_name'     => $this->faker->userName(),
-            'email'         => $this->faker->unique()->safeEmail(),
-            'locale'        => 'en_US',
-            'flag_verified' => 1,
-            'flag_enabled'  => 1,
-            'password'      => 'password',
+            'name'        => $this->faker->word(),
+            'description' => $this->faker->sentence(),
+            'conditions'  => $this->faker->word(),
+            'slug'        => $this->faker->unique()->slug(),
         ];
     }
 }

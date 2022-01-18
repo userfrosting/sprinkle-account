@@ -11,8 +11,14 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use UserFrosting\Sprinkle\Account\Database\Factories\PermissionFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
+use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 
 /**
  * Permission Class.
@@ -29,6 +35,8 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  */
 class Permission extends Model implements PermissionInterface
 {
+    use HasFactory;
+    
     /**
      * @var string The name of the table for the current model.
      */
@@ -63,14 +71,14 @@ class Permission extends Model implements PermissionInterface
     /**
      * Get a list of roles to which this permission is assigned.
      *
-     * @return RoleInterface
+     * @return RoleInterface|BelongsToMany
      */
     public function roles()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(RoleInterface::class);
 
-        return $this->belongsToMany($classMapper->getClassMapping('role'), 'permission_roles', 'permission_id', 'role_id')->withTimestamps();
+        return $this->belongsToMany($relation, 'permission_roles', 'permission_id', 'role_id')->withTimestamps();
     }
 
     /**
@@ -108,16 +116,19 @@ class Permission extends Model implements PermissionInterface
     /**
      * Get a list of users who have this permission, along with a list of roles through which each user has the permission.
      *
-     * @return UserInterface
+     * @return UserInterface|BelongsToManyThrough
      */
     public function users()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $userRelation = static::$ci->get(UserInterface::class);
+
+        /** @var string */
+        $roleRelation = static::$ci->get(RoleInterface::class);
 
         return $this->belongsToManyThrough(
-            $classMapper->getClassMapping('user'),
-            $classMapper->getClassMapping('role'),
+            $userRelation,
+            $roleRelation,
             'permission_roles',
             'permission_id',
             'role_id',
@@ -125,5 +136,15 @@ class Permission extends Model implements PermissionInterface
             'role_id',
             'user_id'
         );
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return PermissionFactory::new();
     }
 }

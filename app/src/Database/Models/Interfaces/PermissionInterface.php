@@ -10,7 +10,9 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
+use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 
 /**
  * Permission Model Interface.
@@ -20,14 +22,14 @@ interface PermissionInterface
     /**
      * Get a list of roles to which this permission is assigned.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return RoleInterface|BelongsToMany
      */
     public function roles();
 
     /**
      * Get a list of users who have this permission, along with a list of roles through which each user has the permission.
      *
-     * @return \UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough
+     * @return UserInterface|BelongsToManyThrough
      */
     public function users();
 }

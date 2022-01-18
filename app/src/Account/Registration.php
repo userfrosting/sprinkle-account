@@ -20,8 +20,6 @@ use UserFrosting\Support\Exception\HttpException;
 
 /**
  * Handles user registration tasks.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class Registration
 {

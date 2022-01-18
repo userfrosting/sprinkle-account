@@ -11,7 +11,9 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PersistenceInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -48,16 +50,14 @@ class Persistence extends Model implements PersistenceInterface
     /**
      * Relation with the user table.
      *
-     * @return UserInterface
+     * @return UserInterface|HasOne
      */
     public function user()
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
+        /** @var string */
+        $relation = static::$ci->get(UserInterface::class);
 
-        return $this->hasOne(
-            $classMapper->getClassMapping('user')
-        );
+        return $this->hasOne($relation);
     }
 
     /**
