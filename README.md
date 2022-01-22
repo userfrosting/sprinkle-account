@@ -1,6 +1,6 @@
 # UserFrosting 5.0 Account Sprinkle
 
-[![Version](https://img.shields.io/badge/Version-5.0.x-red.svg)](https://github.com/userfrosting/sprinkle-account/releases)
+[![Version](https://img.shields.io/badge/Version-5.0.x-blue.svg)](https://github.com/userfrosting/sprinkle-account/releases)
 ![PHP Version](https://img.shields.io/badge/php-%5E8.0-brightgreen)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md)
 [![Build](https://img.shields.io/github/workflow/status/userfrosting/sprinkle-account/Build/5.0?logo=github)](https://github.com/userfrosting/sprinkle-account/actions)
