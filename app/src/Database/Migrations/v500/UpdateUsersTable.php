@@ -35,19 +35,21 @@ class UpdateUsersTable extends Migration
     public function up(): void
     {
         // N.B.: SQLite doesn't support multiple calls to dropColumn / renameColumn in a single modification.
-        if ($this->schema->hasTable('users')) {
+        if ($this->schema->hasColumn('users', 'theme')) {
             $this->schema->table('users', function (Blueprint $table) {
                 $table->dropColumn('theme');
             });
-            $this->schema->table('users', function (Blueprint $table) {
+        }
 
-                /*
-                * sqlite can't drop foreign key without dropping the entire table
-                * since Laravel 5.7. Skip drop if an sqlite connection is detected
-                * @see https://github.com/laravel/framework/issues/25475
-                */
+        if ($this->schema->hasColumn('users', 'last_activity_id')) {
+            $this->schema->table('users', function (Blueprint $table) {
+                /**
+                 * sqlite can't drop foreign key without dropping the entire table
+                 * since Laravel 5.7. Skip drop if an sqlite connection is detected
+                 * @see https://github.com/laravel/framework/issues/25475
+                 */
                 if (!$this->schema->getConnection() instanceof SQLiteConnection) {
-                    $table->dropForeign('last_activity_id');
+                    $table->dropForeign('users_last_activity_id_foreign');
                 }
 
                 $table->dropColumn('last_activity_id');
@@ -63,6 +65,7 @@ class UpdateUsersTable extends Migration
         $this->schema->table('users', function (Blueprint $table) {
             $table->string('theme', 100)->nullable()->comment('The user theme.');
             $table->integer('last_activity_id')->unsigned()->nullable()->comment('The id of the last activity performed by this user.');
+            $table->foreign('last_activity_id')->references('id')->on('activities');
         });
     }
 }

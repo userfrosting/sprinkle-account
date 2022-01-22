@@ -29,6 +29,7 @@ class MigrationsTest extends AccountTestCase
         $migrator = $this->ci->get(Migrator::class);
 
         // Initiate migrations
+        $migrator->reset();
         $migrator->migrate();
 
         // Assert state for each tables
