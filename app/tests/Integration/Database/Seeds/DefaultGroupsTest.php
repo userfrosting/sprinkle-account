@@ -26,16 +26,9 @@ class DefaultGroupsTest extends AccountTestCase
     {
         // Setup fresh, empty table
         $this->refreshDatabase();
-        Group::truncate();
 
-        // Assert initial table state
-        $this->assertCount(0, Group::all());
-
-        // Apply seed
-        $seed = new DefaultGroups();
-        $seed->run();
-
-        // Assert new table state
+        // Assert initial table state.
+        // Seed is run in `refreshDatabase`
         $this->assertCount(3, Group::all());
     }
 }
