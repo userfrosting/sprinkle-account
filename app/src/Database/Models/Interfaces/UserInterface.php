@@ -138,7 +138,8 @@ interface UserInterface
     public function getSecondsSinceLastActivity(?string $type = null): int;
 
     /**
-     * Joins the user's most recent activity directly, so we can do things like sort, search, paginate, etc. in Sprunje.
+     * Joins the user's most recent activity directly, so we can do things like
+     * sort, search, paginate, etc. in Sprunje.
      *
      * @param Builder $query
      *

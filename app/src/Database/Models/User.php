@@ -290,7 +290,9 @@ class User extends Model implements UserInterface
     }
 
     /**
-     * Joins the user's most recent activity directly, so we can do things like sort, search, paginate, etc. in Sprunje.
+     * Joins the user's most recent activity directly, so we can do things like
+     * sort, search, paginate, etc. in Sprunje. Also add `last_activity` columns
+     * for sorting users by last activity.
      *
      * @param Builder $query
      *

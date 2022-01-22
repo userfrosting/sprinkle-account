@@ -156,7 +156,7 @@ class ActivityTest extends AccountTestCase
         // Sort by lastActivity, order will be 2, 1
         /** @var User[] */
         $sortedUsers = User::joinLastActivity()
-                            ->orderBy('activities.occurred_at')
+                            ->orderBy('last_activity')
                             ->get();
 
         $this->assertContainsOnlyInstancesOf(UserInterface::class, $sortedUsers);
