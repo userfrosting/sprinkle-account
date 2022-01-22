@@ -11,6 +11,7 @@
 namespace UserFrosting\Sprinkle\Account\Database\Migrations\v500;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\SQLiteConnection;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\UsersTable;
 use UserFrosting\Sprinkle\Core\Database\Migration;
 
@@ -39,6 +40,16 @@ class UpdateUsersTable extends Migration
                 $table->dropColumn('theme');
             });
             $this->schema->table('users', function (Blueprint $table) {
+                
+                /*
+                * sqlite can't drop foreign key without dropping the entire table
+                * since Laravel 5.7. Skip drop if an sqlite connection is detected
+                * @see https://github.com/laravel/framework/issues/25475
+                */
+                if (!$this->schema->getConnection() instanceof SQLiteConnection) {
+                    $table->dropForeign('user_id');
+                }
+
                 $table->dropColumn('last_activity_id');
             });
         }
