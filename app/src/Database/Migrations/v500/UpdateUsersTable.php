@@ -45,7 +45,8 @@ class UpdateUsersTable extends Migration
             $this->schema->table('users', function (Blueprint $table) {
                 /**
                  * sqlite can't drop foreign key without dropping the entire table
-                 * since Laravel 5.7. Skip drop if an sqlite connection is detected
+                 * since Laravel 5.7. Skip drop if an sqlite connection is detected.
+                 *
                  * @see https://github.com/laravel/framework/issues/25475
                  */
                 if (!$this->schema->getConnection() instanceof SQLiteConnection) {
