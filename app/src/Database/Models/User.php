@@ -11,12 +11,15 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Expression;
 use UserFrosting\Sprinkle\Account\Database\Factories\UserFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
@@ -36,22 +39,6 @@ use UserFrosting\Support\Repository\Repository as Config;
  * Represents a User object as stored in the database.
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
- *
- * @property int       $id
- * @property string    $user_name
- * @property string    $first_name
- * @property string    $last_name
- * @property string    $full_name
- * @property string    $email
- * @property string    $locale
- * @property int       $group_id
- * @property bool      $flag_verified
- * @property bool      $flag_enabled
- * @property int       $last_activity_id
- * @property timestamp $created_at
- * @property timestamp $updated_at
- * @property string    $password
- * @property timestamp $deleted_at
  */
 class User extends Model implements UserInterface
 {
@@ -59,16 +46,12 @@ class User extends Model implements UserInterface
     use HasFactory;
 
     /**
-     * The name of the table for the current model.
-     *
-     * @var string
+     * @var string The name of the table for the current model.
      */
     protected $table = 'users';
 
     /**
-     * Fields that should be mass-assignable when creating a new User.
-     *
-     * @var string[]
+     * @var string[] The attributes that are mass assignable.
      */
     protected $fillable = [
         'user_name',
@@ -79,39 +62,33 @@ class User extends Model implements UserInterface
         'group_id',
         'flag_verified',
         'flag_enabled',
-        'last_activity_id',
         'password',
         'deleted_at',
     ];
 
     /**
-     * A list of attributes to hide by default when using toArray() and toJson().
-     *
-     * @link https://laravel.com/docs/5.8/eloquent-serialization#hiding-attributes-from-json
-     *
-     * @var string[]
+     * @var string[] A list of attributes to hide by default when using toArray() and toJson().
      */
     protected $hidden = [
         'password',
     ];
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var string[]
+     * @var string[] The attributes that should be mutated to dates.
      */
     protected $dates = [
         'deleted_at',
     ];
 
+    /**
+     * @var string[] The accessors to append to the model's array form.
+     */
     protected $appends = [
         'full_name',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array
+     * @var array<string, string> The attributes that should be cast.
      */
     protected $casts = [
         'flag_verified' => 'boolean',
@@ -119,9 +96,7 @@ class User extends Model implements UserInterface
     ];
 
     /**
-     * Events used to handle the user object cache on update and deletion.
-     *
-     * @var array
+     * @var array<string, string> Events used to handle the user object cache on update and deletion.
      */
     protected $dispatchesEvents = [
         // 'saved'   => Events\DeleteUserCacheEvent::class, // TODO
@@ -134,75 +109,6 @@ class User extends Model implements UserInterface
      * @var array
      */
     protected $cachedPermissions;
-
-    /**
-     * Enable timestamps for Users.
-     *
-     * @var bool
-     */
-    public $timestamps = true;
-
-    /**
-     * Determine if the property for this object exists.
-     *
-     * We add relations here so that Twig will be able to find them.
-     * See http://stackoverflow.com/questions/29514081/cannot-access-eloquent-attributes-on-twig/35908957#35908957
-     * Every property in __get must also be implemented here for Twig to recognize it.
-     *
-     * @param string $name the name of the property to check.
-     *
-     * @return bool true if the property is defined, false otherwise.
-     */
-    // TODO : Change to attribute
-    // public function __isset($name)
-    // {
-    //     if (in_array($name, [
-    //         'group',
-    //         'last_sign_in_time',
-    //         'avatar',
-    //     ])) {
-    //         return true;
-    //     } else {
-    //         return parent::__isset($name);
-    //     }
-    // }
-
-    /**
-     * Get a property for this object.
-     *
-     * @param string $name the name of the property to retrieve.
-     *
-     * @throws \Exception the property does not exist for this object.
-     *
-     * @return string the associated property.
-     */
-    // TODO : Change to attribute
-    // public function __get($name)
-    // {
-    //     if ($name == 'last_sign_in_time') {
-    //         return $this->lastActivityTime('sign_in');
-    //     } elseif ($name == 'avatar') {
-    //         // Use Gravatar as the user avatar
-    //         $hash = md5(strtolower(trim($this->email)));
-
-    //         return 'https://www.gravatar.com/avatar/' . $hash . '?d=mm';
-    //     } else {
-    //         return parent::__get($name);
-    //     }
-    // }
-
-    /**
-     * Get all activities for this user.
-     *
-     * @return ActivityInterface|HasMany
-     */
-    public function activities()
-    {
-        /** @var string */
-        $relation = static::$ci->get(ActivityInterface::class);
-
-        return $this->hasMany($relation, 'user_id');
-    }
 
     /**
      * Delete this user from the database, along with any linked roles and activities.
@@ -240,16 +146,6 @@ class User extends Model implements UserInterface
     }
 
     /**
-     * Return a cache instance specific to that user.
-     *
-     * @return \Illuminate\Contracts\Cache\Store
-     */
-    public function getCache()
-    {
-        return static::$ci->cache->tags('_u' . $this->id);
-    }
-
-    /**
      * Allows you to get the full name of the user using `$user->full_name`.
      *
      * @return string
@@ -257,6 +153,40 @@ class User extends Model implements UserInterface
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    /**
+     * Allows you to get the user's avatar using `$user->avatar`.
+     *
+     * Use Gravatar as the user avatar provider.
+     *
+     * @return string
+     */
+    public function getAvatarAttribute(): string
+    {
+        $hash = md5(strtolower(trim($this->email)));
+
+        return 'https://www.gravatar.com/avatar/' . $hash . '?d=mm';
+    }
+
+    /**
+     * Attribute alias for lastActivity() method. Can be accessed using `$user->last_activity`.
+     *
+     * @return Activity|null
+     */
+    public function getLastActivityAttribute(): ?Activity
+    {
+        return $this->lastActivity();
+    }
+
+    /**
+     * Return a cache instance specific to that user.
+     *
+     * @return \Illuminate\Contracts\Cache\Store
+     */
+    public function getCache()
+    {
+        return static::$ci->cache->tags('_u' . $this->id);
     }
 
     /**
@@ -286,35 +216,6 @@ class User extends Model implements UserInterface
     }
 
     /**
-     * Get the amount of time, in seconds, that has elapsed since the last activity of a certain time for this user.
-     *
-     * @param string $type The type of activity to search for.
-     *
-     * @return int
-     */
-    public function getSecondsSinceLastActivity($type)
-    {
-        $time = $this->lastActivityTime($type);
-        $time = $time ? $time : '0000-00-00 00:00:00';
-        $time = new Carbon($time);
-
-        return $time->diffInSeconds();
-    }
-
-    /**
-     * Return this user's group.
-     *
-     * @return GroupInterface|BelongsTo
-     */
-    public function group()
-    {
-        /** @var string */
-        $relation = static::$ci->get(GroupInterface::class);
-
-        return $this->belongsTo($relation, 'group_id');
-    }
-
-    /**
      * Returns whether or not this user is the master user.
      *
      * @return bool
@@ -330,53 +231,89 @@ class User extends Model implements UserInterface
     }
 
     /**
-     * Get the most recent activity for this user, based on the user's last_activity_id.
+     * Get all activities for this user.
      *
-     * @return ActivityInterface|BelongsTo
+     * @return HasMany
      */
-    public function lastActivity()
+    public function activities(): HasMany
     {
         /** @var string */
         $relation = static::$ci->get(ActivityInterface::class);
 
-        return $this->belongsTo($relation, 'last_activity_id');
+        return $this->hasMany($relation, 'user_id');
     }
 
     /**
-     * Find the most recent activity for this user of a particular type.
+     * Get the most recent activity for this user.
      *
-     * @param string $type
+     * @param string|null $type The type of activity to search for.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Activity|null
      */
-    public function lastActivityOfType($type = null)
+    public function lastActivity(?string $type = null): ?Activity
     {
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = static::$ci->classMapper;
-
-        $query = $this->hasOne($classMapper->getClassMapping('activity'), 'user_id');
-
-        if ($type) {
-            $query = $query->where('type', $type);
+        $query = $this->activities();
+        if (!is_null($type)) {
+            // @phpstan-ignore-next-line Laravel is bad at type hinting
+            $query = $query->forType($type);
         }
 
-        return $query->latest('occurred_at');
+        // @phpstan-ignore-next-line Laravel is bad at type hinting
+        return $query->orderBy('occurred_at', 'desc')->first();
     }
 
     /**
      * Get the most recent time for a specified activity type for this user.
      *
-     * @param string $type
+     * @param string|null $type The type of activity to search for.
      *
-     * @return string|null The last activity time, as a SQL formatted time (YYYY-MM-DD HH:MM:SS), or null if an activity of this type doesn't exist.
+     * @return DateTime|null The last activity time, as a DateTime, or null if an activity of this type doesn't exist.
      */
-    public function lastActivityTime($type)
+    public function lastActivityTime(?string $type = null): ?DateTime
     {
-        $result = $this->activities()
-            ->where('type', $type)
-            ->max('occurred_at');
+        return $this->lastActivity($type)?->occurred_at;
+    }
 
-        return $result ? $result : null;
+    /**
+     * Get the amount of time, in seconds, that has elapsed since the last activity of a certain time for this user.
+     *
+     * @param string|null $type The type of activity to search for.
+     *
+     * @return int
+     */
+    public function getSecondsSinceLastActivity(?string $type = null): int
+    {
+        $time = $this->lastActivityTime($type) ?? '0000-00-00 00:00:00';
+        $time = new Carbon($time);
+
+        return $time->diffInSeconds();
+    }
+
+    /**
+     * Joins the user's most recent activity directly, so we can do things like sort, search, paginate, etc. in Sprunje.
+     *
+     * @param Builder $query
+     *
+     * @return Builder|QueryBuilder
+     */
+    public function scopeJoinLastActivity(Builder $query): Builder|QueryBuilder
+    {
+        return $query->select('users.*', new Expression('MAX(activities.occurred_at) as last_activity'))
+                     ->join('activities', 'activities.user_id', '=', 'users.id')
+                     ->groupBy('users.id');
+    }
+
+    /**
+     * Return this user's group.
+     *
+     * @return BelongsTo
+     */
+    public function group(): BelongsTo
+    {
+        /** @var string */
+        $relation = static::$ci->get(GroupInterface::class);
+
+        return $this->belongsTo($relation, 'group_id');
     }
 
     /**
@@ -440,9 +377,9 @@ class User extends Model implements UserInterface
     /**
      * Get all password reset requests for this user.
      *
-     * @return PasswordResetInterface|HasMany
+     * @return HasMany
      */
-    public function passwordResets()
+    public function passwordResets(): HasMany
     {
         /** @var string */
         $relation = static::$ci->get(PasswordResetInterface::class);
@@ -451,11 +388,11 @@ class User extends Model implements UserInterface
     }
 
     /**
-     * Get all of the permissions this user has, via its roles.
+     * Get all of the permissions this user has, through its roles.
      *
-     * @return PermissionInterface|BelongsToManyThrough
+     * @return BelongsToManyThrough
      */
-    public function permissions()
+    public function permissions(): BelongsToManyThrough
     {
         /** @var string */
         $permissionRelation = static::$ci->get(PermissionInterface::class);
@@ -478,9 +415,9 @@ class User extends Model implements UserInterface
     /**
      * Get all roles to which this user belongs.
      *
-     * @return RoleInterface|BelongsToMany
+     * @return BelongsToMany
      */
-    public function roles()
+    public function roles(): BelongsToMany
     {
         /** @var string */
         $relation = static::$ci->get(RoleInterface::class);
@@ -502,22 +439,6 @@ class User extends Model implements UserInterface
             $join->on('role_users.user_id', 'users.id')
                  ->where('role_id', $roleId);
         });
-    }
-
-    /**
-     * Joins the user's most recent activity directly, so we can do things like sort, search, paginate, etc.
-     *
-     * @param Builder $query
-     *
-     * @return Builder
-     */
-    public function scopeJoinLastActivity($query)
-    {
-        $query = $query->select('users.*');
-
-        $query = $query->leftJoin('activities', 'activities.id', '=', 'users.last_activity_id');
-
-        return $query;
     }
 
     /**

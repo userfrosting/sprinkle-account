@@ -18,26 +18,24 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
- * Group Class.
+ * Group Model.
  *
  * Represents a group object as stored in the database.
  *
- * @mixin \Illuminate\Database\Query\Builder
- *
- * @property string $slug
- * @property string $name
- * @property string $description
- * @property string $icon
+ * @mixin \Illuminate\Database\Eloquent\Builder
  */
 class Group extends Model implements GroupInterface
 {
     use HasFactory;
-    
+
     /**
      * @var string The name of the table for the current model.
      */
     protected $table = 'groups';
 
+    /**
+     * @var string[] The attributes that are mass assignable.
+     */
     protected $fillable = [
         'slug',
         'name',
@@ -46,29 +44,23 @@ class Group extends Model implements GroupInterface
     ];
 
     /**
-     * @var bool Enable timestamps for this class.
-     */
-    public $timestamps = true;
-
-    /**
-     * Delete this group from the database, along with any user associations.
+     * Cast nullable description to empty string if null.
      *
-     * @todo What do we do with users when their group is deleted?  Reassign them?  Or, can a user be "groupless"?
+     * @param string|null $value
+     *
+     * @return string
      */
-    /*public function delete()
+    public function getDescriptionAttribute(?string $value): string
     {
-        // Delete the group
-        $result = parent::delete();
-
-        return $result;
-    }*/
+        return $value ?? '';
+    }
 
     /**
      * Lazily load a collection of Users which belong to this group.
      *
-     * @return UserInterface|HasMany
+     * @return HasMany
      */
-    public function users()
+    public function users(): HasMany
     {
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);

@@ -25,7 +25,7 @@ use UserFrosting\Support\Repository\Repository as Config;
  *
  * Represents a role, which aggregates permissions and to which a user can be assigned.
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Illuminate\Database\Eloquent\Builder
  *
  * @property string $slug
  * @property string $name
@@ -34,22 +34,20 @@ use UserFrosting\Support\Repository\Repository as Config;
 class Role extends Model implements RoleInterface
 {
     use HasFactory;
-    
+
     /**
      * @var string The name of the table for the current model.
      */
     protected $table = 'roles';
 
+    /**
+     * @var string[] The attributes that are mass assignable.
+     */
     protected $fillable = [
         'slug',
         'name',
         'description',
     ];
-
-    /**
-     * @var bool Enable timestamps for this class.
-     */
-    public $timestamps = true;
 
     /**
      * Delete this role from the database, removing associations with permissions and users.
@@ -70,7 +68,7 @@ class Role extends Model implements RoleInterface
 
     /**
      * Get a list of default roles.
-     * 
+     *
      * @return string[]
      */
     public static function getDefaultSlugs(): array
@@ -83,10 +81,10 @@ class Role extends Model implements RoleInterface
 
     /**
      * Get a list of permissions assigned to this role.
-     * 
-     * @return PermissionInterface|BelongsToMany
+     *
+     * @return BelongsToMany
      */
-    public function permissions()
+    public function permissions(): BelongsToMany
     {
         /** @var string */
         $relation = static::$ci->get(PermissionInterface::class);
@@ -112,10 +110,10 @@ class Role extends Model implements RoleInterface
 
     /**
      * Get a list of users who have this role.
-     * 
-     * @return UserInterface|BelongsToMany
+     *
+     * @return BelongsToMany
      */
-    public function users()
+    public function users(): BelongsToMany
     {
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);

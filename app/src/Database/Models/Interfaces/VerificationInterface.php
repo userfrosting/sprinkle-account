@@ -15,7 +15,8 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
 /**
  * Verification Model Interface.
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
  */
 interface VerificationInterface
 {

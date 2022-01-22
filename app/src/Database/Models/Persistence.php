@@ -21,7 +21,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents the persistence table.
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Illuminate\Database\Eloquent\Builder
  *
  * @property string $user_id
  * @property string $token
@@ -35,6 +35,9 @@ class Persistence extends Model implements PersistenceInterface
      */
     protected $table = 'persistences';
 
+    /**
+     * @var string[] The attributes that are mass assignable.
+     */
     protected $fillable = [
         'user_id',
         'token',
@@ -43,16 +46,11 @@ class Persistence extends Model implements PersistenceInterface
     ];
 
     /**
-     * @var bool Enable timestamps for this class.
-     */
-    public $timestamps = true;
-
-    /**
      * Relation with the user table.
      *
-     * @return UserInterface|HasOne
+     * @return HasOne
      */
-    public function user()
+    public function user(): HasOne
     {
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);

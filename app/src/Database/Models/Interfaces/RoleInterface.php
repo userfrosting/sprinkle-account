@@ -15,27 +15,30 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
  * Role Model Interface.
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
  */
 interface RoleInterface
 {
     /**
      * Get a list of default roles.
-     * 
+     *
      * @return string[]
      */
     public static function getDefaultSlugs(): array;
 
     /**
      * Get a list of permissions assigned to this role.
-     * 
-     * @return PermissionInterface|BelongsToMany
+     *
+     * @return BelongsToMany
      */
-    public function permissions();
+    public function permissions(): BelongsToMany;
 
     /**
      * Get a list of users who have this role.
-     * 
-     * @return UserInterface|BelongsToMany
+     *
+     * @return BelongsToMany
      */
-    public function users();
+    public function users(): BelongsToMany;
 }

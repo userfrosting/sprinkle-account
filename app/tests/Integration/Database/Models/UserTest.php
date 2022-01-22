@@ -23,10 +23,9 @@ use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 use UserFrosting\Support\Repository\Repository as Config;
 
 /**
- * UserModelTest Class
- * Tests the User Model.
+ * UserTest Class. Tests the User Model.
  */
-class UserModelTest extends AccountTestCase
+class UserTest extends AccountTestCase
 {
     use MockeryPHPUnitIntegration;
     use RefreshDatabase;
@@ -84,12 +83,10 @@ class UserModelTest extends AccountTestCase
     public function testUserIsMaster(): void
     {
         /** @var User */
-        $masterUser = User::factory()->make();
-        $masterUser->save();
+        $masterUser = User::factory()->create();
 
         /** @var User */
-        $normalUser = User::factory()->make();
-        $normalUser->save();
+        $normalUser = User::factory()->create();
 
         $config = Mockery::mock(Config::class)
             ->shouldReceive('get')->with('reserved_user_ids.master')->times(2)->andReturn($masterUser->id)
@@ -98,6 +95,15 @@ class UserModelTest extends AccountTestCase
 
         $this->assertTrue($masterUser->isMaster());
         $this->assertFalse($normalUser->isMaster());
+    }
+
+    public function testUserAvatar(): void
+    {
+        /** @var User */
+        $user = User::factory()->make();
+
+        $this->assertIsString($user->avatar); // @phpstan-ignore-line
+        $this->assertStringContainsString('gravatar', $user->avatar);
     }
 
     /**

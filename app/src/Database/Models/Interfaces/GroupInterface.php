@@ -10,18 +10,31 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
  * Group Model Interface.
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @property int                       $id
+ * @property string                    $slug
+ * @property string                    $name
+ * @property string                    $description
+ * @property string                    $icon
+ * @property timestamp                 $created_at
+ * @property timestamp                 $updated_at
+ * @property Collection<UserInterface> $users
  */
 interface GroupInterface
 {
     /**
      * Users which belong to this group.
      *
-     * @return UserInterface|HasMany
+     * @return HasMany
      */
-    public function users();
+    public function users(): HasMany;
 }

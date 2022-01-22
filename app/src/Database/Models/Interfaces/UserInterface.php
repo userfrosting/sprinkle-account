@@ -10,42 +10,69 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use UserFrosting\Sprinkle\Account\Database\Models\Activity;
 use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 
 /**
  * User Model Interface.
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
  *
- * @property int       $id
- * @property string    $user_name
- * @property string    $first_name
- * @property string    $last_name
- * @property string    $full_name
- * @property string    $email
- * @property string    $locale
- * @property string    $theme
- * @property int       $group_id
- * @property bool      $flag_verified
- * @property bool      $flag_enabled
- * @property int       $last_activity_id
- * @property timestamp $created_at
- * @property timestamp $updated_at
- * @property string    $password
- * @property timestamp $deleted_at
+ * @property int                           $id
+ * @property string                        $user_name
+ * @property string                        $first_name
+ * @property string                        $last_name
+ * @property string                        $full_name
+ * @property string                        $email
+ * @property string                        $locale
+ * @property string                        $theme
+ * @property int                           $group_id
+ * @property bool                          $flag_verified
+ * @property bool                          $flag_enabled
+ * @property string                        $password
+ * @property string                        $avatar
+ * @property timestamp                     $created_at
+ * @property timestamp                     $updated_at
+ * @property timestamp                     $deleted_at
+ * @property Collection<ActivityInterface> $activities
+ * @property ActivityInterface|null        $last_activity
+ * @property ActivityInterface|null        $lastActivity
+ *
+ * @method $this  joinLastActivity()
+ * @method static $this joinLastActivity()
  */
 interface UserInterface
 {
     /**
-     * Get all activities for this user.
+     * Allows you to get the full name of the user using `$user->full_name`.
      *
-     * @return ActivityInterface|HasMany
+     * @return string
      */
-    public function activities();
+    public function getFullNameAttribute();
+
+    /**
+     * Allows you to get the user's avatar using `$user->avatar`.
+     *
+     * Use Gravatar as the user avatar provider.
+     *
+     * @return string
+     */
+    public function getAvatarAttribute(): string;
+
+    /**
+     * Attribute alias for lastActivity() method. Can be accessed using `$user->last_activity`.
+     *
+     * @return Activity|null
+     */
+    public function getLastActivityAttribute(): ?Activity;
 
     /**
      * Return a cache instance specific to that user.
@@ -53,13 +80,6 @@ interface UserInterface
      * @return \Illuminate\Contracts\Cache\Store
      */
     public function getCache();
-
-    /**
-     * Allows you to get the full name of the user using `$user->full_name`.
-     *
-     * @return string
-     */
-    public function getFullNameAttribute();
 
     /**
      * Retrieve the cached permissions dictionary for this user.
@@ -76,52 +96,61 @@ interface UserInterface
     public function reloadCachedPermissions();
 
     /**
-     * Get the amount of time, in seconds, that has elapsed since the last activity of a certain time for this user.
-     *
-     * @param string $type The type of activity to search for.
-     *
-     * @return int
-     */
-    public function getSecondsSinceLastActivity($type);
-
-    /**
-     * Return this user's group.
-     *
-     * @return GroupInterface|BelongsTo
-     */
-    public function group();
-
-    /**
      * Returns whether or not this user is the master user.
      *
      * @return bool
      */
-    public function isMaster();
+    public function isMaster(): bool;
 
     /**
-     * Get the most recent activity for this user, based on the user's last_activity_id.
+     * Get all activities for this user.
      *
-     * @return ActivityInterface|BelongsTo
+     * @return HasMany
      */
-    public function lastActivity();
+    public function activities(): HasMany;
 
     /**
-     * Find the most recent activity for this user of a particular type.
+     * Get the most recent activity for this user.
      *
-     * @param string $type
+     * @param string|null $type The type of activity to search for.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Activity|null
      */
-    public function lastActivityOfType($type = null);
+    public function lastActivity(?string $type = null): ?Activity;
 
     /**
      * Get the most recent time for a specified activity type for this user.
      *
-     * @param string $type
+     * @param string|null $type The type of activity to search for.
      *
-     * @return string|null The last activity time, as a SQL formatted time (YYYY-MM-DD HH:MM:SS), or null if an activity of this type doesn't exist.
+     * @return DateTime|null The last activity time, as a DateTime, or null if an activity of this type doesn't exist.
      */
-    public function lastActivityTime($type);
+    public function lastActivityTime(?string $type = null): ?DateTime;
+
+    /**
+     * Get the amount of time, in seconds, that has elapsed since the last activity of a certain time for this user.
+     *
+     * @param string|null $type The type of activity to search for.
+     *
+     * @return int
+     */
+    public function getSecondsSinceLastActivity(?string $type = null): int;
+
+    /**
+     * Joins the user's most recent activity directly, so we can do things like sort, search, paginate, etc. in Sprunje.
+     *
+     * @param Builder $query
+     *
+     * @return Builder|QueryBuilder
+     */
+    public function scopeJoinLastActivity(Builder $query): Builder|QueryBuilder;
+
+    /**
+     * Return this user's group.
+     *
+     * @return BelongsTo
+     */
+    public function group(): BelongsTo;
 
     /**
      * Performs tasks to be done after this user has been successfully authenticated.
@@ -148,23 +177,23 @@ interface UserInterface
     /**
      * Get all password reset requests for this user.
      *
-     * @return PasswordResetInterface|HasMany
+     * @return HasMany
      */
-    public function passwordResets();
+    public function passwordResets(): HasMany;
 
     /**
-     * Get all of the permissions this user has, via its roles.
+     * Get all of the permissions this user has, through its roles.
      *
-     * @return PermissionInterface|BelongsToManyThrough
+     * @return BelongsToManyThrough
      */
-    public function permissions();
+    public function permissions(): BelongsToManyThrough;
 
     /**
      * Get all roles to which this user belongs.
      *
-     * @return RoleInterface|BelongsToMany
+     * @return BelongsToMany
      */
-    public function roles();
+    public function roles(): BelongsToMany;
 
     /**
      * Query scope to get all users who have a specific role.
@@ -175,13 +204,4 @@ interface UserInterface
      * @return Builder
      */
     public function scopeForRole($query, $roleId);
-
-    /**
-     * Joins the user's most recent activity directly, so we can do things like sort, search, paginate, etc.
-     *
-     * @param Builder $query
-     *
-     * @return Builder
-     */
-    public function scopeJoinLastActivity($query);
 }

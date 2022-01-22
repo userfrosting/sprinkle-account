@@ -10,33 +10,34 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use UserFrosting\Sprinkle\Account\Database\Factories\ActivityFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
- * Activity Class.
+ * Activity Model.
  *
  * Represents a single user activity at a specified point in time.
  *
- * @mixin \Illuminate\Database\Query\Builder
- *
- * @property string   $ip_address
- * @property int      $user_id
- * @property string   $type
- * @property datetime $occurred_at
- * @property string   $description
+ * @mixin \Illuminate\Database\Eloquent\Builder
  */
 class Activity extends Model implements ActivityInterface
 {
+    use HasFactory;
+
     /**
      * @var string The name of the table for the current model.
      */
     protected $table = 'activities';
 
+    /**
+     * @var string[] The attributes that are mass assignable.
+     */
     protected $fillable = [
         'ip_address',
         'user_id',
@@ -46,58 +47,65 @@ class Activity extends Model implements ActivityInterface
     ];
 
     /**
-     * Joins the activity's user, so we can do things like sort, search, paginate, etc.
-     *
-     * @param Builder $query
+     * @var string[] The attributes that should be cast.
      */
-    public function scopeJoinUser($query)
+    protected $casts = [
+        'user_id'     => 'integer',
+        'occurred_at' => 'datetime',
+    ];
+
+    /**
+     * @var bool Disable timestamps for this class.
+     */
+    public $timestamps = false;
+
+    /**
+     * Cast nullable description to empty string if null.
+     *
+     * @param string|null $value
+     *
+     * @return string
+     */
+    public function getDescriptionAttribute(?string $value): string
     {
-        $query = $query->select('activities.*');
-
-        $query = $query->leftJoin('users', 'activities.user_id', '=', 'users.id');
-
-        return $query;
+        return $value ?? '';
     }
 
     /**
-     * Add clauses to select the most recent event of each type for each user, to the query.
-     *
-     * @param Builder $query
-     *
-     * @return Builder
+     * {@inheritDoc}
      */
-    public function scopeMostRecentEvents($query)
+    public function scopeJoinUser(Builder $query): Builder|QueryBuilder
     {
-        return $query->select('user_id', 'event_type', Capsule::raw('MAX(occurred_at) as occurred_at'))
-            ->groupBy('user_id')
-            ->groupBy('type');
+        return $query->select('activities.*')
+            ->join('users', 'activities.user_id', '=', 'users.id');
     }
 
     /**
-     * Add clauses to select the most recent event of a given type for each user, to the query.
-     *
-     * @param Builder $query
-     * @param string  $type  The type of event, matching the `event_type` field in the user_event table.
-     *
-     * @return Builder
+     * {@inheritDoc}
      */
-    public function scopeMostRecentEventsByType(Builder $query, $type)
+    public function scopeForType(Builder $query, string $type): Builder|QueryBuilder
     {
-        return $query->select('user_id', Capsule::raw('MAX(occurred_at) as occurred_at'))
-            ->where('type', $type)
-            ->groupBy('user_id');
+        return $query->where('type', $type);
     }
 
     /**
-     * Get the user associated with this activity.
-     *
-     * @return UserInterface|BelongsTo
+     * {@inheritDoc}
      */
-    public function user()
+    public function user(): BelongsTo
     {
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);
 
         return $this->belongsTo($relation, 'user_id');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return ActivityFactory::new();
     }
 }

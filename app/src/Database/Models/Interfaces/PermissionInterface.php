@@ -16,20 +16,23 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 
 /**
  * Permission Model Interface.
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
  */
 interface PermissionInterface
 {
     /**
      * Get a list of roles to which this permission is assigned.
      *
-     * @return RoleInterface|BelongsToMany
+     * @return BelongsToMany
      */
-    public function roles();
+    public function roles(): BelongsToMany;
 
     /**
      * Get a list of users who have this permission, along with a list of roles through which each user has the permission.
      *
-     * @return UserInterface|BelongsToManyThrough
+     * @return BelongsToManyThrough
      */
-    public function users();
+    public function users(): BelongsToManyThrough;
 }

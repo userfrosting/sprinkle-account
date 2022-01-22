@@ -4,6 +4,8 @@ parameters:
   ignoreErrors:
     - '#Dynamic call to static method PHPUnit\\Framework\\.*#'
     - '#Call to an undefined method Mockery\\Expectation::.*#'
+    - '#PHPDoc type array<.*> of property UserFrosting\\Sprinkle\\Account\\Database\\Models\\.*::\$.* is not the same as PHPDoc type array of overridden property Illuminate\\Database\\Eloquent\\Model::\$.*.#'
+    - '#Dynamic call to static method Illuminate\\Database\\Query\\Builder::.*#'
 includes:
   - vendor/phpstan/phpstan-strict-rules/rules.neon
   - vendor/phpstan/phpstan-deprecation-rules/rules.neon

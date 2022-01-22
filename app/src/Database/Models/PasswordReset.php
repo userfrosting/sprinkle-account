@@ -19,7 +19,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * Represents a password reset request for a specific user.
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Illuminate\Database\Eloquent\Builder
  *
  * @property int      $user_id
  * @property hash     $token
@@ -34,6 +34,9 @@ class PasswordReset extends Model
      */
     protected $table = 'password_resets';
 
+    /**
+     * @var string[] The attributes that are mass assignable.
+     */
     protected $fillable = [
         'user_id',
         'hash',
@@ -41,11 +44,6 @@ class PasswordReset extends Model
         'expires_at',
         'completed_at',
     ];
-
-    /**
-     * @var bool Enable timestamps for PasswordResets.
-     */
-    public $timestamps = true;
 
     /**
      * @var string Stores the raw (unhashed) token when created, so that it can be emailed out to the user.  NOT persisted.
@@ -75,9 +73,9 @@ class PasswordReset extends Model
     /**
      * Get the user associated with this reset request.
      *
-     * @return UserInterface|BelongsTo
+     * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);

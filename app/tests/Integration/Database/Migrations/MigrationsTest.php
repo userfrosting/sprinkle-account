@@ -127,7 +127,6 @@ class MigrationsTest extends AccountTestCase
                 'group_id',
                 'flag_verified',
                 'flag_enabled',
-                'last_activity_id',
                 'password',
                 'deleted_at',
                 'created_at',

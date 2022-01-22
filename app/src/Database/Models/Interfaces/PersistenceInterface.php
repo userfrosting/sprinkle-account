@@ -16,14 +16,15 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
 /**
  * Persistence db Model Interface.
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
  */
 interface PersistenceInterface
 {
     /**
      * Relation with the user table.
      *
-     * @return UserInterface|HasOne
+     * @return HasOne
      */
-    public function user();
+    public function user(): HasOne;
 }

@@ -33,9 +33,13 @@ class UpdateUsersTable extends Migration
      */
     public function up(): void
     {
+        // N.B.: SQLite doesn't support multiple calls to dropColumn / renameColumn in a single modification.
         if ($this->schema->hasTable('users')) {
             $this->schema->table('users', function (Blueprint $table) {
                 $table->dropColumn('theme');
+            });
+            $this->schema->table('users', function (Blueprint $table) {
+                $table->dropColumn('last_activity_id');
             });
         }
     }
@@ -47,6 +51,7 @@ class UpdateUsersTable extends Migration
     {
         $this->schema->table('users', function (Blueprint $table) {
             $table->string('theme', 100)->nullable()->comment('The user theme.');
+            $table->integer('last_activity_id')->unsigned()->nullable()->comment('The id of the last activity performed by this user.');
         });
     }
 }

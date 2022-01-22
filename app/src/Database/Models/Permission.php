@@ -25,7 +25,7 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  *
  * Represents a permission for a role or user.
  *
- * @mixin \Illuminate\Database\Query\Builder
+ * @mixin \Illuminate\Database\Eloquent\Builder
  *
  * @property int    $id
  * @property string $slug
@@ -36,23 +36,21 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 class Permission extends Model implements PermissionInterface
 {
     use HasFactory;
-    
+
     /**
      * @var string The name of the table for the current model.
      */
     protected $table = 'permissions';
 
+    /**
+     * @var string[] The attributes that are mass assignable.
+     */
     protected $fillable = [
         'slug',
         'name',
         'conditions',
         'description',
     ];
-
-    /**
-     * @var bool Enable timestamps for this class.
-     */
-    public $timestamps = true;
 
     /**
      * Delete this permission from the database, removing associations with roles.
@@ -71,9 +69,9 @@ class Permission extends Model implements PermissionInterface
     /**
      * Get a list of roles to which this permission is assigned.
      *
-     * @return RoleInterface|BelongsToMany
+     * @return BelongsToMany
      */
-    public function roles()
+    public function roles(): BelongsToMany
     {
         /** @var string */
         $relation = static::$ci->get(RoleInterface::class);
@@ -116,9 +114,9 @@ class Permission extends Model implements PermissionInterface
     /**
      * Get a list of users who have this permission, along with a list of roles through which each user has the permission.
      *
-     * @return UserInterface|BelongsToManyThrough
+     * @return BelongsToManyThrough
      */
-    public function users()
+    public function users(): BelongsToManyThrough
     {
         /** @var string */
         $userRelation = static::$ci->get(UserInterface::class);

@@ -15,13 +15,16 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
  * Password Reset Model Interface.
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
  */
 interface PasswordResetInterface
 {
     /**
      * User associated with this reset request.
      *
-     * @return UserInterface|BelongsTo
+     * @return BelongsTo
      */
-    public function user();
+    public function user(): BelongsTo;
 }
