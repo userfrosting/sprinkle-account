@@ -10,8 +10,11 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use UserFrosting\Sprinkle\Account\Database\Factories\VerificationFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -20,15 +23,11 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * Represents a pending email verification for a new user account.
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
- *
- * @property int      $user_id
- * @property hash     $token
- * @property bool     $completed
- * @property datetime $expires_at
- * @property datetime $completed_at
  */
-class Verification extends Model
+class Verification extends Model implements VerificationInterface
 {
+    use HasFactory;
+
     /**
      * @var string The name of the table for the current model.
      */
@@ -46,24 +45,30 @@ class Verification extends Model
     ];
 
     /**
-     * @var string Stores the raw (unhashed) token when created, so that it can be emailed out to the user.  NOT persisted.
+     * @var string[] The attributes that should be cast.
+     */
+    protected $casts = [
+        'user_id'   => 'integer',
+        'completed' => 'boolean',
+    ];
+
+    /**
+     * @var string Stores the raw (unhashed) token when created. NOT persisted (saved to db).
      */
     protected $token;
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
 
     /**
-     * @param string $value
-     *
-     * @return self
+     * {@inheritDoc}
      */
-    public function setToken($value)
+    public function setToken(string $value): static
     {
         $this->token = $value;
 
@@ -71,9 +76,7 @@ class Verification extends Model
     }
 
     /**
-     * Get the user associated with this verification request.
-     *
-     * @return BelongsTo
+     * {@inheritDoc}
      */
     public function user(): BelongsTo
     {
@@ -81,5 +84,15 @@ class Verification extends Model
         $relation = static::$ci->get(UserInterface::class);
 
         return $this->belongsTo($relation, 'user_id');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return VerificationFactory::new();
     }
 }

@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use UserFrosting\Sprinkle\Account\Repository\TokenAccessor;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
@@ -19,6 +20,15 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @property int           $id
+ * @property int           $user_id
+ * @property hash          $token
+ * @property string        $hash
+ * @property bool          $completed
+ * @property DateTime|null $expires_at
+ * @property DateTime|null $completed_at
+ * @property UserInterface $user
  */
 interface VerificationInterface extends TokenAccessor
 {

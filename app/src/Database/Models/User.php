@@ -27,6 +27,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterf
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 // use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
@@ -385,6 +386,19 @@ class User extends Model implements UserInterface
     {
         /** @var string */
         $relation = static::$ci->get(PasswordResetInterface::class);
+
+        return $this->hasMany($relation);
+    }
+
+    /**
+     * Get all verification request for this user.
+     *
+     * @return HasMany
+     */
+    public function verifications(): HasMany
+    {
+        /** @var string */
+        $relation = static::$ci->get(VerificationInterface::class);
 
         return $this->hasMany($relation);
     }
