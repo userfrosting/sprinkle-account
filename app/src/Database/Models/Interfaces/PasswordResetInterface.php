@@ -11,6 +11,7 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use UserFrosting\Sprinkle\Account\Repository\TokenAccessor;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -18,8 +19,17 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @property int           $id
+ * @property int           $user_id
+ * @property hash          $token
+ * @property string        $hash
+ * @property bool          $completed
+ * @property datetime|null $expires_at
+ * @property datetime|null $completed_at
+ * @property UserInterface $user
  */
-interface PasswordResetInterface
+interface PasswordResetInterface extends TokenAccessor
 {
     /**
      * User associated with this reset request.

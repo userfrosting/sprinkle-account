@@ -26,25 +26,26 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Eloquent\Model
  *
- * @property int                           $id
- * @property string                        $user_name
- * @property string                        $first_name
- * @property string                        $last_name
- * @property string                        $full_name
- * @property string                        $email
- * @property string                        $locale
- * @property string                        $theme
- * @property int                           $group_id
- * @property bool                          $flag_verified
- * @property bool                          $flag_enabled
- * @property string                        $password
- * @property string                        $avatar
- * @property timestamp                     $created_at
- * @property timestamp                     $updated_at
- * @property timestamp                     $deleted_at
- * @property Collection<ActivityInterface> $activities
- * @property ActivityInterface|null        $last_activity
- * @property ActivityInterface|null        $lastActivity
+ * @property int                                $id
+ * @property string                             $user_name
+ * @property string                             $first_name
+ * @property string                             $last_name
+ * @property string                             $full_name
+ * @property string                             $email
+ * @property string                             $locale
+ * @property string                             $theme
+ * @property int                                $group_id
+ * @property bool                               $flag_verified
+ * @property bool                               $flag_enabled
+ * @property string                             $password
+ * @property string                             $avatar
+ * @property timestamp                          $created_at
+ * @property timestamp                          $updated_at
+ * @property timestamp                          $deleted_at
+ * @property Collection<ActivityInterface>      $activities
+ * @property Collection<PasswordResetInterface> $passwordResets
+ * @property ActivityInterface|null             $last_activity
+ * @property ActivityInterface|null             $lastActivity
  *
  * @method $this  joinLastActivity()
  * @method static $this joinLastActivity()

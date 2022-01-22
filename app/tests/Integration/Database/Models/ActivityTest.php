@@ -11,8 +11,6 @@
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Support\Facades\DB;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Sprinkle\Account\Database\Models\Activity;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
@@ -25,7 +23,6 @@ use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
  */
 class ActivityTest extends AccountTestCase
 {
-    use MockeryPHPUnitIntegration;
     use RefreshDatabase;
 
     /**

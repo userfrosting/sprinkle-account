@@ -10,7 +10,10 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use UserFrosting\Sprinkle\Account\Database\Factories\PasswordResetFactory;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
@@ -20,15 +23,11 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * Represents a password reset request for a specific user.
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
- *
- * @property int      $user_id
- * @property hash     $token
- * @property bool     $completed
- * @property datetime $expires_at
- * @property datetime $completed_at
  */
-class PasswordReset extends Model
+class PasswordReset extends Model implements PasswordResetInterface
 {
+    use HasFactory;
+
     /**
      * @var string The name of the table for the current model.
      */
@@ -46,24 +45,30 @@ class PasswordReset extends Model
     ];
 
     /**
-     * @var string Stores the raw (unhashed) token when created, so that it can be emailed out to the user.  NOT persisted.
+     * @var string[] The attributes that should be cast.
      */
-    protected $token;
+    protected $casts = [
+        'user_id'   => 'integer',
+        'completed' => 'boolean',
+    ];
 
     /**
-     * @return string
+     * @var string Stores the raw (unhashed) token when created. NOT persisted (saved to db).
      */
-    public function getToken()
+    protected string $token;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getToken(): string
     {
         return $this->token;
     }
 
     /**
-     * @param string $value
-     *
-     * @return self
+     * {@inheritDoc}
      */
-    public function setToken($value)
+    public function setToken(string $value): static
     {
         $this->token = $value;
 
@@ -71,15 +76,23 @@ class PasswordReset extends Model
     }
 
     /**
-     * Get the user associated with this reset request.
-     *
-     * @return BelongsTo
+     * {@inheritDoc}
      */
     public function user(): BelongsTo
     {
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);
 
-        return $this->belongsTo($relation, 'user_id');
+        return $this->belongsTo($relation);
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return PasswordResetFactory::new();
     }
 }

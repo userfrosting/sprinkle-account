@@ -240,7 +240,7 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci->get(ActivityInterface::class);
 
-        return $this->hasMany($relation, 'user_id');
+        return $this->hasMany($relation);
     }
 
     /**
@@ -313,7 +313,7 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci->get(GroupInterface::class);
 
-        return $this->belongsTo($relation, 'group_id');
+        return $this->belongsTo($relation);
     }
 
     /**
@@ -384,7 +384,7 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci->get(PasswordResetInterface::class);
 
-        return $this->hasMany($relation, 'user_id');
+        return $this->hasMany($relation);
     }
 
     /**
