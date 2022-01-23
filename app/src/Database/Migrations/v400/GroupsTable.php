@@ -43,7 +43,7 @@ class GroupsTable extends Migration
             });
 
             // Add default groups via seed
-            (new DefaultGroups())->run();
+            // (new DefaultGroups())->run();
         }
     }
 

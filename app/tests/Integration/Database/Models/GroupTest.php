@@ -39,7 +39,7 @@ class GroupTest extends AccountTestCase
     public function testGroup(): void
     {
         // Assert Initial DB state
-        $this->assertSame(3, Group::count());
+        $this->assertSame(0, Group::count());
 
         // Create new group
         $group = new Group([
@@ -50,7 +50,7 @@ class GroupTest extends AccountTestCase
         $this->assertInstanceOf(GroupInterface::class, $group); // @phpstan-ignore-line
 
         // Assert new state
-        $this->assertSame(4, Group::count());
+        $this->assertSame(1, Group::count());
 
         // Get User and assert it's properties
         /** @var Group */
@@ -64,7 +64,7 @@ class GroupTest extends AccountTestCase
         $fetchedGroup->delete();
 
         // Assert new state
-        $this->assertSame(3, Group::count());
+        $this->assertSame(0, Group::count());
     }
 
     public function testUserRelation(): void

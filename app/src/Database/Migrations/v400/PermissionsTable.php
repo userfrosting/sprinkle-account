@@ -52,10 +52,10 @@ class PermissionsTable extends Migration
         }
 
         // Skip this if table is not empty
-        if (Permission::count() === 0) {
+        // if (Permission::count() === 0) {
             // Add default permission via seed
-            (new DefaultPermissions())->run();
-        }
+            // (new DefaultPermissions())->run();
+        // }
     }
 
     /**
