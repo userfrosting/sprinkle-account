@@ -26,9 +26,19 @@ class DefaultPermissionsTest extends AccountTestCase
     {
         // Setup fresh, empty table
         $this->refreshDatabase();
+        Permission::truncate();
+
+        /** @var Permission */
+        $permission = $this->ci->get(Permission::class);
+
+        // Assert initial table state
+        $this->assertCount(0, $permission::all());
+
+        // Apply seed
+        $seed = new DefaultPermissions();
+        $seed->run();
 
         // Assert new table state
-        // Seed is run in `refreshDatabase`
         $this->assertCount(22, Permission::all());
     }
 }

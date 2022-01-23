@@ -26,9 +26,16 @@ class DefaultRolesTest extends AccountTestCase
     {
         // Setup fresh, empty table
         $this->refreshDatabase();
+        Role::truncate();
+
+        // Assert initial table state
+        $this->assertCount(0, Role::all());
+
+        // Apply seed
+        $seed = new DefaultRoles();
+        $seed->run();
 
         // Assert new table state
-        // Seed is run in `refreshDatabase`
         $this->assertCount(3, Role::all());
     }
 }
