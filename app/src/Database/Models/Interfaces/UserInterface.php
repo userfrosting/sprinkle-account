@@ -42,9 +42,11 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property timestamp                          $created_at
  * @property timestamp                          $updated_at
  * @property timestamp                          $deleted_at
+ * @property GroupInterface|null                $group
  * @property Collection<ActivityInterface>      $activities
  * @property Collection<PasswordResetInterface> $passwordResets
  * @property Collection<VerificationInterface>  $verifications
+ * @property Collection<PersistenceInterface>   $persistences
  * @property ActivityInterface|null             $last_activity
  * @property ActivityInterface|null             $lastActivity
  *
@@ -190,6 +192,13 @@ interface UserInterface
      * @return BelongsToManyThrough
      */
     public function permissions(): BelongsToManyThrough;
+
+    /**
+     * Get all persistence items for this user.
+     *
+     * @return HasMany
+     */
+    public function persistences(): HasMany;
 
     /**
      * Get all roles to which this user belongs.

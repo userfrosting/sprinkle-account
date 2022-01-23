@@ -25,6 +25,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PersistenceInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
@@ -399,6 +400,19 @@ class User extends Model implements UserInterface
     {
         /** @var string */
         $relation = static::$ci->get(VerificationInterface::class);
+
+        return $this->hasMany($relation);
+    }
+
+    /**
+     * Get all persistence items for this user.
+     *
+     * @return HasMany
+     */
+    public function persistences(): HasMany
+    {
+        /** @var string */
+        $relation = static::$ci->get(PersistenceInterface::class);
 
         return $this->hasMany($relation);
     }

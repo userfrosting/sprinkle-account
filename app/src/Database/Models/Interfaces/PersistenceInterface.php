@@ -10,7 +10,10 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use DateTime;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
 /**
@@ -18,13 +21,34 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @property int           $id
+ * @property int           $user_id
+ * @property string        $token
+ * @property string        $persistent_token
+ * @property DateTime|null $expires_at
+ * @property timestamp     $created_at
+ * @property timestamp     $updated_at
+ * @property UserInterface $user
+ *
+ * @method $this  notExpired()
+ * @method static $this notExpired()
  */
 interface PersistenceInterface
 {
     /**
      * Relation with the user table.
      *
-     * @return HasOne
+     * @return BelongsTo
      */
-    public function user(): HasOne;
+    public function user(): BelongsTo;
+
+    /**
+     * Scope a query to only include not expired entries.
+     *
+     * @param Builder $query
+     *
+     * @return Builder|QueryBuilder
+     */
+    public function scopeNotExpired(Builder $query): Builder|QueryBuilder;
 }

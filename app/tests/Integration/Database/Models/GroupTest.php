@@ -86,6 +86,6 @@ class GroupTest extends AccountTestCase
         $this->assertSame(1, $group->users->count());
 
         // Assert reverse relation
-        $this->assertSame($group->id, $user->group->id);
+        $this->assertSame($group->id, $user->group?->id);
     }
 }

@@ -10,6 +10,8 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
+use DateTime;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\PasswordReset;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
@@ -69,6 +71,27 @@ class PasswordResetTest extends AccountTestCase
 
         // Assert new state
         $this->assertSame(0, PasswordReset::count());
+    }
+
+    public function testDateCasting(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+
+        /** @var PasswordReset */
+        $passwordReset = PasswordReset::factory()->state(
+            new Sequence(
+                fn ($sequence) => [
+                    'expires_at'   => new DateTime('2022-01-01'),
+                    'completed_at' => new DateTime('2021-01-01'),
+                ],
+            )
+        )->for($user)->create();
+
+        $this->assertInstanceOf(DateTime::class, $passwordReset->expires_at);
+        $this->assertInstanceOf(DateTime::class, $passwordReset->completed_at);
+        $this->assertSame('2022-01-01', $passwordReset->expires_at->format('Y-m-d'));
+        $this->assertSame('2021-01-01', $passwordReset->completed_at->format('Y-m-d'));
     }
 
     public function testTokenAccessor(): void

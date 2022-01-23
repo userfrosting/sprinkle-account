@@ -10,6 +10,8 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
+use DateTime;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Database\Models\Verification;
@@ -69,6 +71,27 @@ class VerificationTest extends AccountTestCase
 
         // Assert new state
         $this->assertSame(0, Verification::count());
+    }
+
+    public function testDateCasting(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+
+        /** @var Verification */
+        $verification = Verification::factory()->state(
+            new Sequence(
+                fn ($sequence) => [
+                    'expires_at'   => new DateTime('2022-01-01'),
+                    'completed_at' => new DateTime('2021-01-01'),
+                ],
+            )
+        )->for($user)->create();
+
+        $this->assertInstanceOf(DateTime::class, $verification->expires_at);
+        $this->assertInstanceOf(DateTime::class, $verification->completed_at);
+        $this->assertSame('2022-01-01', $verification->expires_at->format('Y-m-d'));
+        $this->assertSame('2021-01-01', $verification->completed_at->format('Y-m-d'));
     }
 
     public function testTokenAccessor(): void

@@ -11,7 +11,11 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use UserFrosting\Sprinkle\Account\Database\Factories\PersistenceFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PersistenceInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
@@ -22,14 +26,11 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * Represents the persistence table.
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
- *
- * @property string $user_id
- * @property string $token
- * @property string $persistent_token
- * @property string $expires_at
  */
 class Persistence extends Model implements PersistenceInterface
 {
+    use HasFactory;
+
     /**
      * @var string The name of the table for the current model.
      */
@@ -46,27 +47,38 @@ class Persistence extends Model implements PersistenceInterface
     ];
 
     /**
-     * Relation with the user table.
-     *
-     * @return HasOne
+     * @var string[] The attributes that should be cast.
      */
-    public function user(): HasOne
+    protected $casts = [
+        'user_id'   => 'integer',
+    ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function user(): BelongsTo
     {
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);
 
-        return $this->hasOne($relation);
+        return $this->belongsTo($relation);
     }
 
     /**
-     * Scope a query to only include not expired entries.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * {@inheritDoc}
      */
-    public function scopeNotExpired($query)
+    public function scopeNotExpired(Builder $query): Builder|QueryBuilder
     {
         return $query->where('expires_at', '>', Carbon::now());
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return PersistenceFactory::new();
     }
 }
