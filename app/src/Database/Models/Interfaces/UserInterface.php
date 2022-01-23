@@ -11,6 +11,7 @@
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
 use DateTime;
+use Illuminate\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -85,9 +86,9 @@ interface UserInterface
     /**
      * Return a cache instance specific to that user.
      *
-     * @return \Illuminate\Contracts\Cache\Store
+     * @return Cache
      */
-    public function getCache();
+    public function getCache(): Cache;
 
     /**
      * Retrieve the cached permissions dictionary for this user.

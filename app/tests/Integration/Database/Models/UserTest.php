@@ -10,11 +10,11 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
+use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Testing\withTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 use UserFrosting\Support\Repository\Repository as Config;
@@ -116,5 +116,14 @@ class UserTest extends AccountTestCase
         $this->assertSame(1, User::withTrashed()->count());
         $this->assertTrue($user->forceDelete());
         $this->assertSame(0, User::withTrashed()->count());
+    }
+
+    public function testUserCache(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+
+        $cache = $user->getCache();
+        $this->assertInstanceOf(Cache::class, $cache);
     }
 }

@@ -12,6 +12,7 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,8 +29,8 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PersistenceInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 // use UserFrosting\Sprinkle\Account\Facades\Password;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
@@ -171,11 +172,14 @@ class User extends Model implements UserInterface
     /**
      * Return a cache instance specific to that user.
      *
-     * @return \Illuminate\Contracts\Cache\Store
+     * @return Cache
      */
-    public function getCache()
+    public function getCache(): Cache
     {
-        return static::$ci->cache->tags('_u' . $this->id);
+        /** @var Cache */
+        $cache = static::$ci->get(Cache::class);
+
+        return $cache->tags('_u' . $this->id);
     }
 
     /**
