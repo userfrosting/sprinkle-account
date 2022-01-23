@@ -11,7 +11,6 @@
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
 use DateTime;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PersistenceInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Persistence;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
@@ -90,11 +89,10 @@ class PersistenceTest extends AccountTestCase
         $user = User::factory()->create();
 
         /** @var Persistence */
-        $persistence = Persistence::factory()->state(
-            new Sequence(
-                fn ($sequence) => ['expires_at' => new DateTime('2022-01-01')],
-            )
-        )->for($user)->create();
+        $persistence = Persistence::factory()
+            ->state(['expires_at' => new DateTime('2022-01-01')])
+            ->for($user)
+            ->create();
 
         $this->assertInstanceOf(DateTime::class, $persistence->expires_at);
         $this->assertSame('2022-01-01', $persistence->expires_at->format('Y-m-d'));
@@ -106,18 +104,16 @@ class PersistenceTest extends AccountTestCase
         $user = User::factory()->create();
 
         // Not expired
-        Persistence::factory()->state(
-            new Sequence(
-                fn ($sequence) => ['expires_at' => new DateTime('now + 2 days')],
-            )
-        )->for($user)->create();
+        Persistence::factory()
+            ->state(['expires_at' => new DateTime('now + 2 days')])
+            ->for($user)
+            ->create();
 
         // Expired
-        Persistence::factory()->state(
-            new Sequence(
-                fn ($sequence) => ['expires_at' => new DateTime('now - 2 days')],
-            )
-        )->for($user)->create();
+        Persistence::factory()
+            ->state(['expires_at' => new DateTime('now - 2 days')])
+            ->for($user)
+            ->create();
 
         $this->assertSame(2, Persistence::count());
         $this->assertSame(1, Persistence::notExpired()->count());

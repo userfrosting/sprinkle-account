@@ -136,9 +136,9 @@ return [
             // Default roles and other settings for newly registered users
             'user_defaults' => [
                 'locale' => 'en_US',
-                'group'  => 'terran',
+                'group'  => '',
                 'roles'  => [
-                    'user' => true,
+                    'user' => true, // TODO : We may want to remove the default and promote "no role"
                 ],
             ],
         ],

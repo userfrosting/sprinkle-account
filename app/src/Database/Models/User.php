@@ -452,22 +452,27 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci->get(RoleInterface::class);
 
-        return $this->belongsToMany($relation, 'role_users', 'user_id', 'role_id')->withTimestamps();
+        return $this->belongsToMany($relation, 'role_users')->withTimestamps();
     }
 
     /**
      * Query scope to get all users who have a specific role.
      *
-     * @param Builder $query
-     * @param int     $roleId
+     * @param Builder           $query
+     * @param int|RoleInterface $role
      *
-     * @return Builder
+     * @return Builder|QueryBuilder
      */
-    public function scopeForRole($query, $roleId)
+    public function scopeForRole(Builder $query, int|RoleInterface $role): Builder|QueryBuilder
     {
-        return $query->join('role_users', function ($join) use ($roleId) {
-            $join->on('role_users.user_id', 'users.id')
-                 ->where('role_id', $roleId);
+        if ($role instanceof RoleInterface) {
+            $roleId = $role->id;
+        } else {
+            $roleId = $role;
+        }
+
+        return $query->whereHas('roles', function ($q) use ($roleId) {
+            $q->where('id', $roleId);
         });
     }
 

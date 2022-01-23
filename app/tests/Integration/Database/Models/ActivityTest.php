@@ -129,20 +129,14 @@ class ActivityTest extends AccountTestCase
         /** @var User */
         $userA = User::factory()->has(
             Activity::factory()
-            ->state(new Sequence(
-                fn ($sequence) => ['occurred_at' => new \DateTime('2019-01-01')],
-            ))
+                ->state(['occurred_at' => new \DateTime('2019-01-01')])
         )->has(
             Activity::factory()
-            ->state(new Sequence(
-                fn ($sequence) => ['occurred_at' => new \DateTime('2022-01-01')],
-            ))
+                ->state(['occurred_at' => new \DateTime('2022-01-01')])
         )->create();
         $userB = User::factory()->has(
             Activity::factory()
-            ->state(new Sequence(
-                fn ($sequence) => ['occurred_at' => new \DateTime('2020-01-01')],
-            ))
+                ->state(['occurred_at' => new \DateTime('2020-01-01')])
         )->create();
 
         // Default order is 1, 2
@@ -173,15 +167,11 @@ class ActivityTest extends AccountTestCase
         /** @var User */
         $userFoo = User::factory()
             ->has(Activity::factory())
-            ->state(new Sequence(
-                fn ($sequence) => ['user_name' => 'foo'],
-            ))
+            ->state(['user_name' => 'foo'])
             ->create();
         $userBar = User::factory()
             ->has(Activity::factory())
-            ->state(new Sequence(
-                fn ($sequence) => ['user_name' => 'bar'],
-            ))
+            ->state(['user_name' => 'bar'])
             ->create();
 
         // Default order is 'foo', 'bar'

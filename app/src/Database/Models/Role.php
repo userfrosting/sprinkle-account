@@ -13,6 +13,7 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use UserFrosting\Sprinkle\Account\Database\Factories\RoleFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
@@ -26,10 +27,6 @@ use UserFrosting\Support\Repository\Repository as Config;
  * Represents a role, which aggregates permissions and to which a user can be assigned.
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
- *
- * @property string $slug
- * @property string $name
- * @property string $description
  */
 class Role extends Model implements RoleInterface
 {
@@ -50,6 +47,18 @@ class Role extends Model implements RoleInterface
     ];
 
     /**
+     * Cast nullable description to empty string if null.
+     *
+     * @param string|null $value
+     *
+     * @return string
+     */
+    public function getDescriptionAttribute(?string $value): string
+    {
+        return $value ?? '';
+    }
+
+    /**
      * Delete this role from the database, removing associations with permissions and users.
      */
     public function delete()
@@ -61,9 +70,7 @@ class Role extends Model implements RoleInterface
         $this->users()->detach();
 
         // Delete the role
-        $result = parent::delete();
-
-        return $result;
+        return parent::delete();
     }
 
     /**
@@ -71,12 +78,15 @@ class Role extends Model implements RoleInterface
      *
      * @return string[]
      */
+    // TODO : Not need for this to be in Model.
     public static function getDefaultSlugs(): array
     {
         /** @var Config $config */
-        $config = static::$ci->get(UserInterface::class);
+        $config = static::$ci->get(Config::class);
 
-        return array_map('trim', array_keys($config->get('site.registration.user_defaults.roles'), true));
+        $default = $config->get('site.registration.user_defaults.roles');
+
+        return array_map('trim', array_keys($default, true, true)); // @phpstan-ignore-line False positive
     }
 
     /**
@@ -95,16 +105,21 @@ class Role extends Model implements RoleInterface
     /**
      * Query scope to get all roles assigned to a specific user.
      *
-     * @param Builder $query
-     * @param int     $userId
+     * @param Builder           $query
+     * @param int|UserInterface $user
      *
-     * @return Builder
+     * @return Builder|QueryBuilder
      */
-    public function scopeForUser($query, $userId)
+    public function scopeForUser(Builder $query, int|UserInterface $user): Builder|QueryBuilder
     {
-        return $query->join('role_users', function ($join) use ($userId) {
-            $join->on('role_users.role_id', 'roles.id')
-                 ->where('user_id', $userId);
+        if ($user instanceof UserInterface) {
+            $userId = $user->id;
+        } else {
+            $userId = $user;
+        }
+
+        return $query->whereHas('users', function ($q) use ($userId) {
+            $q->where('id', $userId);
         });
     }
 
@@ -118,7 +133,7 @@ class Role extends Model implements RoleInterface
         /** @var string */
         $relation = static::$ci->get(UserInterface::class);
 
-        return $this->belongsToMany($relation, 'role_users', 'role_id', 'user_id');
+        return $this->belongsToMany($relation, 'role_users');
     }
 
     /**

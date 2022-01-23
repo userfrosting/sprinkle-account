@@ -10,16 +10,15 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 
-use DateTime;
-use Illuminate\Database\Eloquent\Factories\Sequence;
-use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Role;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Database\Models\Verification;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
 /**
- * VerificationTest Class. Tests the Verification Model.
+ * RoleTest Class. Tests the Role Model.
  */
 class RoleTest extends AccountTestCase
 {
@@ -36,84 +35,101 @@ class RoleTest extends AccountTestCase
         $this->refreshDatabase();
     }
 
-    public function testVerification(): void
+    public function testRole(): void
     {
         // Assert Initial DB state
-        $this->assertSame(0, Verification::count());
+        $this->assertSame(0, Role::count());
 
-        /** @var User */
-        $user = User::factory()->create();
-
-        $verification = new Verification([
-            'hash'  => 'TEST',
+        $role = new Role([
+            'name'  => 'Test',
+            'slug'  => 'test',
         ]);
-        $verification->user()->associate($user);
-        $verification->save();
-        $this->assertInstanceOf(VerificationInterface::class, $verification); // @phpstan-ignore-line
+        $role->save();
+        $this->assertInstanceOf(RoleInterface::class, $role); // @phpstan-ignore-line
 
         // Assert new state
-        $this->assertSame(1, Verification::count());
+        $this->assertSame(1, Role::count());
 
         // Get Model and assert it's default properties
-        /** @var Verification */
-        $fetched = Verification::find($verification->id);
-        $this->assertSame($user->id, $fetched->user_id);
-        $this->assertSame('TEST', $fetched->hash);
-        $this->assertFalse($fetched->completed);
-        $this->assertNull($fetched->expires_at);
-        $this->assertNull($fetched->completed_at);
-
-        // Assert User relations
-        $this->assertSame($user->id, $fetched->user->id);
+        /** @var Role */
+        $fetched = Role::find($role->id);
+        $this->assertSame('Test', $fetched->name);
+        $this->assertSame('test', $fetched->slug);
+        $this->assertSame('', $fetched->description);
 
         // Delete
         $fetched->delete();
 
         // Assert new state
-        $this->assertSame(0, Verification::count());
-    }
-
-    public function testDateCasting(): void
-    {
-        /** @var User */
-        $user = User::factory()->create();
-
-        /** @var Verification */
-        $verification = Verification::factory()->state(
-            new Sequence(
-                fn ($sequence) => [
-                    'expires_at'   => new DateTime('2022-01-01'),
-                    'completed_at' => new DateTime('2021-01-01'),
-                ],
-            )
-        )->for($user)->create();
-
-        $this->assertInstanceOf(DateTime::class, $verification->expires_at);
-        $this->assertInstanceOf(DateTime::class, $verification->completed_at);
-        $this->assertSame('2022-01-01', $verification->expires_at->format('Y-m-d'));
-        $this->assertSame('2021-01-01', $verification->completed_at->format('Y-m-d'));
-    }
-
-    public function testTokenAccessor(): void
-    {
-        /** @var User */
-        $user = User::factory()->create();
-
-        /** @var Verification */
-        $Verification = Verification::factory()->for($user)->create();
-
-        $token = 'foobar';
-        $this->assertSame($token, $Verification->setToken($token)->getToken());
+        $this->assertSame(0, Role::count());
     }
 
     public function testUserRelation(): void
     {
+        /** @var Role */
+        $role = Role::factory()->create();
+
+        /** @var User[] */
+        $users = User::factory()
+            ->count(3)
+            ->hasAttached($role)
+            ->create();
+
+        $this->assertContainsOnlyInstancesOf(UserInterface::class, $role->users); // @phpstan-ignore-line
+        $this->assertSame(3, $role->users()->count());
+        $this->assertSame(3, $role->users->count());
+
+        // Assert reverse relation
+        $this->assertSame(1, $users[0]->roles->count());
+        $this->assertSame([$role->id], $users[0]->roles()->pluck('id')->all());
+    }
+
+    public function testScopeForUser(): void
+    {
+        /** @var Role[] */
+        $roles = Role::factory()->count(3)->create();
+
         /** @var User */
-        $user = User::factory()->create();
+        $user = User::factory()->hasAttached($roles[1])->create();
 
-        Verification::factory()->count(3)->for($user)->create();
+        $this->assertSame(3, Role::count());
 
-        $this->assertSame(3, $user->verifications()->count());
-        $this->assertContainsOnlyInstancesOf(VerificationInterface::class, $user->verifications);
+        // Test scope with id
+        $this->assertSame(1, Role::forUser($user->id)->count());
+        $this->assertSame([$roles[1]->id], Role::forUser($user->id)->pluck('id')->all());
+
+        // Test scope with Model
+        $this->assertSame(1, Role::forUser($user)->count());
+        $this->assertSame([$roles[1]->id], Role::forUser($user)->pluck('id')->all());
+    }
+
+    public function testUserScopeForRole(): void
+    {
+        /** @var Role */
+        $roleA = Role::factory()->state(['slug' => 'foo'])->create();
+
+        /** @var Role */
+        $roleB = Role::factory()->state(['slug' => 'bar'])->create();
+
+        /** @var User */
+        $userFoo = User::factory()->hasAttached($roleA)->create();
+
+        /** @var User */
+        $userBar = User::factory()->hasAttached($roleB)->create();
+
+        // Test scope with id
+        $users = User::forRole($roleA->id)->get();
+        $this->assertSame(1, $users->count());
+        $this->assertSame([$userFoo->id], $users->pluck('id')->all());
+
+        // Test scope with Model
+        $users = User::forRole($roleB)->get();
+        $this->assertSame(1, $users->count());
+        $this->assertSame([$userBar->id], $users->pluck('id')->all());
+    }
+
+    public function testGetDefaultSlugs(): void
+    {
+        $this->assertSame(['user'], Role::getDefaultSlugs());
     }
 }

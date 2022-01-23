@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 
@@ -18,6 +19,16 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @property int                             $id
+ * @property string                          $slug
+ * @property string                          $name
+ * @property string                          $description
+ * @property Collection<UserInterface>       $users
+ * @property Collection<PermissionInterface> $permissions
+ *
+ * @method $this  forUser(int|UserInterface $user)
+ * @method static $this forUser(int|UserInterface $user)
  */
 interface RoleInterface
 {

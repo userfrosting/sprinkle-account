@@ -45,13 +45,16 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property GroupInterface|null                $group
  * @property Collection<ActivityInterface>      $activities
  * @property Collection<PasswordResetInterface> $passwordResets
- * @property Collection<VerificationInterface>  $verifications
  * @property Collection<PersistenceInterface>   $persistences
+ * @property Collection<RoleInterface>          $roles
+ * @property Collection<VerificationInterface>  $verifications
  * @property ActivityInterface|null             $last_activity
  * @property ActivityInterface|null             $lastActivity
  *
  * @method $this  joinLastActivity()
  * @method static $this joinLastActivity()
+ * @method $this  forRole(int|RoleInterface $role)
+ * @method static $this forRole(int|RoleInterface $role)
  */
 interface UserInterface
 {
@@ -210,10 +213,10 @@ interface UserInterface
     /**
      * Query scope to get all users who have a specific role.
      *
-     * @param Builder $query
-     * @param int     $roleId
+     * @param Builder           $query
+     * @param int|RoleInterface $role
      *
-     * @return Builder
+     * @return Builder|QueryBuilder
      */
-    public function scopeForRole($query, $roleId);
+    public function scopeForRole(Builder $query, int|RoleInterface $role): Builder|QueryBuilder;
 }
