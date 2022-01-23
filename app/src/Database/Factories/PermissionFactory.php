@@ -29,7 +29,6 @@ class PermissionFactory extends Factory
     {
         return [
             'name'        => $this->faker->word(),
-            'description' => $this->faker->sentence(),
             'conditions'  => $this->faker->word(),
             'slug'        => $this->faker->unique()->slug(),
         ];

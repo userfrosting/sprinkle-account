@@ -108,9 +108,9 @@ class User extends Model implements UserInterface
     /**
      * Cached dictionary of permissions for the user.
      *
-     * @var array
+     * @var array<string, PermissionInterface[]>|null
      */
-    protected $cachedPermissions;
+    protected ?array $cachedPermissions = null;
 
     /**
      * Delete this user from the database, along with any linked roles and activities.
@@ -194,23 +194,23 @@ class User extends Model implements UserInterface
     /**
      * Retrieve the cached permissions dictionary for this user.
      *
-     * @return array
+     * @return array<string, PermissionInterface[]>
      */
-    public function getCachedPermissions()
+    public function getCachedPermissions(): array
     {
-        if (!isset($this->cachedPermissions)) {
+        if ($this->cachedPermissions === null) {
             $this->reloadCachedPermissions();
         }
 
-        return $this->cachedPermissions;
+        return $this->cachedPermissions ?? [];
     }
 
     /**
      * Retrieve the cached permissions dictionary for this user.
      *
-     * @return User
+     * @return static
      */
-    public function reloadCachedPermissions()
+    public function reloadCachedPermissions(): static
     {
         $this->cachedPermissions = $this->buildPermissionsDictionary();
 
@@ -433,12 +433,8 @@ class User extends Model implements UserInterface
         return $this->belongsToManyThrough(
             $permissionRelation,
             $roleRelation,
-            'role_users',
-            'user_id',
-            'role_id',
-            'permission_roles',
-            'role_id',
-            'permission_id'
+            firstJoiningTable: 'role_users',
+            secondJoiningTable: 'permission_roles',
         );
     }
 
@@ -480,14 +476,14 @@ class User extends Model implements UserInterface
      * Loads permissions for this user into a cached dictionary of slugs -> arrays of permissions,
      * so we don't need to keep requerying the DB for every call of checkAccess.
      *
-     * @return array
+     * @return array<string, PermissionInterface[]>
      */
-    protected function buildPermissionsDictionary()
+    protected function buildPermissionsDictionary(): array
     {
-        $permissions = $this->permissions()->get();
         $cachedPermissions = [];
 
-        foreach ($permissions as $permission) {
+        /** @var PermissionInterface $permission */
+        foreach ($this->permissions()->get() as $permission) {
             $cachedPermissions[$permission->slug][] = $permission;
         }
 

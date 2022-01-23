@@ -10,7 +10,10 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Interfaces;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
 
@@ -19,6 +22,19 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @property int                       $id
+ * @property string                    $slug
+ * @property string                    $name
+ * @property string                    $conditions
+ * @property string                    $description
+ * @property Collection<UserInterface> $users
+ * @property Collection<RoleInterface> $roles
+ *
+ * @method $this  forRole(int|RoleInterface $role)
+ * @method static $this forRole(int|RoleInterface $role)
+ * @method $this  notForRole(int|RoleInterface $role)
+ * @method static $this notForRole(int|RoleInterface $role)
  */
 interface PermissionInterface
 {
@@ -35,4 +51,24 @@ interface PermissionInterface
      * @return BelongsToManyThrough
      */
     public function users(): BelongsToManyThrough;
+
+    /**
+     * Query scope to get all permissions assigned to a specific role.
+     *
+     * @param Builder           $query
+     * @param int|RoleInterface $role  Role Model or Role ID
+     *
+     * @return Builder|QueryBuilder
+     */
+    public function scopeForRole(Builder $query, int|RoleInterface $role): Builder|QueryBuilder;
+
+    /**
+     * Query scope to get all permissions NOT associated with a specific role.
+     *
+     * @param Builder           $query
+     * @param int|RoleInterface $role  Role Model or Role ID
+     *
+     * @return Builder|QueryBuilder
+     */
+    public function scopeNotForRole(Builder $query, int|RoleInterface $role): Builder|QueryBuilder;
 }

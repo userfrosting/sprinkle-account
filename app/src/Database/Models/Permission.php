@@ -13,6 +13,7 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use UserFrosting\Sprinkle\Account\Database\Factories\PermissionFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
@@ -26,12 +27,6 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * Represents a permission for a role or user.
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
- *
- * @property int    $id
- * @property string $slug
- * @property string $name
- * @property string $conditions
- * @property string $description
  */
 class Permission extends Model implements PermissionInterface
 {
@@ -53,6 +48,18 @@ class Permission extends Model implements PermissionInterface
     ];
 
     /**
+     * Cast nullable description to empty string if null.
+     *
+     * @param string|null $value
+     *
+     * @return string
+     */
+    public function getDescriptionAttribute(?string $value): string
+    {
+        return $value ?? '';
+    }
+
+    /**
      * Delete this permission from the database, removing associations with roles.
      */
     public function delete()
@@ -61,15 +68,11 @@ class Permission extends Model implements PermissionInterface
         $this->roles()->detach();
 
         // Delete the permission
-        $result = parent::delete();
-
-        return $result;
+        return parent::delete();
     }
 
     /**
-     * Get a list of roles to which this permission is assigned.
-     *
-     * @return BelongsToMany
+     * {@inheritDoc}
      */
     public function roles(): BelongsToMany
     {
@@ -80,41 +83,39 @@ class Permission extends Model implements PermissionInterface
     }
 
     /**
-     * Query scope to get all permissions assigned to a specific role.
-     *
-     * @param Builder $query
-     * @param int     $roleId
-     *
-     * @return Builder
+     * {@inheritDoc}
      */
-    public function scopeForRole($query, $roleId)
+    public function scopeForRole(Builder $query, int|RoleInterface $role): Builder|QueryBuilder
     {
-        return $query->join('permission_roles', function ($join) use ($roleId) {
-            $join->on('permission_roles.permission_id', 'permissions.id')
-                 ->where('role_id', $roleId);
+        if ($role instanceof RoleInterface) {
+            $roleId = $role->id;
+        } else {
+            $roleId = $role;
+        }
+
+        return $query->whereHas('roles', function ($q) use ($roleId) {
+            $q->where('id', $roleId);
         });
     }
 
     /**
-     * Query scope to get all permissions NOT associated with a specific role.
-     *
-     * @param Builder $query
-     * @param int     $roleId
-     *
-     * @return Builder
+     * {@inheritDoc}
      */
-    public function scopeNotForRole($query, $roleId)
+    public function scopeNotForRole(Builder $query, int|RoleInterface $role): Builder|QueryBuilder
     {
-        return $query->join('permission_roles', function ($join) use ($roleId) {
-            $join->on('permission_roles.permission_id', 'permissions.id')
-                 ->where('role_id', '!=', $roleId);
+        if ($role instanceof RoleInterface) {
+            $roleId = $role->id;
+        } else {
+            $roleId = $role;
+        }
+
+        return $query->whereDoesntHave('roles', function ($q) use ($roleId) {
+            $q->where('id', $roleId);
         });
     }
 
     /**
-     * Get a list of users who have this permission, along with a list of roles through which each user has the permission.
-     *
-     * @return BelongsToManyThrough
+     * {@inheritDoc}
      */
     public function users(): BelongsToManyThrough
     {
@@ -127,12 +128,8 @@ class Permission extends Model implements PermissionInterface
         return $this->belongsToManyThrough(
             $userRelation,
             $roleRelation,
-            'permission_roles',
-            'permission_id',
-            'role_id',
-            'role_users',
-            'role_id',
-            'user_id'
+            firstJoiningTable: 'permission_roles',
+            secondJoiningTable: 'role_users',
         );
     }
 

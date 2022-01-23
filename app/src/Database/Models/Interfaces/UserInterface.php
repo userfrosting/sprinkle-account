@@ -46,6 +46,7 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property Collection<ActivityInterface>      $activities
  * @property Collection<PasswordResetInterface> $passwordResets
  * @property Collection<PersistenceInterface>   $persistences
+ * @property Collection<PermissionInterface>    $permissions
  * @property Collection<RoleInterface>          $roles
  * @property Collection<VerificationInterface>  $verifications
  * @property ActivityInterface|null             $last_activity
@@ -91,16 +92,16 @@ interface UserInterface
     /**
      * Retrieve the cached permissions dictionary for this user.
      *
-     * @return array
+     * @return array<string, PermissionInterface[]>
      */
-    public function getCachedPermissions();
+    public function getCachedPermissions(): array;
 
     /**
      * Retrieve the cached permissions dictionary for this user.
      *
-     * @return $this
+     * @return static
      */
-    public function reloadCachedPermissions();
+    public function reloadCachedPermissions(): static;
 
     /**
      * Returns whether or not this user is the master user.
