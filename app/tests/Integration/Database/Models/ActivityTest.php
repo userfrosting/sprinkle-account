@@ -109,6 +109,10 @@ class ActivityTest extends AccountTestCase
 
         // Assert getSecondsSinceLastActivity
         $this->assertIsInt($user->getSecondsSinceLastActivity()); // @phpstan-ignore-line
+
+        // Test force deletion and cascade deletion
+        $user->forceDelete();
+        $this->assertSame(0, Activity::count());
     }
 
     public function testNoLastActivity(): void

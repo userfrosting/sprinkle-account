@@ -13,10 +13,7 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Database\Models\Persistence;
-use UserFrosting\Sprinkle\Account\Database\Models\Role;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Database\Models\Verification;
 use UserFrosting\Sprinkle\Account\Testing\withTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
@@ -29,7 +26,6 @@ class UserTest extends AccountTestCase
 {
     use MockeryPHPUnitIntegration;
     use RefreshDatabase;
-    // use withTestUser;
 
     /**
      * Setup the database schema.
@@ -78,6 +74,9 @@ class UserTest extends AccountTestCase
 
         // Assert new state
         $this->assertSame(0, User::count());
+
+        // Assert soft delete
+        $this->assertSame(1, User::withTrashed()->count());
     }
 
     public function testUserIsMaster(): void
@@ -107,86 +106,15 @@ class UserTest extends AccountTestCase
     }
 
     /**
-     * Test user hard deletion with user relations.
-     * This is not a totally accurate test, as each relations are added manually
-     * and new relations might not be added automatically to accurately test
-     */
-    /*public function testUserHardDeleteWithUserRelations()
-    {
-        $fm = $this->ci->factory;
-
-        // Create a user & make sure it exist
-        $user = $this->createTestUser();
-        $this->assertInstanceOf(User::class, User::withTrashed()->find($user->id));
-
-        //$user->activities - activities
-        $this->ci->userActivityLogger->info('test', [
-            'type'    => 'group_create',
-            'user_id' => $user->id,
-        ]);
-        $this->assertSame(1, $user->activities()->count());
-
-        //$user->passwordResets - password_resets
-        $this->ci->repoPasswordReset->create($user, $this->ci->config['password_reset.timeouts.reset']);
-        $this->assertSame(1, $user->passwordResets()->count());
-
-        //{no relations} - persistences
-        $persistence = new Persistence([
-            'user_id'          => $user->id,
-            'token'            => '',
-            'persistent_token' => '',
-            'expires_at'       => null,
-        ]);
-        $persistence->save();
-        $this->assertSame(1, Persistence::where('user_id', $user->id)->count());
-
-        //$user->roles - role_users
-        $role = $fm->create(Role::class);
-        $user->roles()->attach($role->id);
-        $this->assertSame(1, $user->roles()->count());
-
-        //{no relations} - verification
-        $this->ci->repoVerification->create($user, $this->ci->config['verification.timeout']);
-        $this->assertSame(1, $this->ci->classMapper->staticMethod('verification', 'where', 'user_id', $user->id)->count());
-
-        // Force delete. Now user can't be found at all
-        $this->assertTrue($user->delete(true));
-        $this->assertNull(User::withTrashed()->find($user->id));
-
-        // Assert deletions worked
-        $this->assertSame(0, $user->activities()->count());
-        $this->assertSame(0, $user->passwordResets()->count());
-        $this->assertSame(0, $user->roles()->count());
-        $this->assertSame(0, Persistence::where('user_id', $user->id)->count());
-        $this->assertSame(0, $this->ci->classMapper->staticMethod('verification', 'where', 'user_id', $user->id)->count());
-    }*/
-
-    /**
-     * Test user soft deletion.
-     */
-    /*public function testUserSoftDelete()
-    {
-        // Create a user & make sure it exist
-        $user = $this->createTestUser();
-        $this->assertInstanceOf(User::class, User::withTrashed()->find($user->id));
-
-        // Soft Delete. User won't be found using normal query, but will withTrash
-        $this->assertTrue($user->delete());
-        $this->assertNull(User::find($user->id));
-        $this->assertInstanceOf(User::class, User::withTrashed()->find($user->id));
-    }
-
-    /**
      * Test user hard deletion.
      */
-    /*public function testUserHardDelete()
+    public function testUserForceDelete(): void
     {
-        // Create a user & make sure it exist
-        $user = $this->createTestUser();
-        $this->assertInstanceOf(User::class, User::withTrashed()->find($user->id));
+        /** @var User */
+        $user = User::factory()->create();
 
-        // Force delete. Now user can't be found at all
-        $this->assertTrue($user->delete(true));
-        $this->assertNull(User::withTrashed()->find($user->id));
-    }*/
+        $this->assertSame(1, User::withTrashed()->count());
+        $this->assertTrue($user->forceDelete());
+        $this->assertSame(0, User::withTrashed()->count());
+    }
 }

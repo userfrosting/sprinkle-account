@@ -82,6 +82,11 @@ class RoleTest extends AccountTestCase
         // Assert reverse relation
         $this->assertSame(1, $users[0]->roles->count());
         $this->assertSame([$role->id], $users[0]->roles()->pluck('id')->all());
+
+        // Test force deletion
+        $users[0]->forceDelete();
+        $this->assertSame(1, Role::count()); // Role has no been cascade
+        $this->assertSame(2, $role->users()->count());
     }
 
     public function testScopeForUser(): void

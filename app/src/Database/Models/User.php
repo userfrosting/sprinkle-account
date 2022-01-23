@@ -44,7 +44,9 @@ use UserFrosting\Support\Repository\Repository as Config;
  */
 class User extends Model implements UserInterface
 {
-    use SoftDeletes;
+    use SoftDeletes {
+        forceDelete as forceDeleteSoftModel;
+    }
     use HasFactory;
 
     /**
@@ -113,38 +115,23 @@ class User extends Model implements UserInterface
     protected ?array $cachedPermissions = null;
 
     /**
-     * Delete this user from the database, along with any linked roles and activities.
+     * Force delete this user from the database, along with any linked relations.
      *
-     * @param bool $hardDelete Set to true to completely remove the user and all associated objects.
-     *
-     * @return bool true if the deletion was successful, false otherwise.
+     * @return bool|null
      */
-    public function delete($hardDelete = false)
+    public function forceDelete()
     {
-        if ($hardDelete) {
+        // Remove all role associations
+        $this->roles()->detach();
 
-            /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-            $classMapper = static::$ci->classMapper;
+        // Remove all user info
+        $this->activities()->delete();
+        $this->passwordResets()->delete();
+        $this->verifications()->delete();
+        $this->persistences()->delete();
 
-            // Remove all role associations
-            $this->roles()->detach();
-
-            // Remove last activity association
-            $this->lastActivity()->dissociate();
-            $this->save();
-
-            // Remove all user tokens
-            $this->activities()->delete();
-            $this->passwordResets()->delete();
-            $classMapper->getClassMapping('verification')::where('user_id', $this->id)->delete();
-            $classMapper->getClassMapping('persistence')::where('user_id', $this->id)->delete();
-
-            // Delete the user
-            return $this->forceDelete();
-        }
-
-        // Soft delete the user, leaving all associated records alone
-        return parent::delete();
+        // Delete the user
+        return $this->forceDeleteSoftModel();
     }
 
     /**

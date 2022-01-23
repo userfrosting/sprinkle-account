@@ -113,5 +113,9 @@ class VerificationTest extends AccountTestCase
 
         $this->assertSame(3, $user->verifications()->count());
         $this->assertContainsOnlyInstancesOf(VerificationInterface::class, $user->verifications);
+
+        // Test force deletion and cascade deletion
+        $user->forceDelete();
+        $this->assertSame(0, Verification::count());
     }
 }

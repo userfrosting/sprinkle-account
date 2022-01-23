@@ -81,6 +81,10 @@ class PersistenceTest extends AccountTestCase
 
         $this->assertSame(3, $user->persistences()->count());
         $this->assertContainsOnlyInstancesOf(PersistenceInterface::class, $user->persistences);
+
+        // Test force deletion and cascade deletion
+        $user->forceDelete();
+        $this->assertSame(0, Persistence::count());
     }
 
     public function testDateCasting(): void
