@@ -104,8 +104,8 @@ class User extends Model implements UserInterface
      * @var array<string, string> Events used to handle the user object cache on update and deletion.
      */
     protected $dispatchesEvents = [
-        // 'saved'   => Events\DeleteUserCacheEvent::class, // TODO
-        // 'deleted' => Events\DeleteUserCacheEvent::class, // TODO
+        'saved'   => Events\DeleteUserCacheEvent::class,
+        'deleted' => Events\DeleteUserCacheEvent::class,
     ];
 
     /**
@@ -180,6 +180,52 @@ class User extends Model implements UserInterface
         $cache = static::$ci->get(Cache::class);
 
         return $cache->tags('_u' . $this->id);
+    }
+
+    /**
+     * Return a cached version of the user. If not cached, fetch from db.
+     *
+     * @param int $id
+     *
+     * @return self
+     */
+    public static function findCached(int $id): self
+    {
+        /** @var Cache */
+        $cache = static::$ci->get(Cache::class);
+
+        /** @var Config */
+        $config = static::$ci->get(Config::class);
+
+        // Get config values
+        $key = $config->get('cache.user.key') . $id;
+        $delay = $config->get('cache.user.delay');
+
+        /** @var self */
+        return $cache->remember($key, $delay * 60, function () use ($id) {
+            return self::find($id);
+        });
+    }
+
+    /**
+     * Forge cached version of this user.
+     *
+     * @return static
+     */
+    public function forgetCache(): static
+    {
+        /** @var Cache */
+        $cache = static::$ci->get(Cache::class);
+
+        /** @var Config */
+        $config = static::$ci->get(Config::class);
+
+        // Get config values
+        $key = $config->get('cache.user.key') . $this->id;
+
+        $cache->forget($key);
+
+        return $this;
     }
 
     /**
@@ -317,10 +363,9 @@ class User extends Model implements UserInterface
      * By default, adds a new sign-in activity and updates any legacy hash.
      *
      * @param mixed[] $params Optional array of parameters used for this event handler.
-     *
-     * @todo Transition to Laravel Event dispatcher to handle this
      */
-    public function onLogin($params = [])
+    // TODO : Transition to our Event dispatcher to handle this
+    /*public function onLogin($params = [])
     {
         // Add a sign in activity (time is automatically set by database)
         static::$ci->userActivityLogger->info("User {$this->user_name} signed in.", [
@@ -349,7 +394,7 @@ class User extends Model implements UserInterface
         $this->save();
 
         return $this;
-    }
+    }*/
 
     /**
      * Performs tasks to be done after this user has been logged out.
@@ -357,17 +402,16 @@ class User extends Model implements UserInterface
      * By default, adds a new sign-out activity.
      *
      * @param mixed[] $params Optional array of parameters used for this event handler.
-     *
-     * @todo Transition to Laravel Event dispatcher to handle this
      */
-    public function onLogout($params = [])
+    // TODO : Transition to our Event dispatcher to handle this
+    /*public function onLogout($params = [])
     {
         static::$ci->userActivityLogger->info("User {$this->user_name} signed out.", [
             'type' => 'sign_out',
         ]);
 
         return $this;
-    }
+    }*/
 
     /**
      * Get all password reset requests for this user.

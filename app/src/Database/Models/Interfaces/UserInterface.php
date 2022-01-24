@@ -91,6 +91,22 @@ interface UserInterface
     public function getCache(): Cache;
 
     /**
+     * Return a cached version of the user. If not cached, fetch from db.
+     *
+     * @param int $id
+     *
+     * @return self
+     */
+    public static function findCached(int $id): self;
+
+    /**
+     * Forge cached version of this user.
+     *
+     * @return static
+     */
+    public function forgetCache(): static;
+
+    /**
      * Retrieve the cached permissions dictionary for this user.
      *
      * @return array<string, PermissionInterface[]>
@@ -168,10 +184,8 @@ interface UserInterface
      * By default, adds a new sign-in activity and updates any legacy hash.
      *
      * @param mixed[] $params Optional array of parameters used for this event handler.
-     *
-     * @todo Transition to Laravel Event dispatcher to handle this
      */
-    public function onLogin($params = []);
+    // public function onLogin($params = []);
 
     /**
      * Performs tasks to be done after this user has been logged out.
@@ -179,10 +193,8 @@ interface UserInterface
      * By default, adds a new sign-out activity.
      *
      * @param mixed[] $params Optional array of parameters used for this event handler.
-     *
-     * @todo Transition to Laravel Event dispatcher to handle this
      */
-    public function onLogout($params = []);
+    // public function onLogout($params = []);
 
     /**
      * Get all password reset requests for this user.

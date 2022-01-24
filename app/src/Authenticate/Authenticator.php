@@ -432,6 +432,9 @@ class Authenticator
             $user = $this->cache->remember($key, $this->config['cache.user.delay'] * 60, function () use ($userId) {
                 return $this->classMapper->getClassMapping('user')::find((int) $userId);
             });
+            // TODO ::
+            // $userModel = $this->ci->get(UserInterface::class);
+            // $user = $userModel->findCached($userId);
 
             // If the user doesn't exist any more, throw an exception.
             if (!$user) {

@@ -124,6 +124,37 @@ class UserTest extends AccountTestCase
         $user = User::factory()->create();
 
         $cache = $user->getCache();
-        $this->assertInstanceOf(Cache::class, $cache);
+        $this->assertInstanceOf(Cache::class, $cache); // @phpstan-ignore-line
+    }
+
+    public function testFindCache(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+
+        /** @var Cache */
+        $cache = $this->ci->get(Cache::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+
+        // Config key
+        $key = $config->get('cache.user.key') . $user->id;
+
+        // Assert initial cache
+        $this->assertFalse($cache->has($key));
+
+        // Get fetched
+        $fetched = User::findCached($user->id);
+        $this->assertSame($user->id, $fetched->id);
+
+        // Assert cache directly
+        $this->assertTrue($cache->has($key));
+        $this->assertInstanceOf(UserInterface::class, $cache->get($key));
+        $this->assertSame($user->id, $cache->get($key)->id);
+
+        // Forget and assert cache
+        $fetched->forgetCache();
+        $this->assertFalse($cache->has($key));
     }
 }

@@ -10,9 +10,8 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Models\Events;
 
-use UserFrosting\Sprinkle\Core\Database\Models\Model;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Facades\Cache;
-use UserFrosting\Sprinkle\Core\Facades\Config;
 
 /**
  * Event for global cache object deletion on model update.
@@ -20,11 +19,10 @@ use UserFrosting\Sprinkle\Core\Facades\Config;
 class DeleteUserCacheEvent
 {
     /**
-     * @param Model $user
+     * @param UserInterface $user
      */
-    public function __construct(Model $user)
+    public function __construct(UserInterface $user)
     {
-        $key = Config::get('cache.user.key');
-        Cache::forget($key . $user->id);
+        $user->forgetCache();
     }
 }
