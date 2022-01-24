@@ -15,6 +15,7 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use UserFrosting\Sprinkle\Account\Database\Factories\PasswordResetFactory;
+use UserFrosting\Sprinkle\Account\Database\Models\Features\HasToken;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
@@ -29,6 +30,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
 class PasswordReset extends Model implements PasswordResetInterface
 {
     use HasFactory;
+    use HasToken;
 
     /**
      * @var string The name of the table for the current model.
@@ -53,29 +55,6 @@ class PasswordReset extends Model implements PasswordResetInterface
         'user_id'   => 'integer',
         'completed' => 'boolean',
     ];
-
-    /**
-     * @var string Stores the raw (unhashed) token when created. NOT persisted (saved to db).
-     */
-    protected string $token;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getToken(): string
-    {
-        return $this->token;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setToken(string $value): static
-    {
-        $this->token = $value;
-
-        return $this;
-    }
 
     /**
      * {@inheritDoc}
