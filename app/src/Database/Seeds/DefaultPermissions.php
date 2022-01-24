@@ -196,7 +196,7 @@ class DefaultPermissions implements SeedInterface
             // Trying to find if the permission already exist
             $existingPermission = Permission::where([
                 'slug'       => $permission->slug,
-                'conditions' => $permission->conditions
+                'conditions' => $permission->conditions,
             ])->first();
 
             // Don't save if already exist, use existing permission reference
