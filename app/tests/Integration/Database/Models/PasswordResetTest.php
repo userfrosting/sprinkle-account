@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
