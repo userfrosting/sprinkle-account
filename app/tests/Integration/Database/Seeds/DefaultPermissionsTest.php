@@ -26,7 +26,6 @@ class DefaultPermissionsTest extends AccountTestCase
     {
         // Setup fresh, empty table
         $this->refreshDatabase();
-        Permission::truncate();
 
         /** @var Permission */
         $permission = $this->ci->get(Permission::class);

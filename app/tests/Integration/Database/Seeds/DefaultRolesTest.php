@@ -26,7 +26,6 @@ class DefaultRolesTest extends AccountTestCase
     {
         // Setup fresh, empty table
         $this->refreshDatabase();
-        Role::truncate();
 
         // Assert initial table state
         $this->assertCount(0, Role::all());

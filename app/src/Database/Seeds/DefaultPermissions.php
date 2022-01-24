@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Database\Seeds;
 
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Permission;
 use UserFrosting\Sprinkle\Account\Database\Models\Role;
 use UserFrosting\Sprinkle\Core\Seeder\SeedInterface;
@@ -41,9 +42,9 @@ class DefaultPermissions implements SeedInterface
     protected function getPermissions(): array
     {
         $defaultRoleIds = [
-            'user'        => Role::where('slug', 'user')->first()->id,
-            'group-admin' => Role::where('slug', 'group-admin')->first()->id,
-            'site-admin'  => Role::where('slug', 'site-admin')->first()->id,
+            'user'        => Role::where('slug', 'user')->first()->id, // @phpstan-ignore-line Eloquent doesn't push model to first()
+            'group-admin' => Role::where('slug', 'group-admin')->first()->id, // @phpstan-ignore-line Eloquent doesn't push model to first()
+            'site-admin'  => Role::where('slug', 'site-admin')->first()->id, // @phpstan-ignore-line Eloquent doesn't push model to first()
         ];
 
         return [
@@ -185,14 +186,18 @@ class DefaultPermissions implements SeedInterface
     /**
      * Save permissions.
      *
-     * @param Permission[] $permissions
+     * @param array<string, PermissionInterface> $permissions
      */
     protected function savePermissions(array &$permissions): void
     {
+        /** @var PermissionInterface $permission */
         foreach ($permissions as $slug => $permission) {
 
             // Trying to find if the permission already exist
-            $existingPermission = Permission::where(['slug' => $permission->slug, 'conditions' => $permission->conditions])->first();
+            $existingPermission = Permission::where([
+                'slug'       => $permission->slug,
+                'conditions' => $permission->conditions
+            ])->first();
 
             // Don't save if already exist, use existing permission reference
             // otherwise to re-sync permissions and roles
@@ -211,8 +216,9 @@ class DefaultPermissions implements SeedInterface
      */
     protected function syncPermissionsRole(array $permissions): void
     {
+        /** @var Role|null */
         $roleUser = Role::where('slug', 'user')->first();
-        if ($roleUser) {
+        if ($roleUser !== null) {
             $roleUser->permissions()->sync([
                 $permissions['update_account_settings']->id,
                 $permissions['uri_account_settings']->id,
@@ -220,8 +226,9 @@ class DefaultPermissions implements SeedInterface
             ]);
         }
 
+        /** @var Role|null */
         $roleSiteAdmin = Role::where('slug', 'site-admin')->first();
-        if ($roleSiteAdmin) {
+        if ($roleSiteAdmin !== null) {
             $roleSiteAdmin->permissions()->sync([
                 $permissions['create_group']->id,
                 $permissions['create_user']->id,
@@ -240,8 +247,9 @@ class DefaultPermissions implements SeedInterface
             ]);
         }
 
+        /** @var Role|null */
         $roleGroupAdmin = Role::where('slug', 'group-admin')->first();
-        if ($roleGroupAdmin) {
+        if ($roleGroupAdmin !== null) {
             $roleGroupAdmin->permissions()->sync([
                 $permissions['create_user']->id,
                 $permissions['update_user_field_group']->id,
