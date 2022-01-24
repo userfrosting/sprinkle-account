@@ -41,5 +41,9 @@ class DefaultPermissionsTest extends AccountTestCase
 
         // Assert new table state
         $this->assertCount(22, Permission::all());
+
+        // Test running again
+        $seed->run();
+        $this->assertCount(22, Permission::all());
     }
 }
