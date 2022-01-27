@@ -16,7 +16,8 @@ app/.env
 composer.lock
 
 # Ignore log, cache, sessions and storage directories in sprinkle
-app/cache/
+app/cache/*
+!app/cache/.gitkeep
 app/database/
 app/logs/
 app/sessions/
