@@ -10,11 +10,11 @@
 
 namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 
+use Exception;
+
 /**
- * Invalid credentials exception.  Used when an account fails authentication for some reason.
+ * Base exception for Auth related Exception
  */
-class InvalidCredentialsException extends AuthException
+class AuthException extends Exception
 {
-    protected $defaultMessage = 'USER_OR_PASS_INVALID';
-    protected $httpErrorCode = 403;
 }

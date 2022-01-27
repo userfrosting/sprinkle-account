@@ -10,21 +10,17 @@
 
 namespace UserFrosting\Sprinkle\Account\Authenticate;
 
-use UserFrosting\Sprinkle\Account\Util\HashFailedException;
+use UserFrosting\Sprinkle\Account\Authenticate\Interfaces\HasherInterface;
 
 /**
  * Password hashing and validation class.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
-class Hasher
+class Hasher implements HasherInterface
 {
     /**
-     * Default crypt cost factor.
-     *
-     * @var int
+     * @var int Default crypt cost factor.
      */
-    protected $defaultRounds = 10;
+    protected int $cost = 10;
 
     /**
      * Returns the hashing type for a specified password hash.
@@ -35,7 +31,7 @@ class Hasher
      *
      * @return string "sha1"|"legacy"|"modern".
      */
-    public function getHashType($password)
+    public function getHashType(string $password): string
     {
         // If the password in the db is 65 characters long, we have an sha1-hashed password.
         if (strlen($password) == 65) {
@@ -51,23 +47,14 @@ class Hasher
      * Hashes a plaintext password using bcrypt.
      *
      * @param string $password the plaintext password.
-     * @param array  $options
-     *
-     * @throws HashFailedException
      *
      * @return string the hashed password.
      */
-    public function hash($password, array $options = [])
+    public function hash(string $password): string
     {
-        $hash = password_hash($password, PASSWORD_BCRYPT, [
-            'cost' => $this->cost($options),
+        return password_hash($password, PASSWORD_BCRYPT, [
+            'cost' => $this->getCount(),
         ]);
-
-        if (!$hash) {
-            throw new HashFailedException();
-        }
-
-        return $hash;
     }
 
     /**
@@ -75,13 +62,12 @@ class Hasher
      *
      * @param string $password The plaintext password to verify.
      * @param string $hash     The hash to compare against.
-     * @param array  $options
      *
      * @return bool True if the password matches, false otherwise.
      */
-    public function verify($password, $hash, array $options = [])
+    public function verify(string $password, string $hash): bool
     {
-        $hashType = $this->getHashType($hash);
+        $hashType = self::getHashType($hash);
 
         if ($hashType == 'sha1') {
             // Legacy UserCake passwords
@@ -105,14 +91,26 @@ class Hasher
     }
 
     /**
-     * Extract the cost value from the options array.
-     *
-     * @param array $options
+     * Get default crypt cost factor.
      *
      * @return int
      */
-    protected function cost(array $options = [])
+    public function getCount(): int
     {
-        return isset($options['rounds']) ? $options['rounds'] : $this->defaultRounds;
+        return $this->cost;
+    }
+
+    /**
+     * Set default crypt cost factor.
+     *
+     * @param int $cost Default crypt cost factor.
+     *
+     * @return static
+     */
+    public function setCount(int $cost): static
+    {
+        $this->cost = $cost;
+
+        return $this;
     }
 }

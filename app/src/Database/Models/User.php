@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\Expression;
+use UserFrosting\Sprinkle\Account\Authenticate\Interfaces\HasherInterface;
 use UserFrosting\Sprinkle\Account\Database\Factories\UserFactory;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
@@ -172,6 +173,39 @@ class User extends Model implements UserInterface
     }
 
     /**
+     * Mutate password before saving into db. This is where password is hashed.
+     *
+     * @param string $value
+     */
+    public function setPasswordAttribute(string $value): void
+    {
+        /** @var HasherInterface */
+        $hasher = static::$ci->get(HasherInterface::class);
+
+        // TODO : Might be worth using null instead.
+        if ($value !== '') {
+            $value = $hasher->hash($value);
+        }
+
+        $this->attributes['password'] = $value;
+    }
+
+    /**
+     * Compare password to the user hashed password. Returns true if both evaluate to the same.
+     *
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function comparePassword(string $password): bool
+    {
+        /** @var HasherInterface */
+        $hasher = static::$ci->get(HasherInterface::class);
+
+        return $hasher->verify($password, $this->password);
+    }
+
+    /**
      * Return a cache instance specific to that user.
      *
      * @return Cache
@@ -189,9 +223,9 @@ class User extends Model implements UserInterface
      *
      * @param int $id
      *
-     * @return self
+     * @return ?self
      */
-    public static function findCached(int $id): self
+    public static function findCached(int $id): ?self
     {
         /** @var Cache */
         $cache = static::$ci->get(Cache::class);

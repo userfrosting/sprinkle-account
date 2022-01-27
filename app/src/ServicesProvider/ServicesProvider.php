@@ -18,7 +18,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Authenticate\AuthGuard;
-use UserFrosting\Sprinkle\Account\Authenticate\Hasher;
 use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Log\UserActivityDatabaseHandler;
@@ -42,26 +41,6 @@ class ServicesProvider
      */
     public function register(ContainerInterface $container)
     {
-        /*
-         * Extend the 'classMapper' service to register model classes.
-         *
-         * Mappings added: User, Group, Role, Permission, Activity, PasswordReset, Verification
-         *
-         * @return \UserFrosting\Sprinkle\Core\Util\ClassMapper
-         */
-        $container->extend('classMapper', function ($classMapper, $c) {
-            $classMapper->setClassMapping('user', 'UserFrosting\Sprinkle\Account\Database\Models\User');
-            $classMapper->setClassMapping('group', 'UserFrosting\Sprinkle\Account\Database\Models\Group');
-            $classMapper->setClassMapping('role', 'UserFrosting\Sprinkle\Account\Database\Models\Role');
-            $classMapper->setClassMapping('permission', 'UserFrosting\Sprinkle\Account\Database\Models\Permission');
-            $classMapper->setClassMapping('activity', 'UserFrosting\Sprinkle\Account\Database\Models\Activity');
-            $classMapper->setClassMapping('password_reset', 'UserFrosting\Sprinkle\Account\Database\Models\PasswordReset');
-            $classMapper->setClassMapping('verification', 'UserFrosting\Sprinkle\Account\Database\Models\Verification');
-            $classMapper->setClassMapping('persistence', 'UserFrosting\Sprinkle\Account\Database\Models\Persistence');
-
-            return $classMapper;
-        });
-
         /*
          * Extends the 'errorHandler' service with custom exception handlers.
          *
@@ -115,27 +94,6 @@ class ServicesProvider
 
             return $view;
         });
-
-        /*
-         * Authentication service.
-         *
-         * Supports logging in users, remembering their sessions, etc.
-         *
-         * @return \UserFrosting\Sprinkle\Account\Authenticate\Authenticator
-         */
-        $container['authenticator'] = function ($c) {
-            $classMapper = $c->classMapper;
-            $config = $c->config;
-            $session = $c->session;
-            $cache = $c->cache;
-
-            // Force database connection to boot up
-            $db = $c->db;
-
-            $authenticator = new Authenticator($classMapper, $session, $config, $cache, $db);
-
-            return $authenticator;
-        };
 
         /*
          * Sets up the AuthGuard middleware, used to limit access to authenticated users for certain routes.
@@ -310,17 +268,6 @@ class ServicesProvider
             }
 
             return $currentUser;
-        };
-
-        /*
-         * Password Hasher service
-         *
-         * @return \UserFrosting\Sprinkle\Account\Authenticate\Hasher
-         */
-        $container['passwordHasher'] = function ($c) {
-            $hasher = new Hasher();
-
-            return $hasher;
         };
 
         /*

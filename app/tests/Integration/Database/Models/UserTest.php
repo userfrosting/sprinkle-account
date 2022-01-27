@@ -50,7 +50,7 @@ class UserTest extends AccountTestCase
             'email'      => 'test@test.test',
             'first_name' => 'Test',
             'last_name'  => 'Ing',
-            'password'   => '', // TODO Hash in model
+            'password'   => 'secret',
         ]);
         $user->save();
         $this->assertInstanceOf(UserInterface::class, $user); // @phpstan-ignore-line
@@ -67,9 +67,14 @@ class UserTest extends AccountTestCase
         $this->assertSame('Ing', $fetchedUser->last_name);
         $this->assertSame('Test Ing', $fetchedUser->full_name);
         $this->assertIsString($fetchedUser->password); // @phpstan-ignore-line
+        $this->assertNotSame('secret', $fetchedUser->password); // Password is hash, therefore *not* same
         $this->assertIsString($fetchedUser->locale); // @phpstan-ignore-line
         $this->assertIsBool($fetchedUser->flag_verified); // @phpstan-ignore-line
         $this->assertIsBool($fetchedUser->flag_enabled); // @phpstan-ignore-line
+
+        // Assert comparePassword
+        $this->assertTrue($fetchedUser->comparePassword('secret'));
+        $this->assertFalse($fetchedUser->comparePassword('password'));
 
         // Delete
         $fetchedUser->delete();
@@ -80,6 +85,11 @@ class UserTest extends AccountTestCase
         // Assert soft delete
         $this->assertSame(1, User::withTrashed()->count());
     }
+
+    // public function testValidateArguments(): void
+    // {
+    // TODO Test password is not null, user_name & email are unique, etc.
+    // }
 
     public function testUserIsMaster(): void
     {
@@ -157,6 +167,28 @@ class UserTest extends AccountTestCase
 
         // Forget and assert cache
         $fetched->forgetCache();
+        $this->assertFalse($cache->has($key));
+    }
+
+    public function testFindCacheWithNullUser(): void
+    {
+        /** @var Cache */
+        $cache = $this->ci->get(Cache::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+
+        // Config key (with fake user id)
+        $key = $config->get('cache.user.key') . '1234';
+
+        // Assert initial cache
+        $this->assertFalse($cache->has($key));
+
+        // Get findCached
+        $fetched = User::findCached(1234);
+        $this->assertNull($fetched);
+
+        // N.B.: Laravel cache won't store anything if the value is null.
         $this->assertFalse($cache->has($key));
     }
 }

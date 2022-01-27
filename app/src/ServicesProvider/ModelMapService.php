@@ -39,14 +39,14 @@ class ModelMapService implements ServicesProviderInterface
     public function register(): array
     {
         return [
-            ActivityInterface::class        => Activity::class,
-            GroupInterface::class           => Group::class,
-            PasswordResetInterface::class   => PasswordReset::class,
-            PermissionInterface::class      => Permission::class,
-            PersistenceInterface::class     => Persistence::class,
-            RoleInterface::class            => Role::class,
-            UserInterface::class            => User::class,
-            VerificationInterface::class    => Verification::class,
+            ActivityInterface::class      => Activity::class,
+            GroupInterface::class         => Group::class,
+            PasswordResetInterface::class => PasswordReset::class,
+            PermissionInterface::class    => Permission::class,
+            PersistenceInterface::class   => Persistence::class,
+            RoleInterface::class          => Role::class,
+            UserInterface::class          => User::class,
+            VerificationInterface::class  => Verification::class,
         ];
     }
 }

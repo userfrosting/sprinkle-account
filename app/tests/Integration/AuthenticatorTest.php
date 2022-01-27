@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
@@ -10,28 +12,36 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration;
 
+use Birke\Rememberme\Authenticator as RememberMe;
+use Birke\Rememberme\LoginResult;
+use Birke\Rememberme\Storage\StorageInterface;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PDOException;
+use UserFrosting\Session\Session;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountDisabledException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountInvalidException;
+use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountNotFoundException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountNotVerifiedException;
+use UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthCompromisedException;
+use UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthExpiredException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\InvalidCredentialsException;
-use UserFrosting\Sprinkle\Account\Facades\Password;
-use UserFrosting\Sprinkle\Account\Testing\withTestUser;
+use UserFrosting\Sprinkle\Account\Database\Models\Group;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
-use UserFrosting\Sprinkle\Core\Database\Models\Session as SessionTable;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
-use UserFrosting\Sprinkle\Core\Testing\withDatabaseSessionHandler;
+use UserFrosting\Support\Exception\BadInstanceOfException;
+use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * Integration tests for the Authenticator.
- * Integration, cause use the real $ci. We hope classmapper, session, config and
- * cache services are working properly !
  */
 class AuthenticatorTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use withTestUser;
-    use withDatabaseSessionHandler;
+    use MockeryPHPUnitIntegration;
 
     /**
      * Setup the test database.
@@ -39,371 +49,431 @@ class AuthenticatorTest extends AccountTestCase
     public function setUp(): void
     {
         parent::setUp();
-
-        // Setup test database
-        // $this->setupTestDatabase();
         $this->refreshDatabase();
     }
 
     /**
-     * @return Authenticator
+     * User Model will be set by Service Provider
      */
-    /*public function testConstructor()
+    public function testSetGetUserModel(): void
     {
-        $authenticator = $this->getAuthenticator();
-        $this->assertInstanceOf(Authenticator::class, $authenticator);
-
-        return $authenticator;
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+        $this->assertSame(User::class, $authenticator->getUserModel());
     }
 
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testLogin(Authenticator $authenticator)
+    public function testSetUserModelWithBadInstance(): void
     {
-        // Create a test user
-        $testUser = $this->createTestUser();
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
 
-        // Test session to avoid false positive
-        $key = $this->ci->config['session.keys.current_user_id'];
-        $this->assertNull($this->ci->session[$key]);
-        $this->assertNotSame($testUser->id, $this->ci->session[$key]);
-
-        // Login the test user
-        $authenticator->login($testUser, false);
-
-        // Test session to see if user was logged in
-        $this->assertNotNull($this->ci->session[$key]);
-        $this->assertSame($testUser->id, $this->ci->session[$key]);
-
-        // Must logout to avoid test issue
-        $authenticator->logout(true);
-
-        // We'll test the logout system works too while we're at it (and depend on it)
-        $key = $this->ci->config['session.keys.current_user_id'];
-        $this->assertNull($this->ci->session[$key]);
-        $this->assertNotSame($testUser->id, $this->ci->session[$key]);
+        $this->expectException(BadInstanceOfException::class);
+        $authenticator->setUserModel(Group::class);
     }
 
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testLoginWithSessionDatabase(Authenticator $authenticator)
+    public function testAuthenticate(): void
     {
-        // Reset CI Session
-        $this->useDatabaseSessionHandler();
+        /** @var User */
+        $user = User::factory()->create();
 
-        // Create a test user
-        $testUser = $this->createTestUser();
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
 
-        // Check the table
-        $this->assertSame(0, SessionTable::count());
-
-        // Test session to avoid false positive
-        $key = $this->ci->config['session.keys.current_user_id'];
-        $this->assertNull($this->ci->session[$key]);
-        $this->assertNotSame($testUser->id, $this->ci->session[$key]);
-
-        // Login the test user
-        $authenticator->login($testUser, false);
-
-        // Test session to see if user was logged in
-        $this->assertNotNull($this->ci->session[$key]);
-        $this->assertSame($testUser->id, $this->ci->session[$key]);
-
-        // Close session to initiate write
-        session_write_close();
-
-        // Check the table again
-        $this->assertSame(1, SessionTable::count());
-
-        // Reopen session
-        $this->ci->session->start();
-
-        // Must logout to avoid test issue
-        $authenticator->logout(true);
-
-        // We'll test the logout system works too while we're at it (and depend on it)
-        $key = $this->ci->config['session.keys.current_user_id'];
-        $this->assertNull($this->ci->session[$key]);
-        $this->assertNotSame($testUser->id, $this->ci->session[$key]);
-
-        // Make sure table entry has been removed
-        $this->assertSame(0, SessionTable::count());
+        // Valid credentials.
+        // N.B.: "password" is hardcoded in factory.
+        $authUser = $authenticator->authenticate('user_name', $user->user_name, 'password');
+        $this->assertSame($user->id, $authUser->id);
     }
 
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testValidateUserAccountThrowAccountInvalidException(Authenticator $authenticator)
+    public function testAuthenticateWithBadPassword(): void
     {
+        /** @var User */
+        $user = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        $this->expectException(InvalidCredentialsException::class);
+        $authenticator->authenticate('id', $user->id, 'secret');
+    }
+
+    public function testAuthenticateWithNullUser(): void
+    {
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        $this->expectException(AccountNotFoundException::class);
+        $authenticator->authenticate('id', 123, 'password');
+    }
+
+    public function testAuthenticateWithUserNoPassword(): void
+    {
+        /** @var User */
+        $user = User::factory()->state([
+            'password' => '',
+        ])->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
         $this->expectException(AccountInvalidException::class);
-        $this->invokeMethod($authenticator, 'validateUserAccount', [99999999]);
+        $authenticator->authenticate('id', $user->id, '');
     }
 
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testValidateUserAccountRetunNullOnFalseArgument(Authenticator $authenticator)
+    public function testAuthenticateWithDisableUser(): void
     {
-        $user = $this->invokeMethod($authenticator, 'validateUserAccount', [false]);
-        $this->assertNull($user);
-    }
+        /** @var User */
+        $user = User::factory()->state([
+            'flag_enabled' => false,
+        ])->create();
 
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testValidateUserAccountThrowExceptionArgumentNotInt(Authenticator $authenticator)
-    {
-        $this->expectException(AccountInvalidException::class);
-        $this->invokeMethod($authenticator, 'validateUserAccount', ['stringIsNotInt']);
-    }
-
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testValidateUserAccount(Authenticator $authenticator)
-    {
-        $testUser = $this->createTestUser();
-        $user = $this->invokeMethod($authenticator, 'validateUserAccount', [$testUser->id]);
-        $this->assertSame($testUser->id, $user->id);
-    }
-
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testValidateUserAccountWithAccountDisabledException(Authenticator $authenticator)
-    {
-        $testUser = $this->createTestUser();
-        $testUser->flag_enabled = false;
-        $testUser->save();
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
 
         $this->expectException(AccountDisabledException::class);
-        $this->invokeMethod($authenticator, 'validateUserAccount', [$testUser->id]);
+        $authenticator->authenticate('id', $user->id, 'password');
     }
 
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testLoginWithRememberMe(Authenticator $authenticator)
+    public function testAuthenticateWithUserNotVerified(): void
     {
-        // Create a test user
-        $testUser = $this->createTestUser();
+        /** @var User */
+        $user = User::factory()->state([
+            'flag_verified' => false,
+        ])->create();
 
-        // Test session to avoid false positive
-        $key = $this->ci->config['session.keys.current_user_id'];
-        $this->assertNull($this->ci->session[$key]);
-        $this->assertNotSame($testUser->id, $this->ci->session[$key]);
-
-        $authenticator->login($testUser, true);
-
-        // Test session to see if user was logged in
-        $this->assertNotNull($this->ci->session[$key]);
-        $this->assertSame($testUser->id, $this->ci->session[$key]);
-
-        // We'll manually delete the session,
-        $this->ci->session[$key] = null;
-        $this->assertNull($this->ci->session[$key]);
-        $this->assertNotSame($testUser->id, $this->ci->session[$key]);
-
-        // Go through the loginRememberedUser process
-        // First, we'll simulate a page refresh by creating a new authenticator
-        $authenticator = $this->getAuthenticator();
-        $user = $authenticator->user();
-
-        // If loginRememberedUser returns a PDOException, `user` will return a null user
-        $this->assertNotNull($user);
-        $this->assertEquals($testUser->id, $user->id);
-        $this->assertEquals($testUser->id, $this->ci->session[$key]);
-        $this->assertTrue($authenticator->viaRemember());
-
-        // Must logout to avoid test issue
-        $authenticator->logout();
-    }
-
-    /**
-     * @depends testConstructor
-     * @depends testLogin
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withUserName(Authenticator $authenticator)
-    {
-        // Create a test user
-        $testUser = $this->createTestUser();
-
-        // Faker doesn't hash the password. Let's do that now
-        $unhashed = $testUser->password;
-        $testUser->password = Password::hash($testUser->password);
-        $testUser->save();
-
-        // Attempt to log him in
-        $currentUser = $authenticator->attempt('user_name', $testUser->user_name, $unhashed, false);
-        $this->assertSame($testUser->id, $currentUser->id);
-        $this->assertFalse($authenticator->viaRemember());
-
-        // Must logout to avoid test issue
-        $authenticator->logout();
-    }
-
-    /**
-     * @depends testConstructor
-     * @depends testAttempt_withUserName
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withEmail(Authenticator $authenticator)
-    {
-        // Faker doesn't hash the password. Let's do that now
-        $password = 'FooBar';
-
-        // Create a test user
-        $testUser = $this->createTestUser(false, false, ['password' => Password::hash($password)]);
-
-        // Attempt to log him in
-        $currentUser = $authenticator->attempt('email', $testUser->email, $password, false);
-        $this->assertSame($testUser->id, $currentUser->id);
-        $this->assertFalse($authenticator->viaRemember());
-
-        // Must logout to avoid test issue
-        $authenticator->logout();
-    }
-
-    /**
-     * @depends testConstructor
-     * @depends testAttempt_withUserName
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withNoUser(Authenticator $authenticator)
-    {
-        $this->expectException(InvalidCredentialsException::class);
-        $authenticator->attempt('user_name', 'fooBar', 'barFoo', false);
-    }
-
-    /**
-     * @depends testConstructor
-     * @depends testAttempt_withUserName
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withNoPassword(Authenticator $authenticator)
-    {
-        $testUser = $this->createTestUser(false, false, ['password' => '']);
-        $this->expectException(InvalidCredentialsException::class);
-        $authenticator->attempt('email', $testUser->email, 'fooBar', false);
-    }
-
-    /**
-     * @depends testConstructor
-     * @depends testAttempt_withUserName
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withFlagEnabledFalse(Authenticator $authenticator)
-    {
-        $password = 'FooBar';
-        $testUser = $this->createTestUser(false, false, [
-            'password'     => Password::hash($password),
-            'flag_enabled' => 0,
-        ]);
-
-        $this->expectException(AccountDisabledException::class);
-        $authenticator->attempt('user_name', $testUser->user_name, $password, false);
-    }
-
-    /**
-     * @depends testConstructor
-     * @depends testAttempt_withUserName
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withFlagVerifiedFalse(Authenticator $authenticator)
-    {
-        $password = 'FooBar';
-        $testUser = $this->createTestUser(false, false, [
-            'password'      => Password::hash($password),
-            'flag_verified' => 0,
-        ]);
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
 
         $this->expectException(AccountNotVerifiedException::class);
-        $authenticator->attempt('user_name', $testUser->user_name, $password, false);
+        $authenticator->authenticate('id', $user->id, 'password');
     }
 
-    /**
-     * @depends testConstructor
-     * @depends testAttempt_withUserName
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withFlagVerifiedFalseNoEmailVerification(Authenticator $authenticator)
+    public function testCheckGuestWithDefault(): void
     {
-        // Force email verification to false
-        $this->ci->config['site.registration.require_email_verification'] = false;
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
 
-        // Forcing config requires to recreate the authenticator
-        $authenticator = $this->getAuthenticator();
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
 
-        $password = 'FooBar';
-        $testUser = $this->createTestUser(false, false, [
-            'password'      => Password::hash($password),
-            'flag_verified' => 0,
-        ]);
+        // Start session
+        $session->start();
 
-        $currentUser = $authenticator->attempt('user_name', $testUser->user_name, $password, false);
-        $this->assertSame($testUser->id, $currentUser->id);
-        $this->assertFalse($authenticator->viaRemember());
+        // Do assertions
+        $this->assertFalse($authenticator->check());
+        $this->assertTrue($authenticator->guest());
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+    }
+
+    public function testLogin(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+
+        // Start session
+        $session->start();
+
+        // Test session to avoid false positive
+        $key = $config->get('session.keys.current_user_id');
+        $this->assertNull($session[$key]);
+
+        // Login the test user
+        $authenticator->login($user, false);
+
+        // Test session to see if user was logged in
+        $this->assertNotNull($session[$key]);
+        $this->assertSame($user->id, $session[$key]);
+
+        // Test check/guest
+        $this->assertTrue($authenticator->check());
+        $this->assertFalse($authenticator->guest());
 
         // Must logout to avoid test issue
-        $authenticator->logout();
-    }
+        $authenticator->logout(true);
 
-    /**
-     * @depends testConstructor
-     * @depends testAttempt_withUserName
-     * @param Authenticator $authenticator
-     */
-    /*public function testAttempt_withBadPassword(Authenticator $authenticator)
-    {
-        $password = 'FooBar';
-        $testUser = $this->createTestUser(false, false, [
-            'password' => Password::hash($password),
-        ]);
+        // We'll test the logout system works too while we're at it (and depend on it)
+        $key = $config->get('session.keys.current_user_id');
+        $this->assertNull($session[$key]);
+        $this->assertNotSame($user->id, $session[$key]);
 
-        $this->expectException(InvalidCredentialsException::class);
-        $authenticator->attempt('user_name', $testUser->user_name, 'BarFoo', false);
-    }
-
-    /**
-     * @depends testConstructor
-     * @param Authenticator $authenticator
-     */
-    /*public function testCheckWithNoUser(Authenticator $authenticator)
-    {
-        // We don't have a user by default
+        // Retest check/guest
         $this->assertFalse($authenticator->check());
         $this->assertTrue($authenticator->guest());
     }
 
-    /**
-     * @depends testConstructor
-     */
-    /*public function testCheckWithLoggedInUser()
+    public function testAttempt(): void
     {
-        $testUser = $this->createTestUser(false, true);
-        $authenticator = $this->getAuthenticator();
+        /** @var User */
+        $user = User::factory()->create();
 
-        $this->assertTrue($authenticator->check());
-        $this->assertFalse($authenticator->guest());
-        $this->assertSame($testUser->id, $authenticator->user()->id);
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+
+        // Start session
+        $session->start();
+
+        // Attempt to login user
+        // N.B.: "password" is hardcoded in factory.
+        $authUser = $authenticator->attempt('user_name', $user->user_name, 'password');
+        $this->assertSame($user->id, $authUser->id);
+
+        // Must logout to avoid test issue
+        $authenticator->logout(true);
+        $session->destroy();
     }
 
-    /**
-     * @return Authenticator
-     */
-    protected function getAuthenticator()
+    public function testLoginWithRememberMe(): void
     {
-        return new Authenticator($this->ci->classMapper, $this->ci->session, $this->ci->config, $this->ci->cache, $this->ci->db);
+        /** @var User */
+        $testUser = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+        $config->set('remember_me.domain', 'foo.bar');
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+        $key = strval($config->get('session.keys.current_user_id'));
+
+        // Start session
+        $session->start();
+
+        // Test session to avoid false positive
+        $this->assertNull($session[$key]);
+
+        // Perform login
+        $authenticator->login($testUser, true);
+
+        // Test session to test that user was logged in
+        $this->assertNotNull($session[$key]);
+        $this->assertSame($testUser->id, $session[$key]);
+
+        // We'll manually delete the session,
+        $session->set($key, null);
+        $this->assertNull($session[$key]);
+        $this->assertNotSame($testUser->id, $session[$key]);
+
+        // Now go through the loginRememberedUser process
+        // First, we'll simulate a page refresh by creating a new authenticator
+        // (So `$this->user` will be null)
+        /** @var Authenticator */
+        $authenticator = $this->ci->make(Authenticator::class);
+
+        // Get user
+        $user = $authenticator->user();
+
+        // If loginRememberedUser doesn't work, `user` will be null.
+        $this->assertNotNull($user);
+        $this->assertEquals($user->id, $testUser->id);
+        $this->assertEquals($user->id, $session[$key]);
+        $this->assertTrue($authenticator->viaRemember());
+
+        // Must logout to avoid test issue
+        $authenticator->logout();
+        $session->destroy();
+    }
+
+    public function testLoginWithRememberMeForAuthCompromisedException(): void
+    {
+        // Mock RememberMe so we can force AuthCompromisedException
+        $loginResult = Mockery::mock(LoginResult::class)
+            ->shouldReceive('isSuccess')->once()->andReturn(false)
+            ->shouldReceive('hasPossibleManipulation')->once()->andReturn(true)
+            ->getMock();
+        $storageInterface = $this->ci->get(StorageInterface::class);
+        $rememberMe = Mockery::mock(RememberMe::class . '[login]', [$storageInterface])
+            ->shouldReceive('login')->once()->andReturn($loginResult)
+            ->getMock();
+        $this->ci->set(RememberMe::class, $rememberMe);
+
+        /** @var User */
+        $testUser = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+        $key = strval($config->get('session.keys.current_user_id'));
+
+        // Start session and login user
+        $session->start();
+        $authenticator->login($testUser, true);
+
+        // We'll manually delete the session,
+        $session->set($key, null);
+
+        // Now go through the loginRememberedUser process
+        // First, we'll simulate a page refresh by creating a new authenticator
+        // (So `$this->user` will be null)
+        /** @var Authenticator */
+        $authenticator = $this->ci->make(Authenticator::class);
+
+        // Get user
+        $this->expectException(AuthCompromisedException::class);
+        $authenticator->user();
+
+        // Must destroy to avoid test issue
+        $session->destroy();
+    }
+
+    public function testLoginSessionUser(): void
+    {
+        /** @var User */
+        $testUser = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+        $key = strval($config->get('session.keys.current_user_id'));
+
+        // Start session
+        $session->start();
+
+        // Perform login
+        $authenticator->login($testUser, true);
+
+        // Now go through the `loginSessionUser` process
+        // First, we'll simulate a page refresh by creating a new authenticator
+        // (So `$this->user` will be null)
+        /** @var Authenticator */
+        $authenticator = $this->ci->make(Authenticator::class);
+
+        // Get user
+        $user = $authenticator->user();
+
+        // If loginSessionUser doesn't work, `user` will be null.
+        $this->assertNotNull($user);
+        $this->assertEquals($user->id, $testUser->id);
+        $this->assertEquals($user->id, $session[$key]);
+        $this->assertFalse($authenticator->viaRemember());
+
+        // Must logout to avoid test issue
+        $authenticator->logout();
+        $session->destroy();
+    }
+
+    public function testLoginSessionUserWithAuthExpired(): void
+    {
+        /** @var User */
+        $testUser = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+
+        // Start session
+        $session->start();
+
+        // Perform login
+        $authenticator->login($testUser);
+
+        // Now go through the `loginSessionUser` process
+        // First, we'll simulate a page refresh by creating a new authenticator
+        // (So `$this->user` will be null)
+        /** @var Authenticator */
+        $authenticator = $this->ci->make(Authenticator::class);
+
+        // Get user
+        $this->expectException(AuthExpiredException::class);
+        $authenticator->user();
+
+        // Must logout to avoid test issue
+        $session->destroy();
+    }
+
+    public function testLoginSessionUserForBadId(): void
+    {
+        /** @var User */
+        $testUser = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+        $key = strval($config->get('session.keys.current_user_id'));
+
+        // Start session
+        $session->start();
+
+        // Perform login
+        $authenticator->login($testUser, true);
+
+        // We'll manually alter the session,
+        $session->set($key, $testUser->id + 1);
+        $this->assertNotSame($testUser->id, $session[$key]);
+
+        // Now go through the `loginSessionUser` process
+        // First, we'll simulate a page refresh by creating a new authenticator
+        // (So `$this->user` will be null)
+        /** @var Authenticator */
+        $authenticator = $this->ci->make(Authenticator::class);
+
+        // Get user
+        $this->expectException(AccountInvalidException::class);
+        $authenticator->user();
+
+        // Must destroy session to avoid test issue
+        $session->destroy();
+    }
+
+    public function testPDOException(): void
+    {
+        $userModel = Mockery::mock(UserInterface::class)
+            ->shouldReceive('findCached')->andThrow(new PDOException())
+            ->getMock();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+        $authenticator->setUserModel($userModel::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+        $key = strval($config->get('session.keys.current_user_id'));
+
+        // Start session
+        $session->start();
+
+        // Set a session so we go through loginSessionUser
+        $session->set($key, 1);
+
+        // PDOException won't be thrown, as it's cached. User will be null.
+        $user = $authenticator->user();
+        $this->assertNull($user);
+        $session->destroy();
     }
 }

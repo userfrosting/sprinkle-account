@@ -10,14 +10,10 @@
 
 namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 
-use UserFrosting\Support\Exception\ForbiddenException;
-
 /**
- * Compromised authentication exception.  Used when we suspect theft of the rememberMe cookie.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * Compromised authentication exception. Used when we suspect theft of the rememberMe cookie.
  */
-class AuthCompromisedException extends ForbiddenException
+class AuthCompromisedException extends AuthException
 {
     protected $defaultMessage = 'ACCOUNT.SESSION_COMPROMISED';
 }

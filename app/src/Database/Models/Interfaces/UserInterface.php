@@ -86,6 +86,22 @@ interface UserInterface
     public function getLastActivityAttribute(): ?Activity;
 
     /**
+     * Mutate password before saving into db. This is where password is hashed.
+     *
+     * @param string $value
+     */
+    public function setPasswordAttribute(string $value): void;
+
+    /**
+     * Compare password to the user hashed password. Returns true if both evaluate to the same.
+     *
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function comparePassword(string $password): bool;
+
+    /**
      * Return a cache instance specific to that user.
      *
      * @return Cache
@@ -97,9 +113,9 @@ interface UserInterface
      *
      * @param int $id
      *
-     * @return self
+     * @return ?self
      */
-    public static function findCached(int $id): self;
+    public static function findCached(int $id): ?self;
 
     /**
      * Forge cached version of this user.

@@ -8,16 +8,13 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Util;
-
-use UserFrosting\Support\Exception\HttpException;
+namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 
 /**
- * Password hash failure exception.  Used when the supplied password could not be hashed for some reason.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * Password hash failure exception.
+ * Used when the supplied password could not be hashed for some reason.
  */
-class HashFailedException extends HttpException
+class HashFailedException extends AuthException
 {
     protected $defaultMessage = 'PASSWORD.HASH_FAILED';
     protected $httpErrorCode = 500;
