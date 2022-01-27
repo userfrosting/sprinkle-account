@@ -158,7 +158,7 @@ class UserTest extends AccountTestCase
 
         // Get fetched
         $fetched = User::findCached($user->id);
-        $this->assertSame($user->id, $fetched->id);
+        $this->assertSame($user->id, $fetched?->id);
 
         // Assert cache directly
         $this->assertTrue($cache->has($key));

@@ -13,7 +13,7 @@ namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 use Exception;
 
 /**
- * Base exception for Auth related Exception
+ * Base exception for Auth related Exception.
  */
 class AuthException extends Exception
 {
