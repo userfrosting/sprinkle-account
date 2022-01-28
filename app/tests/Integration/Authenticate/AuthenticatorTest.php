@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Tests\Integration;
+namespace UserFrosting\Sprinkle\Account\Tests\Integration\Authenticate;
 
 use Birke\Rememberme\Authenticator as RememberMe;
 use Birke\Rememberme\LoginResult;
