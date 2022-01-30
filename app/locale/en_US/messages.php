@@ -20,7 +20,7 @@ return [
         'EXCEPTION' => [
             'TITLE'       => 'Account Exception',
             'DESCRIPTION' => 'An unspecified error with he account has been encountered.',
-            
+
             'ACCESS_DENIED' => [
                 'TITLE'       => 'Access Denied',
                 'DESCRIPTION' => "Hmm, looks like you don't have permission to do that.",

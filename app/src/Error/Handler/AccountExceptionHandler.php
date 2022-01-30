@@ -15,7 +15,7 @@ use Throwable;
 use UserFrosting\Sprinkle\Core\Error\Handler\ExceptionHandler;
 
 /**
- * Handler for AuthException. Override the default error message, and
+ * Handler for AuthException. Override the default behavior and status code.
  */
 final class AccountExceptionHandler extends ExceptionHandler
 {
