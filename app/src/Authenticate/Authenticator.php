@@ -18,11 +18,11 @@ use Birke\Rememberme\Triplet as RememberMeTriplet;
 use Illuminate\Cache\Repository as Cache;
 use UserFrosting\Session\Session;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountDisabledException;
+use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountInvalidException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountNotFoundException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountNotVerifiedException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthCompromisedException;
-use UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthExpiredException;
 use UserFrosting\Sprinkle\Account\Authenticate\Exception\InvalidCredentialsException;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
@@ -76,7 +76,7 @@ class Authenticator
      * @param string $identityValue
      * @param string $password
      *
-     * @throws AuthException On invalid credentials.
+     * @throws AccountException On invalid credentials.
      *
      * @return UserInterface
      */
@@ -117,7 +117,7 @@ class Authenticator
      * @param string $identityValue
      * @param string $password
      *
-     * @throws AuthException On invalid credentials.
+     * @throws AccountException On invalid credentials.
      *
      * @return UserInterface
      */
@@ -244,7 +244,7 @@ class Authenticator
      *
      * Tries to re-establish a session for "remember-me" users who have been logged out due to an expired session.
      *
-     * @throws AuthException If any error is encountered.
+     * @throws AccountException If any error is encountered.
      *
      * @return UserInterface|null
      */
@@ -363,8 +363,8 @@ class Authenticator
     /**
      * Attempt to log in the client from the session.
      *
-     * @throws AuthExpiredException    The client attempted to use an expired rememberMe token.
-     * @throws AccountInvalidException The "id" in session is not valid
+     * @throws AuthExpiredException     The client attempted to use an expired rememberMe token.
+     * @throws AccountNotFoundException The "id" in session is not valid
      *
      * @return UserInterface|null If successful, the User object of the user in session.  Otherwise, return null.
      */
@@ -393,7 +393,7 @@ class Authenticator
         // If the user doesn't exist, throw an exception.
         // We don't want to go through "rememberMe", as "session" id might be compromised.
         if ($user === null) {
-            throw new AccountInvalidException();
+            throw new AccountNotFoundException();
         }
 
         $this->validateUserAccount($user);

@@ -13,8 +13,8 @@ namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 /**
  * Disabled account exception. Used when an account has been disabled.
  */
-class AccountDisabledException extends AuthException
+final class AccountDisabledException extends AccountException
 {
-    protected $defaultMessage = 'ACCOUNT.DISABLED';
-    protected $httpErrorCode = 403;
+    protected string $title = 'ACCOUNT.EXCEPTION.DISABLED.TITLE';
+    protected string $description = 'ACCOUNT.EXCEPTION.DISABLED.DESCRIPTION';
 }

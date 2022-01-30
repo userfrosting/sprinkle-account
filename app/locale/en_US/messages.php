@@ -17,23 +17,48 @@ return [
     'ACCOUNT' => [
         '@TRANSLATION' => 'Account',
 
-        'ACCESS_DENIED' => "Hmm, looks like you don't have permission to do that.",
-
-        'DISABLED' => 'This account has been disabled. Please contact us for more information.',
+        'EXCEPTION' => [
+            'TITLE'       => 'Account Exception',
+            'DESCRIPTION' => 'An unspecified error with he account has been encountered.',
+            
+            'ACCESS_DENIED' => [
+                'TITLE'       => 'Access Denied',
+                'DESCRIPTION' => "Hmm, looks like you don't have permission to do that.",
+            ],
+            'DISABLED' => [
+                'TITLE'       => 'Account Disabled',
+                'DESCRIPTION' => 'This account has been disabled. Please contact us for more information.',
+            ],
+            'INVALID' => [
+                'TITLE'       => 'Account Invalid',
+                'DESCRIPTION' => 'This account is not configured properly. Please contact us for more information.',
+            ],
+            'NOT_FOUND' => [
+                'TITLE'       => 'Account Not Found',
+                'DESCRIPTION' => 'This account does not exist. It may have been deleted.',
+            ],
+            'COMPROMISED' => [
+                'TITLE'       => 'Account Compromised',
+                'DESCRIPTION' => 'Someone may have used your login information to access this page.  For your safety, all sessions were logged out. Please log in again and check your account for suspicious activity. You may also wish to change your password.',
+            ],
+            'UNVERIFIED' => [
+                'TITLE'       => 'Account Unverified',
+                'DESCRIPTION' => 'Your account has not yet been verified. Check your emails / spam folder for account activation instructions.',
+            ],
+            'EXPIRED' => [
+                'TITLE'       => 'Session expired',
+                'DESCRIPTION' => 'Your session has expired.  Please sign in again.',
+            ],
+            'INVALID_CREDENTIALS' => [
+                'TITLE'       => 'Invalid Credentials',
+                'DESCRIPTION' => 'User not found or password is invalid.',
+            ],
+        ],
 
         'EMAIL_UPDATED' => 'Account email updated',
 
-        'INVALID' => 'This account does not exist. It may have been deleted.  Please contact us for more information.',
-
         'MASTER_NOT_EXISTS' => 'You cannot register an account until the master account has been created!',
         'MY'                => 'My Account',
-
-        'SESSION_COMPROMISED' => [
-            '@TRANSLATION'  => 'Your session has been compromised.  You should log out on all devices, then log back in and make sure that your data has not been tampered with.',
-            'TITLE'         => 'Your account may have been compromised',
-            'TEXT'          => 'Someone may have used your login information to acccess this page.  For your safety, all sessions were logged out. Please <a href="{{url}}">log in</a> and check your account for suspicious activity.  You may also wish to change your password.',
-        ],
-        'SESSION_EXPIRED'       => 'Your session has expired.  Please sign in again.',
 
         'SETTINGS' => [
             '@TRANSLATION'  => 'Account settings',
@@ -42,8 +67,6 @@ return [
         ],
 
         'TOOLS' => 'Account tools',
-
-        'UNVERIFIED' => 'Your account has not yet been verified. Check your emails / spam folder for account activation instructions.',
 
         'VERIFICATION' => [
             'NEW_LINK_SENT'     => 'We have emailed a new verification link to {{email}}.  Please check your inbox and spam folders for this email.',
@@ -176,10 +199,6 @@ return [
         'IN_USE'        => 'Username <strong>{{user_name}}</strong> is already in use.',
         'NOT_AVAILABLE' => "Username <strong>{{user_name}}</strong> is not available. Choose a different name, or click 'suggest'.",
     ],
-
-    'USER_ID_INVALID'       => 'The requested user id does not exist.',
-    'USER_OR_EMAIL_INVALID' => 'Username or email address is invalid.',
-    'USER_OR_PASS_INVALID'  => 'User not found or password is invalid.',
 
     'WELCOME' => 'Welcome back, {{first_name}}',
 ];

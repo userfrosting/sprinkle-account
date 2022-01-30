@@ -16,7 +16,6 @@ use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use UserFrosting\Sprinkle\Account\Authenticate\AuthGuard;
 use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Log\UserActivityDatabaseHandler;
@@ -40,24 +39,6 @@ class ServicesProvider
      */
     public function register(ContainerInterface $container)
     {
-        /*
-         * Extends the 'errorHandler' service with custom exception handlers.
-         *
-         * Custom handlers added: ForbiddenExceptionHandler
-         *
-         * @return \UserFrosting\Sprinkle\Core\Error\ExceptionHandlerManager
-         */
-        $container->extend('errorHandler', function ($handler, $c) {
-            // Register the ForbiddenExceptionHandler.
-            $handler->registerHandler('\UserFrosting\Support\Exception\ForbiddenException', '\UserFrosting\Sprinkle\Account\Error\Handler\ForbiddenExceptionHandler');
-            // Register the AuthExpiredExceptionHandler
-            $handler->registerHandler('\UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthExpiredException', '\UserFrosting\Sprinkle\Account\Error\Handler\AuthExpiredExceptionHandler');
-            // Register the AuthCompromisedExceptionHandler.
-            $handler->registerHandler('\UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthCompromisedException', '\UserFrosting\Sprinkle\Account\Error\Handler\AuthCompromisedExceptionHandler');
-
-            return $handler;
-        });
-
         /*
          * Extends the 'view' service with the AccountExtension for Twig.
          *
@@ -93,17 +74,6 @@ class ServicesProvider
 
             return $view;
         });
-
-        /*
-         * Sets up the AuthGuard middleware, used to limit access to authenticated users for certain routes.
-         *
-         * @return \UserFrosting\Sprinkle\Account\Authenticate\AuthGuard
-         */
-        $container['authGuard'] = function ($c) {
-            $authenticator = $c->authenticator;
-
-            return new AuthGuard($authenticator);
-        };
 
         /*
          * Authorization check logging with Monolog.
@@ -260,11 +230,6 @@ class ServicesProvider
         $container['currentUser'] = function ($c) {
             $authenticator = $c->authenticator;
             $currentUser = $authenticator->user();
-
-            // Add user theme sprinkles resources
-            if ($c->config['per_user_theme'] && $authenticator->check() && $currentUser->theme) {
-                $c->sprinkleManager->addSprinkleResources($currentUser->theme);
-            }
 
             return $currentUser;
         };

@@ -49,8 +49,7 @@ class AuthGuardTest extends AccountTestCase
         $this->assertResponse('Hello', $response);
     }
 
-    // TODO : Will required
-    /*public function testCheckInvalid(): void
+    public function testCheckInvalid(): void
     {
         // Mock Authenticator
         $authenticator = Mockery::mock(Authenticator::class)
@@ -63,9 +62,9 @@ class AuthGuardTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Asserts
-        $this->assertResponseStatus(200, $response);
-        $this->assertResponse('Hello', $response);
-    }*/
+        $this->assertResponseStatus(403, $response);
+        $this->assertNotSame('Hello', (string) $response->getBody());
+    }
 }
 
 class SprinkleStub extends Account

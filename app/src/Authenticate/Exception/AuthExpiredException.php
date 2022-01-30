@@ -13,8 +13,8 @@ namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 /**
  * Expired authentication exception. Used when the user needs to authenticate/reauthenticate.
  */
-class AuthExpiredException extends AuthException
+final class AuthExpiredException extends AccountException
 {
-    protected $defaultMessage = 'ACCOUNT.SESSION_EXPIRED';
-    protected $httpErrorCode = 401;
+    protected string $title = 'ACCOUNT.EXCEPTION.EXPIRED.TITLE';
+    protected string $description = 'ACCOUNT.EXCEPTION.EXPIRED.DESCRIPTION';
 }

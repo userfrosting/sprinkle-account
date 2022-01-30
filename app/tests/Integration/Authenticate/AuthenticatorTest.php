@@ -441,7 +441,7 @@ class AuthenticatorTest extends AccountTestCase
         $authenticator = $this->ci->make(Authenticator::class);
 
         // Get user
-        $this->expectException(AccountInvalidException::class);
+        $this->expectException(AccountNotFoundException::class);
         $authenticator->user();
 
         // Must destroy session to avoid test issue

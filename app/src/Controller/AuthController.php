@@ -16,7 +16,7 @@ use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\Sprinkle\Account\Account\Registration;
-use UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthException;
+use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountException;
 use UserFrosting\Sprinkle\Account\Controller\Exception\SpammyRequestException;
 use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
@@ -124,7 +124,7 @@ class AuthController
 
         try {
             $currentUser = $authenticator->attempt(($isEmail ? 'email' : 'user_name'), $userIdentifier, $data['password'], $data['rememberme']);
-        } catch (AuthException $e) {
+        } catch (AccountException $e) {
             // only let unsuccessful logins count toward the throttling limit
             $throttler->logEvent('sign_in_attempt', $throttleData);
 

@@ -13,8 +13,8 @@ namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 /**
  * Invalid account exception. Used when an account has been removed during an active session.
  */
-class AccountNotFoundException extends AuthException
+final class AccountNotFoundException extends AccountException
 {
-    protected $defaultMessage = 'ACCOUNT.INVALID';
-    protected $httpErrorCode = 403;
+    protected string $title = 'ACCOUNT.EXCEPTION.NOT_FOUND.TITLE';
+    protected string $description = 'ACCOUNT.EXCEPTION.NOT_FOUND.DESCRIPTION';
 }

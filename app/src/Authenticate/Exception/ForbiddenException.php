@@ -10,11 +10,11 @@
 
 namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
 
-use Exception;
-
 /**
- * Base exception for Auth related Exception.
+ * Forbidden Exception. Used when an account doesn't have access to a resource.
  */
-class AuthException extends Exception
+final class ForbiddenException extends AccountException
 {
+    protected string $title = 'ACCOUNT.EXCEPTION.ACCESS_DENIED.TITLE';
+    protected string $description = 'ACCOUNT.EXCEPTION.ACCESS_DENIED.DESCRIPTION';
 }

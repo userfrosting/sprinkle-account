@@ -32,6 +32,7 @@ use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultRoles;
 use UserFrosting\Sprinkle\Account\I18n\LocaleServicesProvider;
 use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\ErrorHandlerService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ModelMapService;
 use UserFrosting\Sprinkle\Core\Core;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
@@ -100,6 +101,7 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe
             // LocaleServicesProvider::class, // TODO
             AuthService::class,
             ModelMapService::class,
+            ErrorHandlerService::class,
         ];
     }
 
