@@ -8,7 +8,7 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
+namespace UserFrosting\Sprinkle\Account\Exceptions;
 
 /**
  * Unverified account exception. Used when an account is required to complete email verification, but hasn't done so yet.

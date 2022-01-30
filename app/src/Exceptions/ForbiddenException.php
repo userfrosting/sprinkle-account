@@ -8,7 +8,7 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
+namespace UserFrosting\Sprinkle\Account\Exceptions;
 
 /**
  * Forbidden Exception. Used when an account doesn't have access to a resource.

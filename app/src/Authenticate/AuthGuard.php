@@ -38,6 +38,8 @@ class AuthGuard
     public function __invoke(Request $request, RequestHandler $handler): ResponseInterface
     {
         if (!$this->authenticator->check()) {
+            // TODO : Expired might not be right here, and produce wrong user message.
+            // Could probably used a "not logged in" exception ?
             throw new AuthExpiredException();
         }
 

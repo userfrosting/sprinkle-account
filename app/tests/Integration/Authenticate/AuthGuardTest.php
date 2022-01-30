@@ -25,6 +25,7 @@ use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 
 /**
  * Integration tests for the AuthGuard.
+ * Also serves as AccountExceptionHandler test.
  */
 class AuthGuardTest extends AccountTestCase
 {
@@ -63,7 +64,11 @@ class AuthGuardTest extends AccountTestCase
 
         // Asserts
         $this->assertResponseStatus(403, $response);
-        $this->assertNotSame('Hello', (string) $response->getBody());
+        $body = (string) $response->getBody();
+        $this->assertNotSame('Hello', $body);
+        $this->assertStringContainsString('Session expired', $body);
+
+        // TODO : This will change once we implement "redirect" behavior.
     }
 }
 

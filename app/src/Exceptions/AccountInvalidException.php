@@ -8,7 +8,7 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Authenticate\Exception;
+namespace UserFrosting\Sprinkle\Account\Exceptions;
 
 /**
  * Invalid account exception. Used when an account has been removed during an active session.
