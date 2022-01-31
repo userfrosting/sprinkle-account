@@ -30,7 +30,7 @@ final class MissingRequiredParamException extends AccountException
     }
 
     /**
-     * Set the value of param
+     * Set the value of param.
      *
      * @param string $param
      *

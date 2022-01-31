@@ -30,7 +30,7 @@ final class EmailNotUniqueException extends AccountException
     }
 
     /**
-     * Set the value of email
+     * Set the value of email.
      *
      * @param string $email
      *

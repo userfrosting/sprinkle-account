@@ -30,7 +30,7 @@ final class UsernameNotUniqueException extends AccountException
     }
 
     /**
-     * Set the value of username
+     * Set the value of username.
      *
      * @param string $username
      *
