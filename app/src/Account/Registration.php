@@ -54,17 +54,6 @@ class Registration
     protected $defaultRoles = [];
 
     /**
-     * @var array The minimum info required to register a new user
-     */
-    protected $requiredProperties = [
-        'user_name',
-        'first_name',
-        'last_name',
-        'email',
-        'password',
-    ];
-
-    /**
      * Constructor.
      *
      * @param ContainerInterface $ci       The global container object
@@ -86,7 +75,8 @@ class Registration
     public function register()
     {
         // Validate the userdata
-        $this->validate();
+        // $this->validate();
+        // TODO : Use UserValidation
 
         // Set default group
         $defaultGroup = $this->ci->classMapper->getClassMapping('group')::where('slug', $this->defaultGroup)->first();
@@ -101,7 +91,7 @@ class Registration
         $this->setUserProperty('group_id', $defaultGroup->id);
 
         // Hash password
-        $this->hashPassword();
+        // $this->hashPassword();
 
         // Set verified flag
         $this->setUserProperty('flag_verified', !$this->getRequireEmailVerification());
@@ -140,81 +130,6 @@ class Registration
         });
 
         return $user;
-    }
-
-    /**
-     * Validate the user name and email is unique.
-     *
-     * @throws HttpException If data doesn't validate
-     *
-     * @return bool Returns true if the data is valid
-     */
-    public function validate()
-    {
-        // Make sure all required fields are defined
-        foreach ($this->requiredProperties as $property) {
-            if (!isset($this->userdata[$property])) {
-                $e = new HttpException("Account can't be registered as '$property' is required to create a new user.");
-                $e->addUserMessage('USERNAME.IN_USE');
-
-                throw $e;
-            }
-        }
-
-        // Check if username is unique
-        if (!$this->usernameIsUnique($this->userdata['user_name'])) {
-            $e = new HttpException('Username is already in use.');
-            $e->addUserMessage('USERNAME.IN_USE', ['user_name' => $this->userdata['user_name']]);
-
-            throw $e;
-        }
-
-        // Check if email is unique
-        if (!$this->emailIsUnique($this->userdata['email'])) {
-            $e = new HttpException('Email is already in use.');
-            $e->addUserMessage('EMAIL.IN_USE', ['email' => $this->userdata['email']]);
-
-            throw $e;
-        }
-
-        // Validate password requirements
-        // !TODO
-
-        return true;
-    }
-
-    /**
-     * Check Unique Username
-     * Make sure the username is not already in use.
-     *
-     * @param string $username
-     *
-     * @return bool Return true if username is unique
-     */
-    public function usernameIsUnique($username)
-    {
-        return !($this->ci->classMapper->getClassMapping('user')::findUnique($username, 'user_name'));
-    }
-
-    /**
-     * Check Unique Email
-     * Make sure the email is not already in use.
-     *
-     * @param string $email
-     *
-     * @return bool Return true if email is unique
-     */
-    public function emailIsUnique($email)
-    {
-        return !($this->ci->classMapper->getClassMapping('user')::findUnique($email, 'email'));
-    }
-
-    /**
-     * Hash the user password in the userdata array.
-     */
-    protected function hashPassword()
-    {
-        $this->userdata['password'] = Password::hash($this->userdata['password']);
     }
 
     /**

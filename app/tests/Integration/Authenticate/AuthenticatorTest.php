@@ -20,6 +20,8 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDOException;
 use UserFrosting\Session\Session;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountDisabledException;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountInvalidException;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountNotFoundException;
@@ -27,12 +29,8 @@ use UserFrosting\Sprinkle\Account\Exceptions\AccountNotVerifiedException;
 use UserFrosting\Sprinkle\Account\Exceptions\AuthCompromisedException;
 use UserFrosting\Sprinkle\Account\Exceptions\AuthExpiredException;
 use UserFrosting\Sprinkle\Account\Exceptions\InvalidCredentialsException;
-use UserFrosting\Sprinkle\Account\Database\Models\Group;
-use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
-use UserFrosting\Support\Exception\BadInstanceOfException;
 use UserFrosting\Support\Repository\Repository as Config;
 
 /**
@@ -50,25 +48,6 @@ class AuthenticatorTest extends AccountTestCase
     {
         parent::setUp();
         $this->refreshDatabase();
-    }
-
-    /**
-     * User Model will be set by Service Provider
-     */
-    public function testSetGetUserModel(): void
-    {
-        /** @var Authenticator */
-        $authenticator = $this->ci->get(Authenticator::class);
-        $this->assertSame(User::class, $authenticator->getUserModel());
-    }
-
-    public function testSetUserModelWithBadInstance(): void
-    {
-        /** @var Authenticator */
-        $authenticator = $this->ci->get(Authenticator::class);
-
-        $this->expectException(BadInstanceOfException::class);
-        $authenticator->setUserModel(Group::class);
     }
 
     public function testAuthenticate(): void

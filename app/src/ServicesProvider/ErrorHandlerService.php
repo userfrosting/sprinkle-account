@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\ServicesProvider;
 
 use UserFrosting\ServicesProvider\ServicesProviderInterface;
-use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
 use UserFrosting\Sprinkle\Account\Error\Handler\AccountExceptionHandler;
+use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
 use UserFrosting\Sprinkle\Core\Error\ExceptionHandlerMiddleware;
 
 class ErrorHandlerService implements ServicesProviderInterface

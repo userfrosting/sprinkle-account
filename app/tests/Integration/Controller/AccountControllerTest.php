@@ -11,7 +11,6 @@
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 
 use Mockery as m;
-use UserFrosting\Sprinkle\Account\Exceptions;
 use UserFrosting\Sprinkle\Account\Controller\AccountController;
 use UserFrosting\Sprinkle\Account\Controller\Exception\SpammyRequestException;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;

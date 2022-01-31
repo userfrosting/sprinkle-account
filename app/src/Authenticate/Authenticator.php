@@ -17,6 +17,8 @@ use Birke\Rememberme\Storage\StorageInterface;
 use Birke\Rememberme\Triplet as RememberMeTriplet;
 use Illuminate\Cache\Repository as Cache;
 use UserFrosting\Session\Session;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountDisabledException;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountInvalidException;
@@ -25,9 +27,7 @@ use UserFrosting\Sprinkle\Account\Exceptions\AccountNotVerifiedException;
 use UserFrosting\Sprinkle\Account\Exceptions\AuthCompromisedException;
 use UserFrosting\Sprinkle\Account\Exceptions\AuthExpiredException;
 use UserFrosting\Sprinkle\Account\Exceptions\InvalidCredentialsException;
-use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Support\Exception\BadInstanceOfException;
+use UserFrosting\Sprinkle\Account\Helpers\DynamicUserModel;
 use UserFrosting\Support\Repository\Repository as Config;
 
 /**
@@ -35,10 +35,7 @@ use UserFrosting\Support\Repository\Repository as Config;
  */
 class Authenticator
 {
-    /**
-     * @var class-string<UserInterface> User Model to use.
-     */
-    protected string $userModel = User::class;
+    use DynamicUserModel;
 
     /**
      * @var UserInterface|null
@@ -293,34 +290,6 @@ class Authenticator
     public function flushSessionCache(string $id): bool
     {
         return $this->cache->tags('_s' . $id)->flush();
-    }
-
-    /**
-     * Get user Model to use.
-     *
-     * @return class-string<UserInterface>
-     */
-    public function getUserModel(): string
-    {
-        return $this->userModel;
-    }
-
-    /**
-     * Set user Model to use.
-     *
-     * @param string $userModel User Model to use.
-     *
-     * @return static
-     */
-    public function setUserModel(string $userModel): static
-    {
-        if (!is_subclass_of($userModel, UserInterface::class)) {
-            throw new BadInstanceOfException("User Model doesn't implement " . UserInterface::class);
-        }
-
-        $this->userModel = $userModel;
-
-        return $this;
     }
 
     /**
