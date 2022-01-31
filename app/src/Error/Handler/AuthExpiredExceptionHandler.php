@@ -11,16 +11,14 @@
 namespace UserFrosting\Sprinkle\Account\Error\Handler;
 
 use Psr\Http\Message\ResponseInterface;
-use UserFrosting\Sprinkle\Core\Error\Handler\HttpExceptionHandler;
+use UserFrosting\Sprinkle\Core\Error\Handler\ExceptionHandler;
 
 /**
  * Handler for AuthExpiredExceptions.
  *
  * Forwards the user to the login page when their session has expired.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
-class AuthExpiredExceptionHandler extends HttpExceptionHandler
+class AuthExpiredExceptionHandler extends ExceptionHandler
 {
     /**
      * Custom handling for requests that did not pass authentication.

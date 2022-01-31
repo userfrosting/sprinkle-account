@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\ServicesProvider;
 
 use UserFrosting\ServicesProvider\ServicesProviderInterface;
-use UserFrosting\Sprinkle\Account\Authenticate\Exception\AccountException;
+use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
 use UserFrosting\Sprinkle\Account\Error\Handler\AccountExceptionHandler;
 use UserFrosting\Sprinkle\Core\Error\ExceptionHandlerMiddleware;
 
@@ -29,7 +29,7 @@ class ErrorHandlerService implements ServicesProviderInterface
                 $middleware->registerHandler(AccountException::class, AccountExceptionHandler::class, true);
 
                 // Register the AuthExpiredExceptionHandler
-                // $middlewares->registerHandler('\UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthExpiredException', '\UserFrosting\Sprinkle\Account\Error\Handler\AuthExpiredExceptionHandler');
+                // $middlewares->registerHandler('\UserFrosting\Sprinkle\Account\Exceptions\AuthExpiredException', '\UserFrosting\Sprinkle\Account\Error\Handler\AuthExpiredExceptionHandler');
 
                 return $middleware;
             }),

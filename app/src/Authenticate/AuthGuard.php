@@ -13,7 +13,7 @@ namespace UserFrosting\Sprinkle\Account\Authenticate;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
-use UserFrosting\Sprinkle\Account\Authenticate\Exception\AuthExpiredException;
+use UserFrosting\Sprinkle\Account\Exceptions\AuthExpiredException;
 
 /**
  * Middleware to catch requests that fail because they require user authentication.
