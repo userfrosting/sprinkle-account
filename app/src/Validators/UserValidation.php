@@ -17,7 +17,6 @@ use UserFrosting\Sprinkle\Account\Exceptions\MissingRequiredParamException;
 use UserFrosting\Sprinkle\Account\Exceptions\UsernameNotUniqueException;
 use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Account\Helpers\DynamicUserModel;
-use UserFrosting\Support\Exception\HttpException;
 
 /**
  * Process server side validation for the UserInterface Model.
@@ -41,9 +40,11 @@ class UserValidation
     ];
 
     /**
-     * Validate the user has all the required value before creation.
+     * Validate the user has all the required value before creation/update.
      *
-     * @ throws HttpException If data doesn't validate
+     * @throws MissingRequiredParamException If required user field is missing
+     * @throws UsernameNotUniqueException    If username is already in use
+     * @throws EmailNotUniqueException       If email is already in use
      *
      * @return bool Returns true if the data is valid
      */
@@ -54,31 +55,32 @@ class UserValidation
             // @phpstan-ignore-next-line False positive. That's the point of the test
             if ($user->$property === null) {
                 $e = new MissingRequiredParamException();
-                // $e = new HttpException("Account can't be registered as '$property' is required to create a new user.");
-                // $e->addUserMessage('USERNAME.IN_USE'); // TODO + inject missing param
+                $e->setParam($property);
 
                 throw $e;
             }
         }
 
         // Check if username is unique
+        // TODO : Ignore self (in case)
         if (!$this->usernameIsUnique($user->user_name)) {
             $e = new UsernameNotUniqueException();
-            // $e->addUserMessage('USERNAME.IN_USE', ['user_name' => $this->user['user_name']]); // TODO
+            $e->setUsername($user->user_name);
 
             throw $e;
         }
 
         // Check if email is unique
+        // TODO : Ignore self (in case)
         if (!$this->emailIsUnique($user->email)) {
             $e = new EmailNotUniqueException();
-            // $e->addUserMessage('EMAIL.IN_USE', ['email' => $this->user['email']]); // TODO
+            $e->setEmail($user->email);
 
             throw $e;
         }
 
         // Validate password requirements
-        // !TODO
+        // TODO
 
         return true;
     }

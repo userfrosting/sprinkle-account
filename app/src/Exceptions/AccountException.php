@@ -14,6 +14,7 @@ use Exception;
 use Throwable;
 use UserFrosting\Sprinkle\Core\Exceptions\Contracts\TwigRenderedException;
 use UserFrosting\Sprinkle\Core\Exceptions\Contracts\UserMessageException;
+use UserFrosting\Support\Message\UserMessage;
 
 /**
  * Base exception for Auth related Exception.
@@ -46,7 +47,7 @@ class AccountException extends Exception implements TwigRenderedException, UserM
     /**
      * {@inheritDoc}
      */
-    public function getTitle(): string
+    public function getTitle(): string|UserMessage
     {
         return $this->title;
     }
@@ -54,7 +55,7 @@ class AccountException extends Exception implements TwigRenderedException, UserM
     /**
      * {@inheritDoc}
      */
-    public function getDescription(): string
+    public function getDescription(): string|UserMessage
     {
         return $this->description;
     }

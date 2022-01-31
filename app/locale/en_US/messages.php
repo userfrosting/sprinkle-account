@@ -80,12 +80,18 @@ return [
     ],
 
     'EMAIL' => [
-        'INVALID'               => 'There is no account for <strong>{{email}}</strong>.',
+        'INVALID'               => 'Invalid email',
         'IN_USE'                => 'Email <strong>{{email}}</strong> is already in use.',
+        'NOT_FOUND'             => 'There is no account for <strong>{{email}}</strong>.',
         'VERIFICATION_REQUIRED' => 'Email (verification required - use a real address!)',
     ],
 
     'EMAIL_OR_USERNAME' => 'Username or email address',
+
+    'ERROR' => [
+        '@TRANSLATION'  => 'Error validating account',
+        'MISSING_PARAM' => "Account can't be registered as '{{param}}' is required.",
+    ],
 
     'FIRST_NAME' => 'First name',
 

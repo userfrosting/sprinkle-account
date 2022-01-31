@@ -63,7 +63,6 @@ class UserVerificationTest extends AccountTestCase
         $validator = $this->ci->get(UserValidation::class);
 
         $this->expectException(MissingRequiredParamException::class);
-        // $this->expectExceptionMessage("Account can't be registered as 'first_name' is required to create a new user.");
         $validator->validate($user);
     }
 
@@ -81,7 +80,6 @@ class UserVerificationTest extends AccountTestCase
         $validator = $this->ci->get(UserValidation::class);
 
         $this->expectException(UsernameNotUniqueException::class);
-        // $this->expectExceptionMessage('Username is already in use.');
         $validator->validate($user);
     }
 
@@ -99,7 +97,6 @@ class UserVerificationTest extends AccountTestCase
         $validator = $this->ci->get(UserValidation::class);
 
         $this->expectException(EmailNotUniqueException::class);
-        // $this->expectExceptionMessage('Username is already in use.');
         $validator->validate($user);
     }
 
