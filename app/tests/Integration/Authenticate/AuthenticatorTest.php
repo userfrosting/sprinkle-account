@@ -429,13 +429,14 @@ class AuthenticatorTest extends AccountTestCase
 
     public function testPDOException(): void
     {
+        /** @var UserInterface */
         $userModel = Mockery::mock(UserInterface::class)
             ->shouldReceive('findCached')->andThrow(new PDOException())
             ->getMock();
 
         /** @var Authenticator */
         $authenticator = $this->ci->get(Authenticator::class);
-        $authenticator->setUserModel($userModel::class);
+        $authenticator->setUserModel($userModel);
 
         /** @var Config */
         $config = $this->ci->get(Config::class);

@@ -40,6 +40,13 @@ class UserValidation
     ];
 
     /**
+     * @param UserInterface $userModel The User Model to use to fetch User
+     */
+    public function __construct(protected UserInterface $userModel)
+    {
+    }
+
+    /**
      * Validate the user has all the required value before creation/update.
      *
      * @throws MissingRequiredParamException If required user field is missing

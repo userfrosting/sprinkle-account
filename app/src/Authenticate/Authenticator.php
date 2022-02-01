@@ -38,7 +38,7 @@ class Authenticator
     use DynamicUserModel;
 
     /**
-     * @var UserInterface|null
+     * @var UserInterface|null The actual User object
      */
     protected ?UserInterface $user = null;
 
@@ -55,6 +55,7 @@ class Authenticator
      * @param Cache            $cache             Cache service instance
      * @param StorageInterface $rememberMeStorage
      * @param RememberMe       $rememberMe
+     * @param UserInterface    $userModel         The User Model to use to fetch User
      */
     public function __construct(
         protected Session $session,
@@ -62,6 +63,7 @@ class Authenticator
         protected Cache $cache,
         protected StorageInterface $rememberMeStorage,
         protected RememberMe $rememberMe,
+        protected UserInterface $userModel,
     ) {
         $this->setupCookie();
     }

@@ -11,27 +11,16 @@
 namespace UserFrosting\Sprinkle\Account\Helpers;
 
 use PHPUnit\Framework\TestCase;
-use UserFrosting\Sprinkle\Account\Database\Models\Group;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Support\Exception\BadInstanceOfException;
 
 class DynamicUserModelTest extends TestCase
 {
-    /**
-     * User Model will be set by Service Provider
-     */
     public function testSetGetUserModel(): void
     {
+        $user = new User();
         $class = new StubClass();
-        $class->setUserModel(User::class);
-        $this->assertSame(User::class, $class->getUserModel());
-    }
-
-    public function testSetUserModelWithBadInstance(): void
-    {
-        $class = new StubClass();
-        $this->expectException(BadInstanceOfException::class);
-        $class->setUserModel(Group::class);
+        $class->setUserModel($user);
+        $this->assertSame($user, $class->getUserModel());
     }
 }
 

@@ -15,9 +15,7 @@ use UserFrosting\ServicesProvider\ServicesProviderInterface;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Authenticate\Hasher;
 use UserFrosting\Sprinkle\Account\Authenticate\Interfaces\HasherInterface;
-use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Rememberme\PDOStorage;
-use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 
 /**
  * Authenticator related Service.
@@ -27,14 +25,8 @@ class AuthService implements ServicesProviderInterface
     public function register(): array
     {
         return [
-            Authenticator::class => \DI\autowire()
-                ->method('setUserModel', \DI\get(UserInterface::class)),
-
             StorageInterface::class => \DI\autowire(PDOStorage::class),
             HasherInterface::class  => \DI\autowire(Hasher::class),
-
-            UserValidation::class => \DI\autowire()
-                ->method('setUserModel', \DI\get(UserInterface::class)),
         ];
     }
 }

@@ -34,19 +34,19 @@ use UserFrosting\Sprinkle\Account\Database\Models\Verification;
  * Note both class are map using class-string, since Models are not instantiated
  * by the container in the Eloquent world.
  */
-class ModelMapService implements ServicesProviderInterface
+class ModelsService implements ServicesProviderInterface
 {
     public function register(): array
     {
         return [
-            ActivityInterface::class      => Activity::class,
-            GroupInterface::class         => Group::class,
-            PasswordResetInterface::class => PasswordReset::class,
-            PermissionInterface::class    => Permission::class,
-            PersistenceInterface::class   => Persistence::class,
-            RoleInterface::class          => Role::class,
-            UserInterface::class          => User::class,
-            VerificationInterface::class  => Verification::class,
+            ActivityInterface::class      => \DI\autowire(Activity::class),
+            GroupInterface::class         => \DI\autowire(Group::class),
+            PasswordResetInterface::class => \DI\autowire(PasswordReset::class),
+            PermissionInterface::class    => \DI\autowire(Permission::class),
+            PersistenceInterface::class   => \DI\autowire(Persistence::class),
+            RoleInterface::class          => \DI\autowire(Role::class),
+            UserInterface::class          => \DI\autowire(User::class),
+            VerificationInterface::class  => \DI\autowire(Verification::class),
         ];
     }
 }
