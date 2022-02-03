@@ -53,10 +53,34 @@ class AccountException extends Exception implements TwigRenderedException, UserM
     }
 
     /**
+     * Set the value of title
+     *
+     * @return static
+     */
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getDescription(): string|UserMessage
     {
         return $this->description;
+    }
+
+    /**
+     * Set the value of description
+     *
+     * @return static
+     */
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
     }
 }

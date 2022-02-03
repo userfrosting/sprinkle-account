@@ -11,6 +11,7 @@
 namespace UserFrosting\Sprinkle\Account\Helpers;
 
 use PHPUnit\Framework\TestCase;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 
 class DynamicUserModelTest extends TestCase
@@ -27,4 +28,6 @@ class DynamicUserModelTest extends TestCase
 class StubClass
 {
     use DynamicUserModel;
+
+    protected UserInterface $userModel;
 }

@@ -93,6 +93,7 @@ class User extends Model implements UserInterface
      */
     protected $appends = [
         'full_name',
+        'avatar',
     ];
 
     /**

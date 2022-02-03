@@ -178,7 +178,8 @@ return [
     'REGISTER'      => 'Register',
     'REGISTER_ME'   => 'Sign me up',
     'REGISTRATION'  => [
-        'BROKEN'            => "We're sorry, there is a problem with our account registration process.  Please contact us directly for assistance.",
+        'ERROR'             => 'Registration error',
+        'UNKNOWN'           => 'A problem was encountered during the account registration process.',
         'COMPLETE_TYPE1'    => 'You have successfully registered. You can now sign in.',
         'COMPLETE_TYPE2'    => 'You have successfully registered. A link to activate your account has been sent to <strong>{{email}}</strong>.  You will not be able to sign in until you complete this step.',
         'DISABLED'          => "We're sorry, account registration has been disabled.",

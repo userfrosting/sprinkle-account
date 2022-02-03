@@ -14,6 +14,7 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use UserFrosting\Routes\RouteDefinitionInterface;
 use UserFrosting\Sprinkle\Account\Controller\AuthController;
+use UserFrosting\Sprinkle\Account\Controller\RegisterAction;
 use UserFrosting\Sprinkle\Core\Util\NoCache;
 
 class AuthRoutes implements RouteDefinitionInterface
@@ -22,7 +23,7 @@ class AuthRoutes implements RouteDefinitionInterface
     {
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->post('/login', [AuthController::class, 'login'])->setName('account.login');
-            $group->post('/register', [AuthController::class, 'register'])->setName('account.register');
-        }); //->add(new NoCache());
+            $group->post('/register', RegisterAction::class)->setName('account.register');
+        }); //->add(new NoCache()); //->add(GuestGuard::class); TODO
     }
 }
