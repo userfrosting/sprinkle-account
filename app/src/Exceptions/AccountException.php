@@ -53,7 +53,7 @@ class AccountException extends Exception implements TwigRenderedException, UserM
     }
 
     /**
-     * Set the value of title
+     * Set the value of title.
      *
      * @return static
      */
@@ -73,7 +73,7 @@ class AccountException extends Exception implements TwigRenderedException, UserM
     }
 
     /**
-     * Set the value of description
+     * Set the value of description.
      *
      * @return static
      */

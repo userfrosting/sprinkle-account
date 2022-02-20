@@ -10,12 +10,15 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Mail\Mailer;
 use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
+use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
 use UserFrosting\Support\Repository\Repository as Config;
 
@@ -25,6 +28,7 @@ use UserFrosting\Support\Repository\Repository as Config;
 class RegisterActionTest extends AccountTestCase
 {
     use RefreshDatabase;
+    use MockeryPHPUnitIntegration;
 
     /**
      * Setup test database for controller tests
@@ -129,7 +133,6 @@ class RegisterActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        // $this->assertJsonResponse([], $response);
         $this->assertResponseStatus(200, $response);
         $this->assertJsonStructure([
             'user_name',
@@ -158,6 +161,23 @@ class RegisterActionTest extends AccountTestCase
         $messages = $ms->getAndClearMessages();
         $this->assertSame('success', end($messages)['type']);
     }
+
+    public function testRegisterWithFailedThrottle(): void
+    {
+        // Create fake throttler
+        $throttler = Mockery::mock(Throttler::class);
+        $throttler->shouldReceive('getDelay')->once()->with('registration_attempt')->andReturn(90);
+        $this->ci->set(Throttler::class, $throttler);
+
+        // Create request with method and url and fetch response
+        $request = $this->createJsonRequest('POST', '/account/register', []);
+        $response = $this->handleRequest($request);
+
+        // Assert response status
+        $this->assertResponseStatus(429, $response);
+    }
+
+    // TODO : Test with logedin user
 
     /**
      * Create a "master user" and set it's id as the master user.

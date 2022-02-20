@@ -12,7 +12,6 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 
 use Mockery as m;
 use UserFrosting\Sprinkle\Account\Controller\AccountController;
-use UserFrosting\Sprinkle\Account\Controller\Exception\SpammyRequestException;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Facades\Password;
@@ -1105,45 +1104,6 @@ class AccountControllerTest extends AccountTestCase
 
     /**
      * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testRegisterWithHoneypot(AccountController $controller)
-    {
-        $this->expectException(SpammyRequestException::class);
-        $controller->register($this->getRequest(), $this->getResponse(), []);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testRegisterWithRegistrationDisabled(AccountController $controller)
-    {
-        // Force config
-        $this->ci->config['site.registration.enabled'] = false;
-
-        // Recreate controller to use fake config
-        $controller = $this->getController();
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'spiderbro' => 'http://',
-        ]);
-
-        $result = $controller->register($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 403);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
      */
     /*public function testRegisterWithLoggedInUser()
     {
@@ -1161,96 +1121,6 @@ class AccountControllerTest extends AccountTestCase
         $result = $controller->register($request, $this->getResponse(), []);
         $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
         $this->assertSame($result->getStatusCode(), 403);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testRegisterWithLoggedInUser
-     */
-    /*public function testRegisterWithFailedThrottle()
-    {
-        // Create fake throttler
-        $throttler = m::mock(Throttler::class);
-        $throttler->shouldReceive('getDelay')->once()->with('registration_attempt')->andReturn(90);
-        $this->ci->throttler = $throttler;
-
-        // Bypass security feature
-        $fm = $this->ci->factory;
-        $dummyUser = $fm->create(User::class);
-        $this->ci->config['reserved_user_ids.master'] = $dummyUser->id;
-
-        // Recreate controller to use fake throttler
-        $controller = $this->getController();
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'spiderbro' => 'http://',
-        ]);
-
-        $result = $controller->register($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 429);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testRegisterWithFailedThrottle
-     * @param AccountController $controller
-     */
-    /*public function testRegisterWithFailedCaptcha(AccountController $controller)
-    {
-        // Bypass security feature
-        $fm = $this->ci->factory;
-        $dummyUser = $fm->create(User::class);
-        $this->ci->config['reserved_user_ids.master'] = $dummyUser->id;
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'spiderbro' => 'http://',
-        ]);
-
-        $result = $controller->register($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 400);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testRegisterWithFailedCaptcha
-     * @param AccountController $controller
-     */
-    /*public function testRegisterWithFailedValidation(AccountController $controller)
-    {
-        // Bypass security feature
-        $fm = $this->ci->factory;
-        $dummyUser = $fm->create(User::class);
-        $this->ci->config['reserved_user_ids.master'] = $dummyUser->id;
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'spiderbro' => 'http://',
-            'captcha'   => '',
-        ]);
-
-        $result = $controller->register($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 400);
         $this->assertJson((string) $result->getBody());
         $this->assertSame('[]', (string) $result->getBody());
 

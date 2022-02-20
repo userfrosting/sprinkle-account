@@ -32,7 +32,6 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PersistenceInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-// use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;

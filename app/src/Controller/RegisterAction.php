@@ -25,6 +25,8 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale;
+use UserFrosting\Sprinkle\Core\Throttle\Throttler;
+use UserFrosting\Sprinkle\Core\Throttle\ThrottlerDelayException;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
 use UserFrosting\Support\Repository\Repository as Config;
 
@@ -75,6 +77,7 @@ class RegisterAction
         protected UserValidation $userValidation,
         protected AlertStream $alert,
         protected Connection $db,
+        protected Throttler $throttler,
     ) {
     }
 
@@ -106,7 +109,7 @@ class RegisterAction
     protected function handle(Request $request): ?array
     {
         // Throttle requests.
-        // $this->throttle(); TODO
+        $this->throttle();
 
         // Get POST parameters
         $params = (array) $request->getParsedBody();
@@ -149,7 +152,7 @@ class RegisterAction
         $user = $this->db->transaction(function () use ($user) {
 
             // Log throttle-able event
-            // $this->ci->throttler->logEvent('registration_attempt');
+            $this->throttler->logEvent('registration_attempt');
 
             // Store new user to database
             $user->save();
@@ -209,7 +212,7 @@ class RegisterAction
     }
 
     /**
-     * Check if registration is currently enabled
+     * Check if registration is currently enabled.
      *
      * @throws RegistrationException If registration if disabled
      */
@@ -324,13 +327,14 @@ class RegisterAction
     /**
      * Throttle requests.
      */
-    // TODO : This could be in Trait, Middleware or Throttler directly. Just need to inject the 'delay'.
     protected function throttle(): void
     {
-        $delay = $his->throttler->getDelay('registration_attempt');
+        $delay = $this->throttler->getDelay('registration_attempt');
         if ($delay > 0) {
-            // return $response->withJson([], 429);
-            // TODO : Throw exception.
+            $e = new ThrottlerDelayException();
+            $e->setDelay($delay);
+
+            throw $e;
         }
     }
 
