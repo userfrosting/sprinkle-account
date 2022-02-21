@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
@@ -14,6 +16,7 @@ use Illuminate\Database\Connection;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Alert\AlertStream;
+use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
@@ -22,6 +25,7 @@ use UserFrosting\I18n\Translator;
 use UserFrosting\Session\Session;
 use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Event\User\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale;
@@ -78,6 +82,7 @@ class RegisterAction
         protected AlertStream $alert,
         protected Connection $db,
         protected Throttler $throttler,
+        protected EventDispatcher $eventDispatcher
     ) {
     }
 
@@ -157,9 +162,9 @@ class RegisterAction
             // Store new user to database
             $user->save();
 
-            // Set Default Group & Roles
-            // $user = $this->setDefaultGroup($user);
-            // $user = $this->setDefaultRoles($user);
+            // Dispatch UserCreatedEvent
+            $event = new UserCreatedEvent($user);
+            $user = $this->eventDispatcher->dispatch($event)->user;
 
             // Create activity record
             // $this->ci->userActivityLogger->info("User {$user->user_name} registered for a new account.", [
@@ -336,35 +341,6 @@ class RegisterAction
 
             throw $e;
         }
-    }
-
-    protected function setDefaultGroup(UserInterface $user): UserInterface
-    {
-        $this->defaultGroup = $this->ci->config['site.registration.user_defaults.group'];
-        $defaultGroup = $this->ci->classMapper->getClassMapping('group')::where('slug', $this->defaultGroup)->first();
-
-        if (!$defaultGroup) {
-            $e = new HttpException("Account registration is not working because the default group '{$this->defaultGroup}' does not exist.");
-            $e->addUserMessage('ACCOUNT.REGISTRATION_BROKEN');
-
-            throw $e;
-        }
-
-        $this->setUserProperty('group_id', $defaultGroup->id);
-
-        return $user;
-    }
-
-    protected function setDefaultRoles(UserInterface $user): UserInterface
-    {
-        $this->defaultRoles = $this->ci->classMapper->getClassMapping('role')::getDefaultSlugs();
-        $defaultRoles = $this->ci->classMapper->getClassMapping('role')::whereIn('slug', $this->defaultRoles)->get();
-        $defaultRoleIds = $defaultRoles->pluck('id')->all();
-
-        // Attach default roles
-        $user->roles()->attach($defaultRoleIds);
-
-        return $user;
     }
 
     /**

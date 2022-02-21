@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
@@ -10,6 +12,7 @@
 
 namespace UserFrosting\Sprinkle\Account;
 
+use UserFrosting\Event\EventListenerRecipe;
 use UserFrosting\Sprinkle\Account\Bakery\BakeCommand;
 use UserFrosting\Sprinkle\Account\Bakery\CreateAdminUser;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\ActivitiesTable;
@@ -29,6 +32,9 @@ use UserFrosting\Sprinkle\Account\Database\Migrations\v500\UpdateUsersTable as V
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultGroups;
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultPermissions;
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultRoles;
+use UserFrosting\Sprinkle\Account\Event\User\AssignDefaultGroups;
+use UserFrosting\Sprinkle\Account\Event\User\AssignDefaultRoles;
+use UserFrosting\Sprinkle\Account\Event\User\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\I18n\LocaleServicesProvider;
 use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
@@ -39,7 +45,7 @@ use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\SeedRecipe;
 use UserFrosting\Sprinkle\SprinkleRecipe;
 
-class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe
+class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListenerRecipe
 {
     /**
      * {@inheritdoc}
@@ -151,6 +157,19 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe
             DefaultGroups::class,
             DefaultPermissions::class,
             DefaultRoles::class,
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventListeners(): array
+    {
+        return [
+            UserCreatedEvent::class => [
+                AssignDefaultRoles::class,
+                AssignDefaultGroups::class,
+            ],
         ];
     }
 }

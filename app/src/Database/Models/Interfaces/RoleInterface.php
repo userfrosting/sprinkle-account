@@ -35,13 +35,6 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
 interface RoleInterface
 {
     /**
-     * Get a list of default roles.
-     *
-     * @return string[]
-     */
-    public static function getDefaultSlugs(): array;
-
-    /**
      * Get a list of permissions assigned to this role.
      *
      * @return BelongsToMany

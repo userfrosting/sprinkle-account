@@ -134,9 +134,4 @@ class RoleTest extends AccountTestCase
         $this->assertSame(1, $users->count());
         $this->assertSame([$userBar->id], $users->pluck('id')->all());
     }
-
-    public function testGetDefaultSlugs(): void
-    {
-        $this->assertSame(['user'], Role::getDefaultSlugs());
-    }
 }

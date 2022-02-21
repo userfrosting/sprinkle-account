@@ -21,7 +21,6 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PermissionInterface
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
-use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * Role Class.
@@ -73,22 +72,6 @@ class Role extends Model implements RoleInterface
 
         // Delete the role
         return parent::delete();
-    }
-
-    /**
-     * Get a list of default roles.
-     *
-     * @return string[]
-     */
-    // TODO : Not need for this to be in Model.
-    public static function getDefaultSlugs(): array
-    {
-        /** @var Config $config */
-        $config = static::$ci->get(Config::class);
-
-        $default = $config->get('site.registration.user_defaults.roles');
-
-        return array_map('trim', array_keys($default, true, true)); // @phpstan-ignore-line False positive
     }
 
     /**
