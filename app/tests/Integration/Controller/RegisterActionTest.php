@@ -15,8 +15,6 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
-use UserFrosting\Sprinkle\Core\Mail\Mailer;
-use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
@@ -114,6 +112,7 @@ class RegisterActionTest extends AccountTestCase
         $this->setMasterUser();
         $captcha = $this->getCaptcha();
         $this->forceLocaleConfig();
+        $this->setRequireEmailVerification(false);
 
         // Set POST data
         $data = [
@@ -161,6 +160,35 @@ class RegisterActionTest extends AccountTestCase
         $messages = $ms->getAndClearMessages();
         $this->assertSame('success', end($messages)['type']);
     }
+
+    /*public function testRegisterWithEmailVerification(): void
+    {
+        $this->setMasterUser();
+        $captcha = $this->getCaptcha();
+        $this->forceLocaleConfig();
+        $this->setRequireEmailVerification(true);
+
+        // Set POST data
+        $data = [
+            'spiderbro'     => 'http://',
+            'captcha'       => $captcha->getCaptcha(),
+            'user_name'     => 'RegisteredUser',
+            'first_name'    => 'Testing',
+            'last_name'     => 'Register',
+            'email'         => 'testRegister@test.com',
+            'password'      => 'FooBarFooBar123',
+            'passwordc'     => 'FooBarFooBar123',
+            'locale'        => '',
+        ];
+
+        // Create request with method and url and fetch response
+        $request = $this->createJsonRequest('POST', '/account/register', $data);
+        $response = $this->handleRequest($request);
+
+        // Assert response status & body
+        $this->assertResponseStatus(200, $response);
+
+    }*/
 
     public function testRegisterWithFailedThrottle(): void
     {
@@ -225,68 +253,15 @@ class RegisterActionTest extends AccountTestCase
     }
 
     /**
-     * N.B.: Run this register second, as it's easier if no test user is present.
-     * @depends testControllerConstructor
-     * @see UserFrosting\Sprinkle\Account\Tests\Integration\RegistrationTest for complete registration exception (for example duplicate email) testing
+     * Set require_email_verification config.
+     *
+     * @param bool $value
      */
-    /*public function testRegister()
+    protected function setRequireEmailVerification(bool $value): void
     {
-        // Force locale config
-        $this->ci->config['site.registration.user_defaults.locale'] = 'en_US';
-        $this->ci->config['site.locales.available'] = [
-            'en_US' => true,
-        ];
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
 
-        // Create fake mailer
-        $mailer = m::mock(Mailer::class);
-        $mailer->shouldReceive('send')->once()->with(\Mockery::type(TwigMailMessage::class));
-        $this->ci->mailer = $mailer;
-
-        // Register will fail on PGSQL if a user is created with forced id
-        // before registration occurs because the forced id mess the auto_increment
-        // @see https://stackoverflow.com/questions/36157029/laravel-5-2-eloquent-save-auto-increment-pgsql-exception-on-same-id
-        // So we create a dummy user and assign the master id config to it's id
-        // to bypass the "no registration if no master user" security feature.
-        // (Note the dummy should by default be id n°1, but we still assign the config
-        // in case the default config does not return 1)
-        $fm = $this->ci->factory;
-        $dummyUser = $fm->create(User::class);
-        $this->ci->config['reserved_user_ids.master'] = $dummyUser->id;
-
-        // Recreate controller to use fake config
-        $controller = $this->getController();
-
-        // Perform common test code
-        $this->performActualRegisterTest($controller);
-    }*/
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testRegister
-     */
-    /*public function testRegisterWithNoEmailVerification()
-    {
-        // Delete previous attempt so we can reuse the same shared test code
-        if ($user = User::where('email', 'testRegister@test.com')->first()) {
-            $user->delete(true);
-        }
-
-        // Force locale config, disable email verification
-        $this->ci->config['site.registration.require_email_verification'] = false;
-        $this->ci->config['site.registration.user_defaults.locale'] = 'en_US';
-        $this->ci->config['site.locales.available'] = [
-            'en_US' => true,
-        ];
-
-        // Bypass security feature
-        $fm = $this->ci->factory;
-        $dummyUser = $fm->create(User::class);
-        $this->ci->config['reserved_user_ids.master'] = $dummyUser->id;
-
-        // Recreate controller to use fake config
-        $controller = $this->getController();
-
-        // Perform common test code
-        $this->performActualRegisterTest($controller);
-    }*/
+        $config->set('site.registration.require_email_verification', $value);
+    }
 }

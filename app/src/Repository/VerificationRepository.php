@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
@@ -10,29 +12,49 @@
 
 namespace UserFrosting\Sprinkle\Account\Repository;
 
+use Illuminate\Database\Eloquent\Model;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 
 /**
  * Token repository class for new account verifications.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
- *
- * @see https://learn.userfrosting.com/users/user-accounts
  */
 class VerificationRepository extends TokenRepository
 {
     /**
-     * {@inheritdoc}
+     * Inject Verification model.
+     *
+     * @param VerificationInterface $modelIdentifier
      */
-    protected $modelIdentifier = 'verification';
+    public function __construct(
+        protected VerificationInterface $modelIdentifier,
+        protected UserInterface $userModel,
+    ) {
+    }
 
     /**
      * {@inheritdoc}
      */
-    protected function updateUser(UserInterface $user, $args)
+    protected function getModelIdentifier(): TokenAccessor
     {
-        $user->flag_verified = 1;
-        // TODO: generate user activity? or do this in controller?
+        return $this->modelIdentifier;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getUserModel(): UserInterface
+    {
+        return $this->userModel;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function updateUser(UserInterface $user, array $args): void
+    {
+        $user->flag_verified = true;
+        // TODO: generate user activity
         $user->save();
     }
 }

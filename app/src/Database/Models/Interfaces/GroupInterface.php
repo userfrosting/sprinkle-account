@@ -21,6 +21,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  *
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \UserFrosting\Sprinkle\Core\Database\Models\Model
  *
  * @property int                       $id
  * @property string                    $slug

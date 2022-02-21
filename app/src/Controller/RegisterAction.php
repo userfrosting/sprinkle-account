@@ -15,6 +15,7 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 use Illuminate\Database\Connection;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Views\Twig;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Fortress\RequestDataTransformer;
@@ -27,8 +28,12 @@ use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Event\User\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
+use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale;
+use UserFrosting\Sprinkle\Core\Mail\EmailRecipient;
+use UserFrosting\Sprinkle\Core\Mail\Mailer;
+use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Throttle\ThrottlerDelayException;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
@@ -82,7 +87,10 @@ class RegisterAction
         protected AlertStream $alert,
         protected Connection $db,
         protected Throttler $throttler,
-        protected EventDispatcher $eventDispatcher
+        protected EventDispatcher $eventDispatcher,
+        protected VerificationRepository $verificationRepository,
+        protected Twig $twig,
+        // protected Mailer $mailer,
     ) {
     }
 
@@ -167,13 +175,14 @@ class RegisterAction
             $user = $this->eventDispatcher->dispatch($event)->user;
 
             // Create activity record
+            // TODO
             // $this->ci->userActivityLogger->info("User {$user->user_name} registered for a new account.", [
             //     'type'    => 'sign_up',
             //     'user_id' => $user->id,
             // ]);
 
             // Send activation email
-            // $this->sendVerificationEmail($user);
+            $this->sendVerificationEmail($user);
 
             return $user;
         });
@@ -273,6 +282,7 @@ class RegisterAction
     {
         $validator = new ServerSideValidator($schema, $this->translator);
         if ($validator->validate($data) === false) {
+            // TODO
             // $e = new RegistrationException('Registration is disable');
             // $e->setDescription('REGISTRATION.DISABLED');
 
@@ -348,6 +358,7 @@ class RegisterAction
      *
      * @param UserInterface $user The user to send the email for
      */
+    // TODO : This could probably be separated in a different class to cut on dependencies.
     protected function sendVerificationEmail(UserInterface $user): void
     {
         if ($this->requireEmailVerification() === false) {
@@ -355,18 +366,19 @@ class RegisterAction
         }
 
         // Try to generate a new verification request
-        $verification = $this->ci->repoVerification->create($user, $this->ci->config['verification.timeout']);
+        $timeout = intval($this->config->get('verification.timeout'));
+        $verification = $this->verificationRepository->create($user, $timeout);
 
         // Create and send verification email
-        $message = new TwigMailMessage($this->ci->view, 'mail/verify-account.html.twig');
+        $message = new TwigMailMessage($this->twig, 'mail/verify-account.html.twig');
 
-        $message->from($this->ci->config['address_book.admin'])
+        $message->from($this->config->get('address_book.admin'))
                 ->addEmailRecipient(new EmailRecipient($user->email, $user->full_name))
                 ->addParams([
                     'user'  => $user,
                     'token' => $verification->getToken(),
                 ]);
 
-        $this->ci->mailer->send($message);
+        $this->mailer->send($message);
     }
 }

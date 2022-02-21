@@ -902,19 +902,21 @@ class AccountController extends SimpleController
 
         $ms->addMessageTranslated('success', 'PASSWORD.UPDATED');
 
+        // TODO : Token won't return the model. The user should bee sent to the login pag, not autologin.
+
         /** @var \UserFrosting\Sprinkle\Account\Authenticate\Authenticator $authenticator */
-        $authenticator = $this->ci->authenticator;
+        // $authenticator = $this->ci->authenticator;
 
         // Log out any existing user, and create a new session
-        if ($authenticator->check()) {
-            $authenticator->logout();
-        }
+        // if ($authenticator->check()) {
+        //     $authenticator->logout();
+        // }
 
         // Auto-login the user (without "remember me")
-        $user = $passwordReset->user;
-        $authenticator->login($user);
+        // $user = $passwordReset->user;
+        // $authenticator->login($user);
 
-        $ms->addMessageTranslated('success', 'WELCOME', $user->toArray());
+        // $ms->addMessageTranslated('success', 'WELCOME', $user->toArray());
 
         return $response->withJson([], 200);
     }

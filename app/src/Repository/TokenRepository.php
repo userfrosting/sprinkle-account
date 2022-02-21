@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
@@ -11,62 +13,35 @@
 namespace UserFrosting\Sprinkle\Account\Repository;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Core\Database\Models\Model;
-use UserFrosting\Sprinkle\Core\Util\ClassMapper;
 
 /**
  * An abstract class for interacting with a repository of time-sensitive user tokens.
- *
  * User tokens are used, for example, to perform password resets and new account email verifications.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
- *
- * @see https://learn.userfrosting.com/users/user-accounts
  */
 abstract class TokenRepository
 {
     /**
-     * @var ClassMapper
-     */
-    protected $classMapper;
-
-    /**
      * @var string
      */
-    protected $algorithm;
-
-    /**
-     * @var string
-     */
-    protected $modelIdentifier;
-
-    /**
-     * Create a new TokenRepository object.
-     *
-     * @param ClassMapper $classMapper Maps generic class identifiers to specific class names.
-     * @param string      $algorithm   The hashing algorithm to use when storing generated tokens.
-     */
-    public function __construct(ClassMapper $classMapper, $algorithm = 'sha512')
-    {
-        $this->classMapper = $classMapper;
-        $this->algorithm = $algorithm;
-    }
+    protected string $algorithm = 'sha512';
 
     /**
      * Cancels a specified token by removing it from the database.
      *
-     * @param int $token The token to remove.
+     * @param string $token The token to remove.
      *
-     * @return Model|false
+     * @return bool
      */
-    public function cancel($token)
+    public function cancel(string $token): bool
     {
         // Hash the password reset token for the stored version
         $hash = hash($this->algorithm, $token);
 
         // Find an incomplete reset request for the specified hash
-        $model = $this->classMapper->getClassMapping($this->modelIdentifier)::where('hash', $hash)
+        $model = $this->getModelIdentifier()
+            ->where('hash', $hash)
             ->where('completed', false)
             ->first();
 
@@ -76,24 +51,25 @@ abstract class TokenRepository
 
         $model->delete();
 
-        return $model;
+        return true;
     }
 
     /**
      * Completes a token-based process, invoking updateUser() in the child object to do the actual action.
      *
-     * @param int     $token      The token to complete.
+     * @param string  $token      The token to complete.
      * @param mixed[] $userParams An optional list of parameters to pass to updateUser().
      *
-     * @return Model|false
+     * @return bool True on success
      */
-    public function complete($token, $userParams = [])
+    public function complete(string $token, array $userParams = []): bool
     {
         // Hash the token for the stored version
         $hash = hash($this->algorithm, $token);
 
         // Find an unexpired, incomplete token for the specified hash
-        $model = $this->classMapper->getClassMapping($this->modelIdentifier)::where('hash', $hash)
+        $model = $this->getModelIdentifier()
+            ->where('hash', $hash)
             ->where('completed', false)
             ->where('expires_at', '>', Carbon::now())
             ->first();
@@ -103,7 +79,7 @@ abstract class TokenRepository
         }
 
         // Fetch user for this token
-        $user = $this->classMapper->getClassMapping('user')::find($model->user_id);
+        $user = $model->user;
 
         if (is_null($user)) {
             return false;
@@ -118,7 +94,7 @@ abstract class TokenRepository
 
         $model->save();
 
-        return $model;
+        return true;
     }
 
     /**
@@ -127,9 +103,9 @@ abstract class TokenRepository
      * @param UserInterface $user    The user object to associate with this token.
      * @param int           $timeout The time, in seconds, after which this token should expire.
      *
-     * @return Model The model (PasswordReset, Verification, etc) object that stores the token.
+     * @return TokenAccessor The model (PasswordReset, Verification, etc) object that stores the token.
      */
-    public function create(UserInterface $user, $timeout)
+    public function create(UserInterface $user, int $timeout): TokenAccessor
     {
         // Remove any previous tokens for this user
         $this->removeExisting($user);
@@ -137,10 +113,11 @@ abstract class TokenRepository
         // Compute expiration time
         $expiresAt = Carbon::now()->addSeconds($timeout);
 
-        $model = $this->classMapper->createInstance($this->modelIdentifier);
+        $model = $this->getModelIdentifier();
 
         // Generate a random token
-        $model->setToken($this->generateRandomToken());
+        $token = $this->generateRandomToken();
+        $model->setToken($token);
 
         // Hash the password reset token for the stored version
         $hash = hash($this->algorithm, $model->getToken());
@@ -162,46 +139,47 @@ abstract class TokenRepository
      * Determine if a specified user has an incomplete and unexpired token.
      *
      * @param UserInterface $user  The user object to look up.
-     * @param int           $token Optionally, try to match a specific token.
+     * @param string|null   $token Optionally, try to match a specific token.
      *
-     * @return Model|false
+     * @return bool
      */
-    public function exists(UserInterface $user, $token = null)
+    public function exists(UserInterface $user, ?string $token = null): bool
     {
-        $model = $this->classMapper->getClassMapping($this->modelIdentifier)::where('user_id', $user->id)
+        $model = $this->getModelIdentifier()
+            ->where('user_id', $user->id)
             ->where('completed', false)
             ->where('expires_at', '>', Carbon::now());
 
-        if ($token) {
+        if ($token !== null) {
             // get token hash
             $hash = hash($this->algorithm, $token);
             $model->where('hash', $hash);
         }
 
-        return $model->first() ?: false;
+        return $model->first() ? true : false;
     }
 
     /**
      * Delete all existing tokens from the database for a particular user.
      *
      * @param UserInterface $user
-     *
-     * @return int
      */
-    protected function removeExisting(UserInterface $user)
+    protected function removeExisting(UserInterface $user): void
     {
-        return $this->classMapper->getClassMapping($this->modelIdentifier)::where('user_id', $user->id)
-            ->delete();
+        $this->getModelIdentifier()
+             ->where('user_id', $user->id)
+             ->delete();
     }
 
     /**
      * Remove all expired tokens from the database.
      *
-     * @return bool|null
+     * @return bool
      */
-    public function removeExpired()
+    public function removeExpired(): bool
     {
-        return $this->classMapper->getClassMapping($this->modelIdentifier)::where('completed', false)
+        return $this->getModelIdentifier()
+            ->where('completed', false)
             ->where('expires_at', '<', Carbon::now())
             ->delete();
     }
@@ -211,18 +189,41 @@ abstract class TokenRepository
      *
      * This generates a token to use for verifying a new account, resetting a lost password, etc.
      *
-     * @param string $gen specify an existing token that, if we happen to generate the same value, we should regenerate on.
+     * @param string|null $gen specify an existing token that, if we happen to generate the same value, we should regenerate on.
      *
      * @return string
      */
-    protected function generateRandomToken($gen = null)
+    protected function generateRandomToken(string $gen = null): string
     {
         do {
-            $gen = md5(uniqid(mt_rand(), false));
-        } while ($this->classMapper->getClassMapping($this->modelIdentifier)::where('hash', hash($this->algorithm, $gen))
-            ->first());
+            $gen = md5(uniqid((string) mt_rand(), false));
+        } while ($this->getModelIdentifier()->where('hash', hash($this->algorithm, $gen))->first());
 
         return $gen;
+    }
+
+    /**
+     * Get the value of algorithm
+     *
+     * @return string
+     */
+    public function getAlgorithm(): string
+    {
+        return $this->algorithm;
+    }
+
+    /**
+     * Set the value of algorithm
+     *
+     * @param string $algorithm
+     *
+     * @return static
+     */
+    public function setAlgorithm(string $algorithm): static
+    {
+        $this->algorithm = $algorithm;
+
+        return $this;
     }
 
     /**
@@ -232,8 +233,20 @@ abstract class TokenRepository
      *
      * @param UserInterface $user the user object to modify.
      * @param mixed[]       $args
-     *
-     * @return mixed[] $args the list of parameters that were supplied to the call to `complete()`
      */
-    abstract protected function updateUser(UserInterface $user, $args);
+    abstract protected function updateUser(UserInterface $user, array $args): void;
+
+    /**
+     * Return the model to use for this repository.
+     *
+     * @return TokenAccessor
+     */
+    abstract protected function getModelIdentifier(): TokenAccessor;
+
+    /**
+     * Return the user Model to use.
+     *
+     * @return UserInterface
+     */
+    abstract protected function getUserModel(): UserInterface;
 }
