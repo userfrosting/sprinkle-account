@@ -90,7 +90,7 @@ class RegisterAction
         protected EventDispatcher $eventDispatcher,
         protected VerificationRepository $verificationRepository,
         protected Twig $twig,
-        // protected Mailer $mailer,
+        protected Mailer $mailer,
     ) {
     }
 

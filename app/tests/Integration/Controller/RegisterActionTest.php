@@ -15,6 +15,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
+use UserFrosting\Sprinkle\Core\Mail\Mailer;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
@@ -161,8 +162,15 @@ class RegisterActionTest extends AccountTestCase
         $this->assertSame('success', end($messages)['type']);
     }
 
-    /*public function testRegisterWithEmailVerification(): void
+    public function testRegisterWithEmailVerification(): void
     {
+        /** @var Mailer */
+        $mailer = Mockery::mock(Mailer::class)
+            ->makePartial()
+            ->shouldReceive('send')->once()
+            ->getMock();
+        $this->ci->set(Mailer::class, $mailer);
+
         $this->setMasterUser();
         $captcha = $this->getCaptcha();
         $this->forceLocaleConfig();
@@ -187,8 +195,21 @@ class RegisterActionTest extends AccountTestCase
 
         // Assert response status & body
         $this->assertResponseStatus(200, $response);
-
-    }*/
+        $this->assertJsonStructure([
+            'user_name',
+            'first_name',
+            'last_name',
+            'email',
+            'locale',
+            'flag_verified',
+            'flag_enabled',
+            'updated_at',
+            'created_at',
+            'id',
+            'full_name',
+            'avatar',
+        ], $response);
+    }
 
     public function testRegisterWithFailedThrottle(): void
     {
