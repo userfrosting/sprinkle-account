@@ -18,10 +18,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Log\UserActivityDatabaseHandler;
-use UserFrosting\Sprinkle\Account\Log\UserActivityProcessor;
 use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
-use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
 use UserFrosting\Sprinkle\Core\Log\MixedFormatter;
 
@@ -297,48 +294,6 @@ class ServicesProvider
             $repo = new PasswordResetRepository($classMapper, $config['password_reset.algorithm']);
 
             return $repo;
-        };
-
-        /*
-         * Repository for verification requests.
-         *
-         * @return \UserFrosting\Sprinkle\Account\Repository\VerificationRepository
-         */
-        $container['repoVerification'] = function ($c) {
-            $classMapper = $c->classMapper;
-            $config = $c->config;
-
-            $repo = new VerificationRepository($classMapper, $config['verification.algorithm']);
-
-            return $repo;
-        };
-
-        /*
-         * Logger for logging the current user's activities to the database.
-         *
-         * Extend this service to push additional handlers onto the 'userActivity' log stack.
-         *
-         * @return \Monolog\Logger
-         */
-        $container['userActivityLogger'] = function ($c) {
-            $classMapper = $c->classMapper;
-            $config = $c->config;
-            $session = $c->session;
-
-            $logger = new Logger('userActivity');
-
-            $handler = new UserActivityDatabaseHandler($classMapper, 'activity');
-
-            // Note that we get the user id from the session, not the currentUser service.
-            // This is because the currentUser service may not reflect the actual user during login/logout requests.
-            $currentUserIdKey = $config['session.keys.current_user_id'];
-            $userId = isset($session[$currentUserIdKey]) ? $session[$currentUserIdKey] : $config['reserved_user_ids.guest'];
-            $processor = new UserActivityProcessor($userId);
-
-            $logger->pushProcessor($processor);
-            $logger->pushHandler($handler);
-
-            return $logger;
         };
     }
 }

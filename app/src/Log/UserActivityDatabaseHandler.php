@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
@@ -10,27 +12,58 @@
 
 namespace UserFrosting\Sprinkle\Account\Log;
 
-use UserFrosting\Sprinkle\Core\Log\DatabaseHandler;
+use LogicException;
+use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Logger;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 
 /**
  * Monolog handler for storing user activities to the database.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @phpstan-import-type Level from \Monolog\Logger
+ * @phpstan-import-type LevelName from \Monolog\Logger
  */
-class UserActivityDatabaseHandler extends DatabaseHandler
+final class UserActivityDatabaseHandler extends AbstractProcessingHandler
 {
+    /**
+     * @var ActivityInterface
+     */
+    protected ActivityInterface $model;
+
+    /**
+     * Create a new DatabaseHandler object.
+     *
+     * @param ActivityInterface $model
+     * @param int|string        $level  The minimum logging level at which this handler will be triggered
+     * @param bool              $bubble Whether the messages that are handled can bubble up the stack or not
+     *
+     * @phpstan-param Level|LevelName|\Psr\Log\LogLevel::* $level
+     */
+    public function __construct(
+        ActivityInterface $model,
+        $level = Logger::DEBUG,
+        $bubble = true
+    ) {
+        $this->model = $model;
+        parent::__construct($level, $bubble);
+    }
+
     /**
      * {@inheritdoc}
      */
-    protected function write(array $record)
+    protected function write(array $record): void
     {
-        $log = $this->classMapper->createInstance($this->modelName, $record['extra']);
-        $log->save();
-
-        if (isset($record['extra']['user_id'])) {
-            $user = $this->classMapper->getClassMapping('user')::find($record['extra']['user_id']);
-            $user->lastActivity()->associate($log);
-            $user->save();
+        if (!isset($record['context']['user_id'])) {
+            throw new LogicException('UserActivityLogger requires a `user_id` to be set in the context.');
         }
+
+        $log = new $this->model([
+            'ip_address'  => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
+            'user_id'     => $record['context']['user_id'],
+            'type'        => $record['context']['type'] ?? 'undefined',
+            'occurred_at' => $record['datetime'],
+            'description' => $record['message'],
+        ]);
+        $log->save();
     }
 }

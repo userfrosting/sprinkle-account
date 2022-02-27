@@ -28,6 +28,7 @@ use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Event\User\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale;
@@ -91,6 +92,7 @@ class RegisterAction
         protected VerificationRepository $verificationRepository,
         protected Twig $twig,
         protected Mailer $mailer,
+        protected UserActivityLogger $userActivityLogger,
     ) {
     }
 
@@ -175,11 +177,10 @@ class RegisterAction
             $user = $this->eventDispatcher->dispatch($event)->user;
 
             // Create activity record
-            // TODO
-            // $this->ci->userActivityLogger->info("User {$user->user_name} registered for a new account.", [
-            //     'type'    => 'sign_up',
-            //     'user_id' => $user->id,
-            // ]);
+            $this->userActivityLogger->info("User {$user->user_name} registered for a new account.", [
+                'type'    => 'sign_up',
+                'user_id' => $user->id,
+            ]);
 
             // Send activation email
             $this->sendVerificationEmail($user);

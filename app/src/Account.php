@@ -40,6 +40,7 @@ use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ErrorHandlerService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ModelsService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\UserActivityLoggerService;
 use UserFrosting\Sprinkle\Core\Core;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\SeedRecipe;
@@ -108,6 +109,7 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
             AuthService::class,
             ModelsService::class,
             ErrorHandlerService::class,
+            UserActivityLoggerService::class,
         ];
     }
 
