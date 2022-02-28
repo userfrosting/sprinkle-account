@@ -31,6 +31,7 @@ use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
+use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale;
 use UserFrosting\Sprinkle\Core\Mail\EmailRecipient;
 use UserFrosting\Sprinkle\Core\Mail\Mailer;
@@ -144,11 +145,11 @@ class RegisterAction
         // Inject default locale if necessary.
         $data = $this->validateLocale($data);
 
-        // Validate request data
-        $this->validateData($schema, $data);
-
         // Check captcha
         $this->checkCaptcha($data);
+
+        // Validate request data
+        $this->validateData($schema, $data);
 
         // Set flags
         $data['flag_verified'] = !$this->requireEmailVerification();
@@ -282,21 +283,18 @@ class RegisterAction
     protected function validateData(RequestSchemaInterface $schema, array $data): void
     {
         $validator = new ServerSideValidator($schema, $this->translator);
-        if ($validator->validate($data) === false) {
-            // TODO
-            // $e = new RegistrationException('Registration is disable');
-            // $e->setDescription('REGISTRATION.DISABLED');
+        if ($validator->validate($data) === false && is_array($validator->errors())) {
+            $e = new ValidationException();
+            $e->addErrors($validator->errors());
 
-            // throw $e;
-            // $ms->addValidationErrors($validator); TODO Need a validation exception that replicate `addValidationErrors`
-            // 400 error ?
+            throw $e;
         }
     }
 
     /**
      * Check captcha, if required by config.
      *
-     * @param string[] $data
+     * @param mixed[] $data
      *
      * @throws RegistrationException If captcha fails.
      */
@@ -305,7 +303,7 @@ class RegisterAction
         if ($this->config->get('site.registration.captcha') === true) {
             $key = strval($this->config->get('session.keys.captcha'));
             $captcha = new Captcha($this->session, $key);
-            if (!isset($data['captcha']) || !$captcha->verifyCode($data['captcha'])) {
+            if (!isset($data['captcha']) || !$captcha->verifyCode(strval($data['captcha']))) {
                 $e = new RegistrationException('Failed Captcha');
                 $e->setDescription('CAPTCHA.FAIL'); // 400 error ?
 
@@ -373,6 +371,7 @@ class RegisterAction
         // Create and send verification email
         $message = new TwigMailMessage($this->twig, 'mail/verify-account.html.twig');
 
+        // @phpstan-ignore-next-line Config limitation
         $message->from($this->config->get('address_book.admin'))
                 ->addEmailRecipient(new EmailRecipient($user->email, $user->full_name))
                 ->addParams([

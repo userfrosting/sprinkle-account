@@ -162,6 +162,39 @@ class RegisterActionTest extends AccountTestCase
         $this->assertSame('success', end($messages)['type']);
     }
 
+    public function testRegisterWithFailedValidation(): void
+    {
+        $this->setMasterUser();
+        $captcha = $this->getCaptcha();
+        $this->forceLocaleConfig();
+        $this->setRequireEmailVerification(false);
+
+        // Set POST data
+        $data = [
+            'spiderbro'     => 'http://',
+            'captcha'       => $captcha->getCaptcha(),
+            'user_name'     => 'RegisteredUser',
+            'first_name'    => 'Testing',
+            'last_name'     => 'Register',
+            'email'         => 'foo', // <-- Bad Email on purpose
+            'password'      => 'FooBarFooBar123',
+            'passwordc'     => 'FooBarFooBar123',
+            'locale'        => '',
+        ];
+
+        // Create request with method and url and fetch response
+        $request = $this->createJsonRequest('POST', '/account/register', $data);
+        $response = $this->handleRequest($request);
+
+        // Assert response status & body
+        $this->assertJsonResponse([
+            'title'       => 'Validation error',
+            'description' => 'Invalid email address.',
+            'status'      => 400,
+        ], $response);
+        $this->assertResponseStatus(400, $response);
+    }
+
     public function testRegisterWithEmailVerification(): void
     {
         /** @var Mailer */
