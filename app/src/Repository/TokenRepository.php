@@ -203,7 +203,7 @@ abstract class TokenRepository
     }
 
     /**
-     * Get the value of algorithm
+     * Get the value of algorithm.
      *
      * @return string
      */
@@ -213,7 +213,7 @@ abstract class TokenRepository
     }
 
     /**
-     * Set the value of algorithm
+     * Set the value of algorithm.
      *
      * @param string $algorithm
      *
