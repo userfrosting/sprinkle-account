@@ -174,9 +174,9 @@ abstract class TokenRepository
     /**
      * Remove all expired tokens from the database.
      *
-     * @return bool
+     * @return int
      */
-    public function removeExpired(): bool
+    public function removeExpired(): int
     {
         return $this->getModelIdentifier()
             ->where('completed', false)
@@ -242,11 +242,4 @@ abstract class TokenRepository
      * @return TokenAccessor
      */
     abstract protected function getModelIdentifier(): TokenAccessor;
-
-    /**
-     * Return the user Model to use.
-     *
-     * @return UserInterface
-     */
-    abstract protected function getUserModel(): UserInterface;
 }

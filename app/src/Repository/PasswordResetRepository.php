@@ -15,25 +15,29 @@ namespace UserFrosting\Sprinkle\Account\Repository;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Facades\Password;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 
 /**
  * Token repository class for password reset requests.
  */
-class PasswordResetRepository extends TokenRepository
+final class PasswordResetRepository extends TokenRepository
 {
     /**
-     * Inject Verification model.
+     * Inject Dependencies.
      *
      * @param PasswordResetInterface $modelIdentifier
+     * @param UserActivityLogger     $userActivityLogger
      */
-    public function __construct(protected PasswordResetInterface $modelIdentifier)
-    {
+    public function __construct(
+        protected PasswordResetInterface $modelIdentifier,
+        protected UserActivityLogger $userActivityLogger,
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getModelIdentifier()
+    protected function getModelIdentifier(): TokenAccessor
     {
         return $this->modelIdentifier;
     }
@@ -43,8 +47,14 @@ class PasswordResetRepository extends TokenRepository
      */
     protected function updateUser(UserInterface $user, array $args): void
     {
-        $user->password = Password::hash($args['password']);
-        // TODO: generate user activity? or do this in controller?
+        $user->setPasswordAttribute($args['password']);
+
+        // Create activity record
+        $this->userActivityLogger->info("User {$user->user_name} reset it's password.", [
+            'type'    => UserActivityLogger::TYPE_PASSWORD_RESET,
+            'user_id' => $user->id,
+        ]);
+
         $user->save();
     }
 }

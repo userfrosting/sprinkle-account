@@ -19,7 +19,7 @@ use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
 /**
- * Tests VerificationRepository.
+ * Tests VerificationRepository. Also test abstract TokenRepository.
  */
 class VerificationRepositoryTest extends AccountTestCase
 {
@@ -68,6 +68,22 @@ class VerificationRepositoryTest extends AccountTestCase
         $this->assertFalse($repo->exists($user));
     }
 
+    public function testCompleteWithUserGone(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+
+        /** @var VerificationRepository */
+        $repo = $this->ci->get(VerificationRepository::class);
+
+        $verification = $repo->create($user, 3600);
+
+        // Hack user is deleted in case of
+        $user->delete();
+
+        $this->assertFalse($repo->complete($verification->getToken()));
+    }
+
     public function testCancel(): void
     {
         /** @var User */
@@ -80,5 +96,36 @@ class VerificationRepositoryTest extends AccountTestCase
         $this->assertTrue($repo->exists($user));
         $this->assertTrue($repo->cancel($verification->getToken()));
         $this->assertFalse($repo->exists($user));
+    }
+
+    public function testBadToken(): void
+    {
+        /** @var VerificationRepository */
+        $repo = $this->ci->get(VerificationRepository::class);
+
+        $this->assertFalse($repo->cancel('foo'));
+        $this->assertFalse($repo->complete('foo'));
+    }
+
+    public function testExpired(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+
+        /** @var VerificationRepository */
+        $repo = $this->ci->get(VerificationRepository::class);
+
+        $repo->create($user, -3600);
+        $this->assertSame(1, Verification::count());
+        $this->assertSame(1, $repo->removeExpired());
+        $this->assertSame(0, Verification::count());
+    }
+
+    public function testGetSetAlgorithm(): void
+    {
+        /** @var VerificationRepository */
+        $repo = $this->ci->get(VerificationRepository::class);
+
+        $this->assertSame('foo', $repo->setAlgorithm('foo')->getAlgorithm());
     }
 }

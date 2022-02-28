@@ -179,7 +179,7 @@ class RegisterAction
 
             // Create activity record
             $this->userActivityLogger->info("User {$user->user_name} registered for a new account.", [
-                'type'    => 'sign_up',
+                'type'    => UserActivityLogger::TYPE_REGISTER,
                 'user_id' => $user->id,
             ]);
 

@@ -17,4 +17,7 @@ use Monolog\Logger;
  */
 final class UserActivityLogger extends Logger
 {
+    public const TYPE_REGISTER = 'sign_up';
+    public const TYPE_VERIFIED = 'verified';
+    public const TYPE_PASSWORD_RESET = 'password_reset';
 }
