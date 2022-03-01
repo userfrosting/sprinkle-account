@@ -53,6 +53,10 @@ return [
                 'TITLE'       => 'Invalid Credentials',
                 'DESCRIPTION' => 'User not found or password is invalid.',
             ],
+            'LOGGEDIN' => [
+                'TITLE'       => 'Already Logged-in',
+                'DESCRIPTION' => "Can't access this resource, as you're already logged-in",
+            ],
         ],
 
         'EMAIL_UPDATED' => 'Account email updated',
