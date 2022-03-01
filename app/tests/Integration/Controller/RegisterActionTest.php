@@ -13,6 +13,7 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
+use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Mail\Mailer;
@@ -36,6 +37,27 @@ class RegisterActionTest extends AccountTestCase
     {
         parent::setUp();
         $this->refreshDatabase();
+    }
+
+    public function testWithLoggedInUser(): void
+    {
+        // Mock user is logged in
+        $auth = Mockery::mock(Authenticator::class)
+            ->shouldReceive('check')->once()->andReturn(true)
+            ->getMock();
+        $this->ci->set(Authenticator::class, $auth);
+
+        // Create request with method and url and fetch response
+        $request = $this->createJsonRequest('POST', '/account/register');
+        $response = $this->handleRequest($request);
+
+        // Assert response status & body
+        $this->assertJsonResponse([
+            'title'       => 'Already Logged-in',
+            'description' => "Can't access this resource, as you're already logged-in",
+            'status'      => 403,
+        ], $response);
+        $this->assertResponseStatus(403, $response);
     }
 
     public function testWithDisabledRegistration(): void

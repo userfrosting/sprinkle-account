@@ -285,6 +285,7 @@ class AccountController extends SimpleController
      * @param Response $response
      * @param array    $args
      */
+    // TODO : Move to Theme repo
     public function getModalAccountTos(Request $request, Response $response, $args)
     {
         return $this->ci->view->render($response, 'modals/tos.html.twig');
@@ -327,6 +328,7 @@ class AccountController extends SimpleController
      * @param Response $response
      * @param array    $args
      */
+    // TODO : Move to Theme repo ?
     public function pageForgotPassword(Request $request, Response $response, $args)
     {
         // Load validation rules
@@ -360,6 +362,7 @@ class AccountController extends SimpleController
      *
      * @throws NotFoundException If site registration is disabled
      */
+    // TODO : Move to Theme repo ?
     public function pageRegister(Request $request, Response $response, $args)
     {
         /** @var \UserFrosting\Support\Repository\Repository $config */
@@ -431,6 +434,7 @@ class AccountController extends SimpleController
      * @param Response $response
      * @param array    $args
      */
+    // TODO : Move to Theme repo ?
     public function pageResendVerification(Request $request, Response $response, $args)
     {
         // Load validation rules
@@ -460,6 +464,7 @@ class AccountController extends SimpleController
      * @param Response $response
      * @param array    $args
      */
+    // TODO : Move to Theme repo ?
     public function pageResetPassword(Request $request, Response $response, $args)
     {
         /** @var \UserFrosting\Support\Repository\Repository $config */
@@ -501,6 +506,7 @@ class AccountController extends SimpleController
      * @param Response $response
      * @param array    $args
      */
+    // TODO : Move to Theme repo ?
     public function pageSetPassword(Request $request, Response $response, $args)
     {
         /** @var \UserFrosting\Support\Repository\Repository $config */
@@ -545,6 +551,7 @@ class AccountController extends SimpleController
      *
      * @throws ForbiddenException If user is not authorized to access page
      */
+    // TODO : Move to Theme repo ?
     public function pageSettings(Request $request, Response $response, $args)
     {
         /** @var \UserFrosting\Support\Repository\Repository $config */
@@ -613,6 +620,7 @@ class AccountController extends SimpleController
      * @param Response $response
      * @param array    $args
      */
+    // TODO : Move to Theme repo ?
     public function pageSignIn(Request $request, Response $response, $args)
     {
         /** @var \UserFrosting\Support\Repository\Repository $config */
