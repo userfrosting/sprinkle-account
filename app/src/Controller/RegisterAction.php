@@ -57,8 +57,7 @@ use UserFrosting\Support\Repository\Repository as Config;
  * This route is "public access".
  * Returns the User Object for the user record that was created.
  *
- * AuthGuard: false
- * GuestGuard: true
+ * Middleware: GuestGuard
  * Route: /account/register
  * Route Name: account.register
  * Request type: POST
@@ -71,13 +70,20 @@ class RegisterAction
     /**
      * Inject dependencies.
      *
-     * @param Config         $config
-     * @param UserInterface  $userModel
-     * @param SiteLocale     $locale
-     * @param Translator     $translator
-     * @param Session        $session
-     * @param UserValidation $userValidation
-     * @param AlertStream    $alert
+     * @param Config                 $config
+     * @param UserInterface          $userModel
+     * @param SiteLocale             $locale
+     * @param Translator             $translator
+     * @param Session                $session
+     * @param UserValidation         $userValidation
+     * @param AlertStream            $alert
+     * @param Connection             $db
+     * @param Throttler              $throttler
+     * @param EventDispatcher        $eventDispatcher
+     * @param VerificationRepository $verificationRepository
+     * @param Twig                   $twig
+     * @param Mailer                 $mailer
+     * @param UserActivityLogger     $userActivityLogger
      */
     public function __construct(
         protected Config $config,

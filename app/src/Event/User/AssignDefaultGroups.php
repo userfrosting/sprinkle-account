@@ -27,6 +27,7 @@ class AssignDefaultGroups
     public function __invoke(UserCreatedEvent $event): void
     {
         // TODO : Default group should be defined in the DB instead of config.
+        // TODO : We need to accommodate "no group" too.
         $defaultGroupSlug = $this->config->get('site.registration.user_defaults.group');
         $defaultGroup = $this->groupModel->where('slug', $defaultGroupSlug)->first();
 

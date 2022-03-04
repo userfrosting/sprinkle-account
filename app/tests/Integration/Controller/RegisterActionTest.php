@@ -281,8 +281,6 @@ class RegisterActionTest extends AccountTestCase
         $this->assertResponseStatus(429, $response);
     }
 
-    // TODO : Test with logedin user
-
     /**
      * Create a "master user" and set it's id as the master user.
      */
