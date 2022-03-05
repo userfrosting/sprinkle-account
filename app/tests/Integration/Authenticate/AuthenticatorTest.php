@@ -388,6 +388,15 @@ class AuthenticatorTest extends AccountTestCase
         $session->destroy();
     }
 
+    public function testLoginWithNoOneLoggedIn(): void
+    {
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+        $this->assertTrue($authenticator->guest());
+        $authenticator->logout();
+        $this->assertTrue($authenticator->guest());
+    }
+
     public function testLoginSessionUserForBadId(): void
     {
         /** @var User */

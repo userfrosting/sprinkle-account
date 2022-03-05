@@ -10,11 +10,16 @@ declare(strict_types=1);
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Event\User;
+namespace UserFrosting\Sprinkle\Account\Event;
 
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 
-class UserCreatedEvent
+/**
+ * This event is dispatched when the user is validated, before login or session is restore.
+ * A listener can throw an exception to interrupt the login, session or rememberme restoration process.
+ * User can also be mutated by the listener.
+ */
+class UserValidatedEvent
 {
     /**
      * @param UserInterface $user

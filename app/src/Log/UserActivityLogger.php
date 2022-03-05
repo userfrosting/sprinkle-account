@@ -20,4 +20,7 @@ final class UserActivityLogger extends Logger
     public const TYPE_REGISTER = 'sign_up';
     public const TYPE_VERIFIED = 'verified';
     public const TYPE_PASSWORD_RESET = 'password_reset';
+    public const TYPE_LOGGED_IN = 'sign_in';
+    public const TYPE_LOGGED_OUT = 'sign_out';
+    public const TYPE_PASSWORD_UPGRADED = 'password_upgraded';
 }

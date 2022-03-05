@@ -35,7 +35,6 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
-use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Support\Repository\Repository as Config;
 
 /**
@@ -393,62 +392,6 @@ class User extends Model implements UserInterface
 
         return $this->belongsTo($relation);
     }
-
-    /**
-     * Performs tasks to be done after this user has been successfully authenticated.
-     *
-     * By default, adds a new sign-in activity and updates any legacy hash.
-     *
-     * @param mixed[] $params Optional array of parameters used for this event handler.
-     */
-    // TODO : Transition to our Event dispatcher to handle this
-    /*public function onLogin($params = [])
-    {
-        // Add a sign in activity (time is automatically set by database)
-        static::$ci->userActivityLogger->info("User {$this->user_name} signed in.", [
-            'type' => 'sign_in',
-        ]);
-
-        // Update password if we had encountered an outdated hash
-        $passwordType = Password::getHashType($this->password);
-
-        if ($passwordType != 'modern') {
-            if (!isset($params['password'])) {
-                Debug::notice('Notice: Unhashed password must be supplied to update to modern password hashing.');
-            } else {
-                // Hash the user's password and update
-                $passwordHash = Password::hash($params['password']);
-                if ($passwordHash === null) {
-                    Debug::notice('Notice: outdated password hash could not be updated because the new hashing algorithm is not supported.');
-                } else {
-                    $this->password = $passwordHash;
-                    Debug::notice('Notice: outdated password hash has been automatically updated to modern hashing.');
-                }
-            }
-        }
-
-        // Save changes
-        $this->save();
-
-        return $this;
-    }*/
-
-    /**
-     * Performs tasks to be done after this user has been logged out.
-     *
-     * By default, adds a new sign-out activity.
-     *
-     * @param mixed[] $params Optional array of parameters used for this event handler.
-     */
-    // TODO : Transition to our Event dispatcher to handle this
-    /*public function onLogout($params = [])
-    {
-        static::$ci->userActivityLogger->info("User {$this->user_name} signed out.", [
-            'type' => 'sign_out',
-        ]);
-
-        return $this;
-    }*/
 
     /**
      * Get all password reset requests for this user.

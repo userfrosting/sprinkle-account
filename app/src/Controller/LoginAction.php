@@ -22,6 +22,7 @@ use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
 use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\I18n\Translator;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
+use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterLoginEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
 use UserFrosting\Sprinkle\Account\Exceptions\InvalidCredentialsException;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
@@ -76,8 +77,17 @@ class LoginAction
      */
     public function __invoke(Request $request, Response $response): Response
     {
-        $payload = $this->handle($request);
-        $payload = json_encode($payload ?? [], JSON_THROW_ON_ERROR);
+        $this->handle($request);
+
+        // Get redirect target and add Header
+        // TODO
+        // Set redirect, if relevant
+        // $redirectOnLogin = $this->ci->get('redirect.onLogin');
+        // UserRedirectedAfterLoginEvent
+        // return $redirectOnLogin($request, $response, $args);
+
+        // Write empty response
+        $payload = json_encode([], JSON_THROW_ON_ERROR);
         $response->getBody()->write($payload);
 
         return $response->withHeader('Content-Type', 'application/json');
@@ -87,10 +97,8 @@ class LoginAction
      * Handle the request and return the payload.
      *
      * @param Request $request
-     *
-     * @return mixed[]|null
      */
-    protected function handle(Request $request): ?array
+    protected function handle(Request $request): void
     {
         // Get POST parameters
         $params = (array) $request->getParsedBody();
@@ -140,18 +148,6 @@ class LoginAction
 
         // Add success message
         $this->alert->addMessageTranslated('success', 'WELCOME', $currentUser->toArray());
-
-        // TODO
-        // Add login event
-        // $this->eventDispatcher
-
-        // TODO
-        // Set redirect, if relevant
-        // $redirectOnLogin = $this->ci->get('redirect.onLogin');
-
-        // return $redirectOnLogin($request, $response, $args);
-
-        return null;
     }
 
     /**

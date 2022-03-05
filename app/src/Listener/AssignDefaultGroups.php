@@ -10,10 +10,11 @@ declare(strict_types=1);
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Event\User;
+namespace UserFrosting\Sprinkle\Account\Listener;
 
 use Exception;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
+use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
 use UserFrosting\Support\Repository\Repository as Config;
 
 class AssignDefaultGroups

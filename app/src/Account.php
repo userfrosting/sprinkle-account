@@ -32,10 +32,16 @@ use UserFrosting\Sprinkle\Account\Database\Migrations\v500\UpdateUsersTable as V
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultGroups;
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultPermissions;
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultRoles;
-use UserFrosting\Sprinkle\Account\Event\User\AssignDefaultGroups;
-use UserFrosting\Sprinkle\Account\Event\User\AssignDefaultRoles;
-use UserFrosting\Sprinkle\Account\Event\User\UserCreatedEvent;
+use UserFrosting\Sprinkle\Account\Event\UserAuthenticatedEvent;
+use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
+use UserFrosting\Sprinkle\Account\Event\UserLoggedInEvent;
+use UserFrosting\Sprinkle\Account\Event\UserLoggedOutEvent;
 use UserFrosting\Sprinkle\Account\I18n\LocaleServicesProvider;
+use UserFrosting\Sprinkle\Account\Listener\AssignDefaultGroups;
+use UserFrosting\Sprinkle\Account\Listener\AssignDefaultRoles;
+use UserFrosting\Sprinkle\Account\Listener\UpgradePassword;
+use UserFrosting\Sprinkle\Account\Listener\UserLogoutActivity;
+use UserFrosting\Sprinkle\Account\Listener\UserSignInActivity;
 use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ErrorHandlerService;
@@ -172,6 +178,15 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
                 AssignDefaultRoles::class,
                 AssignDefaultGroups::class,
             ],
+            UserLoggedInEvent::class => [
+                UserSignInActivity::class,
+            ],
+            UserLoggedOutEvent::class => [
+                UserLogoutActivity::class,
+            ],
+            UserAuthenticatedEvent::class => [
+                UpgradePassword::class,
+            ]
         ];
     }
 }

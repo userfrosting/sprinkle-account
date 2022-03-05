@@ -16,9 +16,14 @@ use Birke\Rememberme\Authenticator as RememberMe;
 use Birke\Rememberme\Storage\StorageInterface;
 use Birke\Rememberme\Triplet as RememberMeTriplet;
 use Illuminate\Cache\Repository as Cache;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use UserFrosting\Session\Session;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
+use UserFrosting\Sprinkle\Account\Event\UserAuthenticatedEvent;
+use UserFrosting\Sprinkle\Account\Event\UserLoggedInEvent;
+use UserFrosting\Sprinkle\Account\Event\UserLoggedOutEvent;
+use UserFrosting\Sprinkle\Account\Event\UserValidatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountDisabledException;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountInvalidException;
@@ -50,12 +55,13 @@ class Authenticator
     /**
      * Create a new Authenticator object.
      *
-     * @param Session          $session           The session wrapper object that will store the user's id.
-     * @param Config           $config            Config object that contains authentication settings.
-     * @param Cache            $cache             Cache service instance
-     * @param StorageInterface $rememberMeStorage
-     * @param RememberMe       $rememberMe
-     * @param UserInterface    $userModel         The User Model to use to fetch User
+     * @param Session                             $session
+     * @param Config                              $config
+     * @param Cache                               $cache
+     * @param StorageInterface                    $rememberMeStorage
+     * @param RememberMe                          $rememberMe
+     * @param UserInterface                       $userModel
+     * @param \UserFrosting\Event\EventDispatcher $eventDispatcher
      */
     public function __construct(
         protected Session $session,
@@ -64,6 +70,7 @@ class Authenticator
         protected StorageInterface $rememberMeStorage,
         protected RememberMe $rememberMe,
         protected UserInterface $userModel,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
         $this->setupCookie();
     }
@@ -94,7 +101,7 @@ class Authenticator
         }
 
         // Validate the user. Will throw exception on error.
-        $this->validateUserAccount($user);
+        $user = $this->validateUserAccount($user);
 
         // Here is my password.  May I please assume the identify of this user now?
         // We know the password is at fault here (as opposed to the identity),
@@ -103,9 +110,11 @@ class Authenticator
             throw new InvalidCredentialsException();
         }
 
-        // TODO : Dispatch event so this can be extended.
+        // Dispatch event. Listeners can throw exception to stop authentication
+        $event = new UserAuthenticatedEvent($user, $identityColumn, $identityValue, $password);
+        $event = $this->eventDispatcher->dispatch($event);
 
-        return $user;
+        return $event->user;
     }
 
     /**
@@ -139,9 +148,6 @@ class Authenticator
      *
      * @param UserInterface $user       The user to log in.
      * @param bool          $rememberMe Set to true to make this a "persistent session", i.e. one that will re-login even after the session expires.
-     *
-     * @todo Figure out a way to update the currentUser service to reflect the logged-in user *immediately* in the service provider.
-     * As it stands, the currentUser service will still reflect a "guest user" for the remainder of the request.
      */
     public function login(UserInterface $user, bool $rememberMe = false): void
     {
@@ -168,8 +174,8 @@ class Authenticator
         // Set auth mode
         $this->viaRemember = false;
 
-        // User login actions
-        // $user->onLogin(); // TODO : use dispatchers
+        // Dispatch login event. Listeners can throw exception to interrupt login.
+        $this->eventDispatcher->dispatch(new UserLoggedInEvent($user));
     }
 
     /**
@@ -179,33 +185,30 @@ class Authenticator
      * This can optionally remove persistent sessions across all browsers/devices, since there can be a "RememberMe" cookie
      * and corresponding database entries in multiple browsers/devices.  See http://jaspan.com/improved_persistent_login_cookie_best_practice.
      *
-     * @param bool $complete If set to true, will ensure that the user is logged out from *all* browsers on all devices.
+     * @param bool               $complete If set to true, will ensure that the user is logged out from *all* browsers on all devices.
+     * @param UserInterface|null $user     The user information. Used to avoid infinite loop when logout is called from user().
      */
-    public function logout(bool $complete = false): void
+    public function logout(bool $complete = false, ?UserInterface $user = null): void
     {
-        $key = strval($this->config->get('session.keys.current_user_id'));
-        $currentUserId = $this->session->get($key);
+        $currentUser = $user ?? $this->user();
+
+        // No user, nothing to logout
+        if ($currentUser === null) {
+            return;
+        }
 
         // This removes all of the user's persistent logins from the database
-        if ($complete) {
-            $this->rememberMeStorage->cleanAllTriplets($currentUserId);
+        if ($complete === true) {
+            $this->rememberMeStorage->cleanAllTriplets($currentUser->id);
         }
 
         // Clear the rememberMe cookie
         $this->rememberMe->clearCookie();
 
         // User logout actions
-        if (is_int($currentUserId)) {
+        $currentUser->forgetCache();
 
-            /** @var UserInterface|null */
-            $currentUser = $this->userModel::find($currentUserId);
-            if ($currentUser !== null) {
-                // $currentUser->onLogout(); // TODO : use dispatchers
-                $currentUser->forgetCache();
-            }
-        }
-
-        // Remove cache user
+        // Remove cached user
         $this->user = null;
 
         // Since regenerateId deletes the old session, we'll do the same in cache
@@ -216,6 +219,9 @@ class Authenticator
         // Completely destroy the session and restart the session.
         $this->session->destroy();
         $this->session->start();
+
+        // Dispatch logged out event.
+        $this->eventDispatcher->dispatch(new UserLoggedOutEvent($currentUser));
     }
 
     /**
@@ -326,7 +332,7 @@ class Authenticator
             return null;
         }
 
-        $this->validateUserAccount($user);
+        $user = $this->validateUserAccount($user);
 
         return $user;
     }
@@ -349,15 +355,6 @@ class Authenticator
             return null;
         }
 
-        // If a user_id was found in the session, check any rememberMe cookie
-        // that was submitted. If they submitted an expired rememberMe cookie,
-        // then we need to log them out.
-        if (!$this->validateRememberMeCookie()) {
-            $this->logout();
-
-            throw new AuthExpiredException();
-        }
-
         // Find user model using cached data if available and validate it.
         $user = $this->userModel::findCached($userId);
 
@@ -367,7 +364,16 @@ class Authenticator
             throw new AccountNotFoundException();
         }
 
-        $this->validateUserAccount($user);
+        // If a user_id was found in the session, check any rememberMe cookie
+        // that was submitted. If they submitted an expired rememberMe cookie,
+        // then we need to log them out.
+        if (!$this->validateRememberMeCookie()) {
+            $this->logout(user: $user);
+
+            throw new AuthExpiredException();
+        }
+
+        $user = $this->validateUserAccount($user);
 
         return $user;
     }
@@ -395,7 +401,7 @@ class Authenticator
      * @throws AccountDisabledException
      * @throws AccountNotVerifiedException
      */
-    protected function validateUserAccount(UserInterface $user): void
+    protected function validateUserAccount(UserInterface $user): UserInterface
     {
         // Check that the user has a password set (so, rule out newly created accounts without a password)
         if ($user->password === '') {
@@ -412,7 +418,10 @@ class Authenticator
             throw new AccountNotVerifiedException();
         }
 
-        // TODO : Dispatch event so this can be extended.
+        // Dispatch event. Listeners can throw exception to stop validation
+        $event = $this->eventDispatcher->dispatch(new UserValidatedEvent($user));
+
+        return $event->user;
     }
 
     /**
