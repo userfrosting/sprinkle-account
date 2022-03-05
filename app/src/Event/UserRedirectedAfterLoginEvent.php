@@ -29,7 +29,7 @@ class UserRedirectedAfterLoginEvent implements StoppableEventInterface
     /**
      * {@inheritDoc}
      */
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->stopped;
     }

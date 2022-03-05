@@ -36,7 +36,7 @@ class UserAuthenticatedEvent
     }
 
     /**
-     * Get the value of identityColumn
+     * Get the value of identityColumn.
      */
     public function getIdentityColumn(): string
     {
@@ -44,7 +44,7 @@ class UserAuthenticatedEvent
     }
 
     /**
-     * Get the value of identityValue
+     * Get the value of identityValue.
      */
     public function getIdentityValue(): string|int
     {
@@ -52,7 +52,7 @@ class UserAuthenticatedEvent
     }
 
     /**
-     * Get the value of password
+     * Get the value of password.
      */
     public function getPassword(): string
     {

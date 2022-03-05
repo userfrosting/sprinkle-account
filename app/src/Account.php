@@ -186,7 +186,7 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
             ],
             UserAuthenticatedEvent::class => [
                 UpgradePassword::class,
-            ]
+            ],
         ];
     }
 }
