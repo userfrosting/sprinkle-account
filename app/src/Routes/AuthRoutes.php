@@ -13,8 +13,10 @@ namespace UserFrosting\Sprinkle\Account\Routes;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use UserFrosting\Routes\RouteDefinitionInterface;
+use UserFrosting\Sprinkle\Account\Authenticate\AuthGuard;
 use UserFrosting\Sprinkle\Account\Authenticate\GuestGuard;
 use UserFrosting\Sprinkle\Account\Controller\LoginAction;
+use UserFrosting\Sprinkle\Account\Controller\LogoutAction;
 use UserFrosting\Sprinkle\Account\Controller\RegisterAction;
 use UserFrosting\Sprinkle\Core\Util\NoCache;
 
@@ -26,5 +28,9 @@ class AuthRoutes implements RouteDefinitionInterface
             $group->post('/login', LoginAction::class)->setName('account.login');
             $group->post('/register', RegisterAction::class)->setName('account.register');
         })->add(GuestGuard::class); //->add(new NoCache()); TODO
+
+        $app->group('/account', function (RouteCollectorProxy $group) {
+            $group->get('/logout', LogoutAction::class)->setName('account.logout');
+        })->add(AuthGuard::class); //->add(new NoCache()); TODO
     }
 }
