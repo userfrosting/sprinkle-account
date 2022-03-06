@@ -220,18 +220,6 @@ class ServicesProvider
         };
 
         /*
-         * Loads the User object for the currently logged-in user.
-         *
-         * @return \UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface
-         */
-        $container['currentUser'] = function ($c) {
-            $authenticator = $c->authenticator;
-            $currentUser = $authenticator->user();
-
-            return $currentUser;
-        };
-
-        /*
          * Returns a callback that forwards to dashboard if user is already logged in.
          *
          * @return callable
@@ -250,35 +238,6 @@ class ServicesProvider
                 $redirect = $c->router->pathFor('dashboard');
 
                 return $response->withRedirect($redirect);
-            };
-        };
-
-        /*
-         * Returns a callback that handles setting the `UF-Redirect` header after a successful login.
-         *
-         * @return callable
-         */
-        $container['redirect.onLogin'] = function ($c) {
-            /*
-             * This method is invoked when a user completes the login process.
-             *
-             * Returns a callback that handles setting the `UF-Redirect` header after a successful login.
-             * @param  \Psr\Http\Message\ServerRequestInterface $request
-             * @param  \Psr\Http\Message\ResponseInterface      $response
-             * @param  array                                    $args
-             * @return \Psr\Http\Message\ResponseInterface
-             */
-            return function (Request $request, Response $response, array $args) use ($c) {
-                /** @var \UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager */
-                $authorizer = $c->authorizer;
-
-                $currentUser = $c->authenticator->user();
-
-                if ($authorizer->checkAccess($currentUser, 'uri_account_settings')) {
-                    return $response->withHeader('UF-Redirect', $c->router->pathFor('settings'));
-                } else {
-                    return $response->withHeader('UF-Redirect', $c->router->pathFor('index'));
-                }
             };
         };
 

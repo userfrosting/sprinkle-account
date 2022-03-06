@@ -15,7 +15,7 @@ use Monolog\Logger;
 /**
  * Monolog alias for dependency injection.
  */
-final class UserActivityLogger extends Logger
+class UserActivityLogger extends Logger
 {
     public const TYPE_REGISTER = 'sign_up';
     public const TYPE_VERIFIED = 'verified';

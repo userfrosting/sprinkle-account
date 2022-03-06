@@ -80,11 +80,10 @@ class LoginAction
         $this->handle($request);
 
         // Get redirect target and add Header
-        // TODO
-        // Set redirect, if relevant
-        // $redirectOnLogin = $this->ci->get('redirect.onLogin');
-        // UserRedirectedAfterLoginEvent
-        // return $redirectOnLogin($request, $response, $args);
+        $event = $this->eventDispatcher->dispatch(new UserRedirectedAfterLoginEvent());
+        if ($event->getRedirect() !== null) {
+            $response = $response->withHeader('UF-Redirect', $event->getRedirect());
+        }
 
         // Write empty response
         $payload = json_encode([], JSON_THROW_ON_ERROR);

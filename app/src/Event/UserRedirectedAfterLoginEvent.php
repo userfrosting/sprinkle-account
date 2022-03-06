@@ -13,18 +13,12 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Event;
 
 use Psr\EventDispatcher\StoppableEventInterface;
-use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 
 class UserRedirectedAfterLoginEvent implements StoppableEventInterface
 {
     protected bool $stopped = false;
 
-    /**
-     * @param UserInterface $user
-     */
-    public function __construct(public UserInterface $user)
-    {
-    }
+    protected ?string $redirect = null;
 
     /**
      * {@inheritDoc}
@@ -40,5 +34,25 @@ class UserRedirectedAfterLoginEvent implements StoppableEventInterface
     public function stop(): void
     {
         $this->stopped = true;
+    }
+
+    /**
+     * Get the value of redirect
+     *
+     * @return string
+     */
+    public function getRedirect(): ?string
+    {
+        return $this->redirect;
+    }
+
+    /**
+     * Set the value of redirect
+     *
+     * @param string $redirect
+     */
+    public function setRedirect(?string $redirect): void
+    {
+        $this->redirect = $redirect;
     }
 }

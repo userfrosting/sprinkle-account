@@ -15,8 +15,10 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
+use UserFrosting\Sprinkle\Account\Account;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
+use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterLoginEvent;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
@@ -29,6 +31,8 @@ class LoginActionTest extends AccountTestCase
 {
     use RefreshDatabase;
     use MockeryPHPUnitIntegration;
+
+    protected string $mainSprinkle = LoginActionSprinkle::class;
 
     /**
      * Setup test database for controller tests
@@ -56,6 +60,9 @@ class LoginActionTest extends AccountTestCase
         // Assert response status & body
         $this->assertJsonResponse([], $response);
         $this->assertResponseStatus(200, $response);
+
+        // Assert Event Redirect
+        $this->assertSame('/home', $response->getHeaderLine('UF-Redirect'));
 
         // Test message
         /** @var AlertStream */
@@ -116,7 +123,7 @@ class LoginActionTest extends AccountTestCase
         $this->assertResponseStatus(403, $response);
     }
 
-    public function testLoginWithFailledValidation(): void
+    public function testLoginWithFailedValidation(): void
     {
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/login', [
@@ -133,7 +140,7 @@ class LoginActionTest extends AccountTestCase
         $this->assertResponseStatus(400, $response);
     }
 
-    public function testloginWithThrottler(): void
+    public function testLoginWithThrottler(): void
     {
         // Create fake throttler
         /** @var Throttler */
@@ -182,7 +189,7 @@ class LoginActionTest extends AccountTestCase
         $this->assertResponseStatus(403, $response);
     }
 
-    public function testloginThrottlerDoesntCountSuccessfulLogins(): void
+    public function testLoginThrottlerDoesNotCountSuccessfulLogins(): void
     {
         /** @var User */
         $user = User::factory([
@@ -243,5 +250,38 @@ class LoginActionTest extends AccountTestCase
             'status'      => 403,
         ], $response);
         $this->assertResponseStatus(403, $response);
+    }
+}
+
+class LoginActionSprinkle extends Account
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventListeners(): array
+    {
+        return [
+            UserRedirectedAfterLoginEvent::class => [
+                UserRedirectedAfterLoginListener::class,
+                UserRedirectedAfterLoginListener2::class,
+            ],
+        ];
+    }
+}
+
+class UserRedirectedAfterLoginListener
+{
+    public function __invoke(UserRedirectedAfterLoginEvent $event): void
+    {
+        $event->setRedirect('/home');
+        $event->stop();
+    }
+}
+
+class UserRedirectedAfterLoginListener2
+{
+    public function __invoke(UserRedirectedAfterLoginEvent $event): void
+    {
+        $event->setRedirect('/index'); // Won't be used, as "/home" stop propagation
     }
 }

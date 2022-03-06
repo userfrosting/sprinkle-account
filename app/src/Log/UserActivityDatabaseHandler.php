@@ -23,7 +23,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
  * @phpstan-import-type Level from \Monolog\Logger
  * @phpstan-import-type LevelName from \Monolog\Logger
  */
-final class UserActivityDatabaseHandler extends AbstractProcessingHandler
+class UserActivityDatabaseHandler extends AbstractProcessingHandler
 {
     /**
      * @var ActivityInterface
