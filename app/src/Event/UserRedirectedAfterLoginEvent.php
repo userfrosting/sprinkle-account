@@ -37,7 +37,7 @@ class UserRedirectedAfterLoginEvent implements StoppableEventInterface
     }
 
     /**
-     * Get the value of redirect
+     * Get the value of redirect.
      *
      * @return string
      */
@@ -47,7 +47,7 @@ class UserRedirectedAfterLoginEvent implements StoppableEventInterface
     }
 
     /**
-     * Set the value of redirect
+     * Set the value of redirect.
      *
      * @param string $redirect
      */
