@@ -15,11 +15,11 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Database\Models;
 use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
-use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * UserTest Class. Tests the User Model.

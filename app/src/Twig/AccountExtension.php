@@ -14,7 +14,7 @@ use Psr\Container\ContainerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFunction;
-use UserFrosting\Support\Repository\Repository as Config;
+use UserFrosting\Config\Config;
 
 /**
  * Extends Twig functionality for the Account sprinkle.

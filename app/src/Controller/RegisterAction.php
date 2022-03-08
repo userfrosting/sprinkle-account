@@ -17,6 +17,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use UserFrosting\Alert\AlertStream;
+use UserFrosting\Config\Config;
 use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
@@ -39,7 +40,6 @@ use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Throttle\ThrottlerDelayException;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
-use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * Processes an new account registration request.

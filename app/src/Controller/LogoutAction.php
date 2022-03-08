@@ -17,7 +17,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterLogoutEvent;
-use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
 
 /**
  * Processes an account login request.

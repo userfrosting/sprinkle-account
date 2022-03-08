@@ -17,6 +17,7 @@ use Birke\Rememberme\Storage\StorageInterface;
 use Birke\Rememberme\Triplet as RememberMeTriplet;
 use Illuminate\Cache\Repository as Cache;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use UserFrosting\Config\Config;
 use UserFrosting\Session\Session;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
@@ -33,7 +34,6 @@ use UserFrosting\Sprinkle\Account\Exceptions\AuthCompromisedException;
 use UserFrosting\Sprinkle\Account\Exceptions\AuthExpiredException;
 use UserFrosting\Sprinkle\Account\Exceptions\InvalidCredentialsException;
 use UserFrosting\Sprinkle\Account\Helpers\DynamicUserModel;
-use UserFrosting\Support\Repository\Repository as Config;
 
 /**
  * Handles authentication tasks.

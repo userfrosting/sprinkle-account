@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Listener;
 
+use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
-use UserFrosting\Support\Repository\Repository as Config;
 
 class AssignDefaultRoles
 {

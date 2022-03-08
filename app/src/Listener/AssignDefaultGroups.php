@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Listener;
 
 use Exception;
+use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
-use UserFrosting\Support\Repository\Repository as Config;
 
 class AssignDefaultGroups
 {

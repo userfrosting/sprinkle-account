@@ -14,7 +14,7 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use UserFrosting\Support\Repository\Repository as Config;
+use UserFrosting\Config\Config;
 use UserFrosting\Session\Session;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
 
