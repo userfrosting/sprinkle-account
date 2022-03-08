@@ -290,29 +290,7 @@ class AccountController extends SimpleController
     {
         return $this->ci->view->render($response, 'modals/tos.html.twig');
     }
-
-    /**
-     * Generate a random captcha, store it to the session, and return the captcha image.
-     *
-     * AuthGuard: false
-     * Route: /account/captcha
-     * Route Name: {none}
-     * Request type: GET
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     */
-    public function imageCaptcha(Request $request, Response $response, $args)
-    {
-        $captcha = new Captcha($this->ci->session, $this->ci->config['session.keys.captcha']);
-        $captcha->generateRandomCode();
-
-        return $response->withStatus(200)
-                    ->withHeader('Content-Type', 'image/png;base64')
-                    ->write($captcha->getImage());
-    }
-
+    
     /**
      * Render the "forgot password" page.
      *
@@ -340,81 +318,6 @@ class AccountController extends SimpleController
                 'validators' => [
                     'forgot_password'    => $validator->rules('json', false),
                 ],
-            ],
-        ]);
-    }
-
-    /**
-     * Render the account registration page for UserFrosting.
-     *
-     * This allows new (non-authenticated) users to create a new account for themselves on your website (if enabled).
-     * By definition, this is a "public page" (does not require authentication).
-     *
-     * AuthGuard: false
-     * checkEnvironment
-     * Route: /account/register
-     * Route Name: register
-     * Request type: GET
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     *
-     * @throws NotFoundException If site registration is disabled
-     */
-    // TODO : Move to Theme repo ?
-    public function pageRegister(Request $request, Response $response, $args)
-    {
-        /** @var \UserFrosting\Support\Repository\Repository $config */
-        $config = $this->ci->config;
-
-        if (!$config['site.registration.enabled']) {
-            throw new NotFoundException();
-        }
-
-        /** @var \UserFrosting\Sprinkle\Account\Authenticate\Authenticator $authenticator */
-        $authenticator = $this->ci->authenticator;
-
-        // Redirect if user is already logged in
-        if ($authenticator->check()) {
-            $redirect = $this->ci->get('redirect.onAlreadyLoggedIn');
-
-            return $redirect($request, $response, $args);
-        }
-
-        // Load validation rules
-        $schema = new RequestSchema('schema://requests/register.yaml');
-        $schema->set('password.validators.length.min', $config['site.password.length.min']);
-        $schema->set('password.validators.length.max', $config['site.password.length.max']);
-        $schema->set('passwordc.validators.length.min', $config['site.password.length.min']);
-        $schema->set('passwordc.validators.length.max', $config['site.password.length.max']);
-        $validatorRegister = new JqueryValidationAdapter($schema, $this->ci->translator);
-
-        // Get locale information
-        $currentLocale = $this->ci->translator->getLocale()->getIdentifier();
-
-        // Get a list of all locales
-        $locales = $this->ci->locale->getAvailableOptions();
-
-        // Hide the locale field if there is only 1 locale available
-        $fields = [
-            'hidden'   => [],
-            'disabled' => [],
-        ];
-        if (count($locales) <= 1) {
-            $fields['hidden'][] = 'locale';
-        }
-
-        return $this->ci->view->render($response, 'pages/register.html.twig', [
-            'page' => [
-                'validators' => [
-                    'register' => $validatorRegister->rules('json', false),
-                ],
-            ],
-            'fields'  => $fields,
-            'locales' => [
-                'available' => $locales,
-                'current'   => $currentLocale,
             ],
         ]);
     }
@@ -600,51 +503,6 @@ class AccountController extends SimpleController
                     'profile_settings'    => $validatorProfileSettings->rules('json', false),
                 ],
                 'visibility' => ($authorizer->checkAccess($currentUser, 'update_account_settings') ? '' : 'disabled'),
-            ],
-        ]);
-    }
-
-    /**
-     * Render the account sign-in page for UserFrosting.
-     *
-     * This allows existing users to sign in.
-     * By definition, this is a "public page" (does not require authentication).
-     *
-     * AuthGuard: false
-     * checkEnvironment
-     * Route: /account/sign-in
-     * Route Name: login
-     * Request type: GET
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     */
-    // TODO : Move to Theme repo ?
-    public function pageSignIn(Request $request, Response $response, $args)
-    {
-        /** @var \UserFrosting\Support\Repository\Repository $config */
-        $config = $this->ci->config;
-
-        /** @var \UserFrosting\Sprinkle\Account\Authenticate\Authenticator $authenticator */
-        $authenticator = $this->ci->authenticator;
-
-        // Redirect if user is already logged in
-        if ($authenticator->check()) {
-            $redirect = $this->ci->get('redirect.onAlreadyLoggedIn');
-
-            return $redirect($request, $response, $args);
-        }
-
-        // Load validation rules
-        $schema = new RequestSchema('schema://requests/login.yaml');
-        $validatorLogin = new JqueryValidationAdapter($schema, $this->ci->translator);
-
-        return $this->ci->view->render($response, 'pages/sign-in.html.twig', [
-            'page' => [
-                'validators' => [
-                    'login'    => $validatorLogin->rules('json', false),
-                ],
             ],
         ]);
     }

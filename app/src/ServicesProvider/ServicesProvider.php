@@ -58,17 +58,6 @@ class ServicesProvider
                 return $view;
             }
 
-            // Register user theme template with Twig Loader
-            if ($authenticator->check()) {
-                $themePath = $c->locator->findResource('templates://', true, false);
-                if ($themePath) {
-                    $loader = $twig->getLoader();
-                    $loader->prependPath($themePath);
-                    // Add namespaced path as well
-                    $loader->addPath($themePath, $currentUser->theme);
-                }
-            }
-
             return $view;
         });
 

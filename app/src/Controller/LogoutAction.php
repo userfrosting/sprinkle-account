@@ -53,8 +53,6 @@ class LogoutAction
      *
      * @param Request  $request
      * @param Response $response
-     *
-     * @throws RegistrationException
      */
     public function __invoke(Request $request, Response $response): Response
     {

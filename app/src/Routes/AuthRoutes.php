@@ -15,6 +15,7 @@ use Slim\Routing\RouteCollectorProxy;
 use UserFrosting\Routes\RouteDefinitionInterface;
 use UserFrosting\Sprinkle\Account\Authenticate\AuthGuard;
 use UserFrosting\Sprinkle\Account\Authenticate\GuestGuard;
+use UserFrosting\Sprinkle\Account\Controller\CaptchaAction;
 use UserFrosting\Sprinkle\Account\Controller\LoginAction;
 use UserFrosting\Sprinkle\Account\Controller\LogoutAction;
 use UserFrosting\Sprinkle\Account\Controller\RegisterAction;
@@ -24,13 +25,20 @@ class AuthRoutes implements RouteDefinitionInterface
 {
     public function register(App $app): void
     {
+        // Guest Guard
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->post('/login', LoginAction::class)->setName('account.login');
             $group->post('/register', RegisterAction::class)->setName('account.register');
         })->add(GuestGuard::class); //->add(new NoCache()); TODO
 
+        // Auth Guard
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->get('/logout', LogoutAction::class)->setName('account.logout');
         })->add(AuthGuard::class); //->add(new NoCache()); TODO
+
+        // No guard
+        $app->group('/account', function (RouteCollectorProxy $group) {
+            $group->get('/captcha', CaptchaAction::class)->setName('account.captcha');
+        }); //->add(new NoCache()); TODO
     }
 }

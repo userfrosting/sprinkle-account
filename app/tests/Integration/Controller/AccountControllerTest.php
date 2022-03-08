@@ -350,47 +350,6 @@ class AccountControllerTest extends AccountTestCase
      * @depends testControllerConstructor
      * @param AccountController $controller
      */
-    /*public function testimageCaptcha(AccountController $controller)
-    {
-        $result = $controller->imageCaptcha($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertNotSame('', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     */
-    /*public function testlogoutWithLoggedInUser()
-    {
-        // Create a test user
-        $testUser = $this->createTestUser(false, true);
-
-        // Recreate controller to use fake throttler
-        $controller = $this->getController();
-
-        $result = $controller->logout($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 302);
-        $this->assertEquals($this->ci->config['site.uri.public'], $result->getHeaderLine('Location'));
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testlogoutWithNoUser(AccountController $controller)
-    {
-        $result = $controller->logout($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 302);
-        $this->assertEquals($this->ci->config['site.uri.public'], $result->getHeaderLine('Location'));
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
     /*public function testpageForgotPassword(AccountController $controller)
     {
         $result = $controller->pageForgotPassword($this->getRequest(), $this->getResponse(), []);
