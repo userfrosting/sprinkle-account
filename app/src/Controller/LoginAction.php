@@ -119,7 +119,7 @@ class LoginAction
 
         // If credential is an email address, but email login is not enabled, raise an error.
         // Note that this error counts towards the throttling limit.
-        if ($isEmail == true && !boolval($this->config->get('site.login.enable_email'))) {
+        if ($isEmail == true && $this->config->get('site.login.enable_email') === false) {
             $this->throttler->logEvent('sign_in_attempt', [
                 'user_identifier' => $userIdentifier,
             ]);

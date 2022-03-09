@@ -224,7 +224,7 @@ class RegisterAction
      */
     protected function validateMasterUser(): void
     {
-        $masterId = intval($this->config->get('reserved_user_ids.master'));
+        $masterId = $this->config->getInt('reserved_user_ids.master');
         if ($this->userModel::find($masterId) === null) {
             $e = new RegistrationException('Master account not created.');
             $e->setDescription('ACCOUNT.MASTER_NOT_EXISTS');

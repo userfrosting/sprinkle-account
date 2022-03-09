@@ -47,12 +47,14 @@ use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ErrorHandlerService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ModelsService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\UserActivityLoggerService;
+use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
 use UserFrosting\Sprinkle\Core\Core;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\SeedRecipe;
+use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\TwigExtensionRecipe;
 use UserFrosting\Sprinkle\SprinkleRecipe;
 
-class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListenerRecipe
+class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListenerRecipe, TwigExtensionRecipe
 {
     /**
      * {@inheritdoc}
@@ -187,6 +189,16 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
             UserAuthenticatedEvent::class => [
                 UpgradePassword::class,
             ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTwigExtensions(): array
+    {
+        return [
+            AccountExtension::class,
         ];
     }
 }

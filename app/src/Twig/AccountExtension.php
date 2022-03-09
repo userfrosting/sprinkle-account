@@ -10,71 +10,62 @@
 
 namespace UserFrosting\Sprinkle\Account\Twig;
 
-use Psr\Container\ContainerInterface;
+use Exception;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFunction;
-use UserFrosting\Config\Config;
+use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
+use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 
 /**
  * Extends Twig functionality for the Account sprinkle.
- *
- * @author Alex Weissman (https://alexanderweissman.com)
  */
 class AccountExtension extends AbstractExtension implements GlobalsInterface
 {
     /**
-     * @var ContainerInterface
+     * @ param AuthorizationManager $authorizer
+     * @param Authenticator $authenticator
      */
-    protected $services;
-
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @param ContainerInterface $services
-     */
-    public function __construct(ContainerInterface $services)
-    {
-        $this->services = $services;
-        $this->config = $services->config;
+    public function __construct(
+        // protected AuthorizationManager $authorizer,
+        protected Authenticator $authenticator,
+    ) {
     }
 
-    public function getName()
-    {
-        return 'userfrosting/account';
-    }
-
+    /**
+     * Adds Twig functions `getAlerts`.
+     *
+     * @return TwigFunction[]
+     */
     public function getFunctions()
     {
         return [
             // Add Twig function for checking permissions during dynamic menu rendering
-            new TwigFunction('checkAccess', function ($slug, $params = []) {
-                $authorizer = $this->services->authorizer;
-                $currentUser = $this->services->currentUser;
-
-                return $authorizer->checkAccess($currentUser, $slug, $params);
-            }),
+            // TODO
+            // new TwigFunction('checkAccess', function ($slug, $params = []) {
+            //     return $this->authorizer->checkAccess($this->authenticator->user(), $slug, $params);
+            // }),
             new TwigFunction('checkAuthenticated', function () {
-                $authenticator = $this->services->authenticator;
-
-                return $authenticator->check();
+                return $this->authenticator->check();
             }),
         ];
     }
 
-    public function getGlobals()
+    /**
+     * Adds Twig global variables `site`.
+     *
+     * @return mixed[]
+     */
+    public function getGlobals(): array
     {
         try {
-            $currentUser = $this->services->currentUser;
-        } catch (\Exception $e) {
+            $currentUser = $this->authenticator->user();
+        } catch (Exception $e) {
             $currentUser = null;
         }
 
         return [
-            'current_user'   => $currentUser,
+            'current_user' => $currentUser,
         ];
     }
 }
