@@ -24,7 +24,6 @@ use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 // use UserFrosting\Sprinkle\Core\Tests\withController;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
-use UserFrosting\Support\Exception\BadRequestException;
 use UserFrosting\Support\Exception\ForbiddenException;
 use UserFrosting\Support\Exception\NotFoundException;
 
@@ -98,81 +97,6 @@ class AccountControllerTest extends AccountTestCase
         $messages = $ms->getAndClearMessages();
         $this->assertSame('danger', end($messages)['type']);
     }*/
-
-    /**
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testcheckUsername(AccountController $controller)
-    {
-        $request = $this->getRequest()->withQueryParams([
-            'user_name' => 'potato',
-        ]);
-
-        $result = $controller->checkUsername($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertSame('true', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testcheckUsername
-     * @param AccountController $controller
-     */
-    /*public function testcheckUsernameWithNoData(AccountController $controller)
-    {
-        $this->expectException(BadRequestException::class);
-        $controller->checkUsername($this->getRequest(), $this->getResponse(), []);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testcheckUsername
-     * @param AccountController $controller
-     */
-    /*public function testcheckUsernameWithUsernameNotAvailable(AccountController $controller)
-    {
-        // Create test user
-        $this->createTestUser(false, false, [
-            'user_name' => 'userfoo',
-        ]);
-
-        $request = $this->getRequest()->withQueryParams([
-            'user_name' => 'userfoo',
-        ]);
-
-        $result = $controller->checkUsername($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertNotSame('', (string) $result->getBody());
-        $this->assertNotSame('true', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testcheckUsername
-     */
-    /*public function testcheckUsernameWithThrottler()
-    {
-        // Create fake throttler
-        $throttler = m::mock(Throttler::class);
-        $throttler->shouldReceive('getDelay')->once()->with('check_username_request')->andReturn(90);
-        $this->ci->throttler = $throttler;
-
-        // Recreate controller to use fake throttler
-        $controller = $this->getController();
-
-        $request = $this->getRequest()->withQueryParams([
-            'user_name' => 'potato',
-        ]);
-
-        $result = $controller->checkUsername($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 429);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-    }
 
     /**
      * @depends testControllerConstructor

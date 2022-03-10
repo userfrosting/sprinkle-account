@@ -19,8 +19,6 @@ class AccountRoutes implements RouteDefinitionInterface
     public function register(App $app): void
     {
         $app->group('/account', function () {
-            $this->get('/check-username', 'UserFrosting\Sprinkle\Account\Controller\AccountController:checkUsername');
-
             $this->get('/forgot-password', 'UserFrosting\Sprinkle\Account\Controller\AccountController:pageForgotPassword')
                 ->setName('forgot-password');
 

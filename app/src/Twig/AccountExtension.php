@@ -24,6 +24,7 @@ class AccountExtension extends AbstractExtension implements GlobalsInterface
 {
     /**
      * @ param AuthorizationManager $authorizer
+     *
      * @param Authenticator $authenticator
      */
     public function __construct(

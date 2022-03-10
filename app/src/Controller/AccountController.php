@@ -24,7 +24,6 @@ use UserFrosting\Sprinkle\Account\Util\Util as AccountUtil;
 use UserFrosting\Sprinkle\Core\Controller\SimpleController;
 use UserFrosting\Sprinkle\Core\Mail\EmailRecipient;
 use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
-use UserFrosting\Support\Exception\BadRequestException;
 use UserFrosting\Support\Exception\ForbiddenException;
 
 /**
@@ -36,76 +35,6 @@ use UserFrosting\Support\Exception\ForbiddenException;
  */
 class AccountController extends SimpleController
 {
-    /**
-     * Check a username for availability.
-     *
-     * This route is throttled by default, to discourage abusing it for account enumeration.
-     * This route is "public access".
-     *
-     * AuthGuard: false
-     * Route: /account/check-username
-     * Route Name: {none}
-     * Request type: GET
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     *
-     * @throws BadRequestException
-     */
-    public function checkUsername(Request $request, Response $response, $args)
-    {
-        // GET parameters
-        $params = $request->getQueryParams();
-
-        // Load request schema
-        $schema = new RequestSchema('schema://requests/check-username.yaml');
-
-        // Whitelist and set parameter defaults
-        $transformer = new RequestDataTransformer($schema);
-        $data = $transformer->transform($params);
-
-        // Validate, and halt on validation errors.
-        $validator = new ServerSideValidator($schema, $this->ci->translator);
-        if (!$validator->validate($data)) {
-            // TODO: encapsulate the communication of error messages from ServerSideValidator to the BadRequestException
-            $e = new BadRequestException('Missing or malformed request data!');
-            foreach ($validator->errors() as $idx => $field) {
-                foreach ($field as $eidx => $error) {
-                    $e->addUserMessage($error);
-                }
-            }
-
-            throw $e;
-        }
-
-        /** @var \UserFrosting\Sprinkle\Core\Throttle\Throttler $throttler */
-        $throttler = $this->ci->throttler;
-        $delay = $throttler->getDelay('check_username_request');
-
-        // Throttle requests
-        if ($delay > 0) {
-            return $response->withJson([], 429);
-        }
-
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = $this->ci->classMapper;
-
-        /** @var \UserFrosting\I18n\Translator $translator */
-        $translator = $this->ci->translator;
-
-        // Log throttleable event
-        $throttler->logEvent('check_username_request');
-
-        if ($classMapper->getClassMapping('user')::findUnique($data['user_name'], 'user_name')) {
-            $message = $translator->translate('USERNAME.NOT_AVAILABLE', $data);
-
-            return $response->write($message)->withStatus(200);
-        } else {
-            return $response->write('true')->withStatus(200);
-        }
-    }
-
     /**
      * Processes a request to cancel a password reset request.
      *
