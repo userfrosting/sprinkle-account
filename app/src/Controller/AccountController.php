@@ -20,7 +20,6 @@ use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Facades\Password;
-use UserFrosting\Sprinkle\Account\Util\Util as AccountUtil;
 use UserFrosting\Sprinkle\Core\Controller\SimpleController;
 use UserFrosting\Sprinkle\Core\Mail\EmailRecipient;
 use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
@@ -827,39 +826,6 @@ class AccountController extends SimpleController
         $ms->addMessageTranslated('success', 'ACCOUNT.SETTINGS.UPDATED');
 
         return $response->withJson([], 200);
-    }
-
-    /**
-     * Suggest an available username for a specified first/last name.
-     *
-     * This route is "public access".
-     *
-     * @todo Can this route be abused for account enumeration?  If so we should throttle it as well.
-     *
-     * AuthGuard: false
-     * Route: /account/suggest-username
-     * Route Name: {none}
-     * Request type: GET
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     */
-    public function suggestUsername(Request $request, Response $response, $args)
-    {
-        /** @var \UserFrosting\Sprinkle\Core\Alert\AlertStream $ms */
-        $ms = $this->ci->alerts;
-
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = $this->ci->classMapper;
-
-        $suggestion = AccountUtil::randomUniqueUsername($classMapper, 50, 10);
-
-        // Be careful how you consume this data - it has not been escaped and contains untrusted user-supplied content.
-        // For example, if you plan to insert it into an HTML DOM, you must escape it on the client side (or use client-side templating).
-        return $response->withJson([
-            'user_name' => $suggestion,
-        ], 200, JSON_PRETTY_PRINT);
     }
 
     /**

@@ -20,6 +20,7 @@ use UserFrosting\Sprinkle\Account\Controller\CheckUsernameAction;
 use UserFrosting\Sprinkle\Account\Controller\LoginAction;
 use UserFrosting\Sprinkle\Account\Controller\LogoutAction;
 use UserFrosting\Sprinkle\Account\Controller\RegisterAction;
+use UserFrosting\Sprinkle\Account\Controller\SuggestUsernameAction;
 use UserFrosting\Sprinkle\Core\Util\NoCache;
 
 class AuthRoutes implements RouteDefinitionInterface
@@ -41,6 +42,7 @@ class AuthRoutes implements RouteDefinitionInterface
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->get('/captcha', CaptchaAction::class)->setName('account.captcha');
             $group->get('/check-username', CheckUsernameAction::class)->setName('account.checkUsername');
+            $group->get('/suggest-username', SuggestUsernameAction::class)->setName('account.suggestUsername');
         }); //->add(new NoCache()); TODO
     }
 }

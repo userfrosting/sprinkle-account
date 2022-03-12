@@ -164,6 +164,7 @@ return [
         'registration_attempt'   => null,
         'sign_in_attempt'        => null,
         'verification_request'   => null,
+        'suggest_username'       => null,
     ],
 
     /*

@@ -28,6 +28,13 @@ return [
                 40 => 1000,
             ],
         ],
+        'suggest_username' => [
+            'method'   => 'ip',
+            'interval' => 3600,
+            'delays'   => [
+                40 => 1000,
+            ],
+        ],
         'password_reset_request' => [
             'method'   => 'ip',
             'interval' => 3600,
