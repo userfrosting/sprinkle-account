@@ -57,7 +57,7 @@ class SuggestUsernameAction
     public function __invoke(Request $request, Response $response): Response
     {
         $payload = [
-            'user_name' => $this->handle($request)
+            'user_name' => $this->handle($request),
         ];
         $payload = json_encode($payload, JSON_THROW_ON_ERROR);
         $response->getBody()->write($payload);
