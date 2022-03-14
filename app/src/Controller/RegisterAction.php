@@ -15,7 +15,6 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 use Illuminate\Database\Connection;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Views\Twig;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
 use UserFrosting\Event\EventDispatcher;
@@ -30,13 +29,10 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
-use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
+use UserFrosting\Sprinkle\Account\Mail\VerificationEmail;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale;
-use UserFrosting\Sprinkle\Core\Mail\EmailRecipient;
-use UserFrosting\Sprinkle\Core\Mail\Mailer;
-use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Throttle\ThrottlerDelayException;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
@@ -69,37 +65,20 @@ class RegisterAction
 
     /**
      * Inject dependencies.
-     *
-     * @param Config                 $config
-     * @param UserInterface          $userModel
-     * @param SiteLocale             $locale
-     * @param Translator             $translator
-     * @param Session                $session
-     * @param UserValidation         $userValidation
-     * @param AlertStream            $alert
-     * @param Connection             $db
-     * @param Throttler              $throttler
-     * @param EventDispatcher        $eventDispatcher
-     * @param VerificationRepository $verificationRepository
-     * @param Twig                   $twig
-     * @param Mailer                 $mailer
-     * @param UserActivityLogger     $userActivityLogger
      */
     public function __construct(
+        protected AlertStream $alert,
         protected Config $config,
-        protected UserInterface $userModel,
+        protected Connection $db,
+        protected EventDispatcher $eventDispatcher,
+        protected Session $session,
         protected SiteLocale $locale,
         protected Translator $translator,
-        protected Session $session,
-        protected UserValidation $userValidation,
-        protected AlertStream $alert,
-        protected Connection $db,
         protected Throttler $throttler,
-        protected EventDispatcher $eventDispatcher,
-        protected VerificationRepository $verificationRepository,
-        protected Twig $twig,
-        protected Mailer $mailer,
         protected UserActivityLogger $userActivityLogger,
+        protected UserInterface $userModel,
+        protected UserValidation $userValidation,
+        protected VerificationEmail $verificationEmail,
     ) {
     }
 
@@ -190,7 +169,9 @@ class RegisterAction
             ]);
 
             // Send activation email
-            $this->sendVerificationEmail($user);
+            if ($this->requireEmailVerification() === true) {
+                $this->verificationEmail->send($user);
+            }
 
             return $user;
         });
@@ -341,7 +322,7 @@ class RegisterAction
      */
     protected function requireEmailVerification(): bool
     {
-        return boolval($this->config->get('site.registration.require_email_verification'));
+        return $this->config->getBool('site.registration.require_email_verification');
     }
 
     /**
@@ -356,35 +337,5 @@ class RegisterAction
 
             throw $e;
         }
-    }
-
-    /**
-     * Send verification email for specified user.
-     *
-     * @param UserInterface $user The user to send the email for
-     */
-    // TODO : This could probably be separated in a different class to cut on dependencies.
-    protected function sendVerificationEmail(UserInterface $user): void
-    {
-        if ($this->requireEmailVerification() === false) {
-            return;
-        }
-
-        // Try to generate a new verification request
-        $timeout = intval($this->config->get('verification.timeout'));
-        $verification = $this->verificationRepository->create($user, $timeout);
-
-        // Create and send verification email
-        $message = new TwigMailMessage($this->twig, 'mail/verify-account.html.twig');
-
-        // @phpstan-ignore-next-line Config limitation
-        $message->from($this->config->get('address_book.admin'))
-                ->addEmailRecipient(new EmailRecipient($user->email, $user->full_name))
-                ->addParams([
-                    'user'  => $user,
-                    'token' => $verification->getToken(),
-                ]);
-
-        $this->mailer->send($message);
     }
 }

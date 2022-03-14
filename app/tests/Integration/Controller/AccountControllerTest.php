@@ -16,7 +16,6 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
-use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 use UserFrosting\Sprinkle\Account\Testing\withTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Mail\Mailer;
@@ -347,42 +346,6 @@ class AccountControllerTest extends AccountTestCase
 
     /**
      * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testpageResendVerification(AccountController $controller)
-    {
-        $result = $controller->pageResendVerification($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertNotSame('', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testpageResetPassword(AccountController $controller)
-    {
-        $result = $controller->pageResetPassword($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertNotSame('', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testpageSetPassword(AccountController $controller)
-    {
-        $result = $controller->pageSetPassword($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertNotSame('', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
      */
     /*public function testpageSettings()
     {
@@ -662,115 +625,6 @@ class AccountControllerTest extends AccountTestCase
     /**
      * @depends testControllerConstructor
      */
-    /*public function testresendVerification()
-    {
-        // Create fake mailer
-        $mailer = m::mock(Mailer::class);
-        $mailer->shouldReceive('send')->once()->with(\Mockery::type(TwigMailMessage::class));
-        $this->ci->mailer = $mailer;
-
-        // Create fake user to test
-        $user = $this->createTestUser(false, false, [
-            'flag_verified' => 0,
-        ]);
-
-        // Recreate controller to use fake mailer
-        $controller = $this->getController();
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'email' => $user->email,
-        ]);
-
-        $result = $controller->resendVerification($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testresendVerification
-     */
-    /*public function testresendVerificationWithVerifiedUser()
-    {
-        // Create fake user to test
-        $user = $this->createTestUser(false, false, [
-            'flag_verified' => 1,
-        ]);
-
-        // Recreate controller to use fake mailer
-        $controller = $this->getController();
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'email' => $user->email,
-        ]);
-
-        $result = $controller->resendVerification($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testresendVerification
-     */
-    /*public function testresendVerificationWithFailedThrottle()
-    {
-        // Create fake throttler
-        $throttler = m::mock(Throttler::class);
-        $throttler->shouldReceive('getDelay')->once()->with('verification_request', ['email' => 'testresendVerificationWithVerifiedUser@test.com'])->andReturn(90);
-        $this->ci->throttler = $throttler;
-
-        // Recreate controller to use fake throttler
-        $controller = $this->getController();
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'email' => 'testresendVerificationWithVerifiedUser@test.com',
-        ]);
-
-        $result = $controller->resendVerification($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 429);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testresendVerification
-     * @param AccountController $controller
-     */
-    /*public function testresendVerificationWithFailedValidation(AccountController $controller)
-    {
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([]);
-
-        $result = $controller->resendVerification($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 400);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-    }
-
-    /**
-     * @depends testControllerConstructor
-     */
     /*public function testSetPassword()
     {
         // Create fake user to test
@@ -1037,108 +891,6 @@ class AccountControllerTest extends AccountTestCase
         $this->assertSame($result->getStatusCode(), 400);
         $this->assertJson((string) $result->getBody());
         $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testSuggestUsername(AccountController $controller)
-    {
-        $result = $controller->suggestUsername($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertJson((string) $result->getBody());
-
-        $body = (string) $result->getBody();
-        $this->assertNotSame('[]', $body);
-
-        // Make sure we got a string
-        $data = json_decode($body, true);
-        $this->assertIsString($data['user_name']);
-        $this->assertNotSame('', $data['user_name']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     */
-    /*public function testVerify()
-    {
-        // Create fake VerificationRepository
-        $repoVerification = m::mock(VerificationRepository::class);
-        $repoVerification->shouldReceive('complete')->once()->with('potato')->andReturn(true);
-        $this->ci->repoVerification = $repoVerification;
-
-        // Recreate controller to use fake PasswordResetRepository
-        $controller = $this->getController();
-
-        $request = $this->getRequest()->withQueryParams([
-            'token' => 'potato',
-        ]);
-
-        $result = $controller->verify($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 302);
-        $this->assertEquals($this->ci->router->pathFor('login'), $result->getHeaderLine('Location'));
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testVerify
-     */
-    /*public function testVerifyWithFailedVerification()
-    {
-        // Create fake VerificationRepository
-        $repoVerification = m::mock(VerificationRepository::class);
-        $repoVerification->shouldReceive('complete')->once()->with('potato')->andReturn(false);
-        $this->ci->repoVerification = $repoVerification;
-
-        // Recreate controller to use fake PasswordResetRepository
-        $controller = $this->getController();
-
-        $request = $this->getRequest()->withQueryParams([
-            'token' => 'potato',
-        ]);
-
-        $result = $controller->verify($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 302);
-        $this->assertEquals($this->ci->router->pathFor('login'), $result->getHeaderLine('Location'));
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testVerify
-     */
-    /*public function testVerifyWithFailedValidation()
-    {
-        // Create fake VerificationRepository
-        $repoVerification = m::mock(VerificationRepository::class);
-        $repoVerification->shouldNotReceive('complete');
-        $this->ci->repoVerification = $repoVerification;
-
-        // Recreate controller to use fake PasswordResetRepository
-        $controller = $this->getController();
-
-        $result = $controller->verify($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 302);
-        $this->assertEquals($this->ci->router->pathFor('login'), $result->getHeaderLine('Location'));
 
         // Test message
         $ms = $this->ci->alerts;

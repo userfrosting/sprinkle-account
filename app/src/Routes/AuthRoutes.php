@@ -20,7 +20,9 @@ use UserFrosting\Sprinkle\Account\Controller\CheckUsernameAction;
 use UserFrosting\Sprinkle\Account\Controller\LoginAction;
 use UserFrosting\Sprinkle\Account\Controller\LogoutAction;
 use UserFrosting\Sprinkle\Account\Controller\RegisterAction;
+use UserFrosting\Sprinkle\Account\Controller\ResendVerificationAction;
 use UserFrosting\Sprinkle\Account\Controller\SuggestUsernameAction;
+use UserFrosting\Sprinkle\Account\Controller\VerifyAction;
 use UserFrosting\Sprinkle\Core\Util\NoCache;
 
 class AuthRoutes implements RouteDefinitionInterface
@@ -31,6 +33,8 @@ class AuthRoutes implements RouteDefinitionInterface
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->post('/login', LoginAction::class)->setName('account.login');
             $group->post('/register', RegisterAction::class)->setName('account.register');
+            $group->get('/verify', VerifyAction::class)->setName('account.verify');
+            $group->post('/resend-verification', ResendVerificationAction::class)->setName('account.resendVerification');
         })->add(GuestGuard::class); //->add(new NoCache()); TODO
 
         // Auth Guard

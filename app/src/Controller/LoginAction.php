@@ -56,12 +56,12 @@ class LoginAction
      * Inject dependencies.
      */
     public function __construct(
-        protected Authenticator $authenticator,
         protected AlertStream $alert,
+        protected Authenticator $authenticator,
         protected Config $config,
+        protected EventDispatcher $eventDispatcher,
         protected Translator $translator,
         protected Throttler $throttler,
-        protected EventDispatcher $eventDispatcher,
     ) {
     }
 

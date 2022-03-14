@@ -19,7 +19,7 @@ use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 /**
  * Token repository class for new account verifications.
  */
-final class VerificationRepository extends TokenRepository
+class VerificationRepository extends TokenRepository
 {
     /**
      * Inject Dependencies.

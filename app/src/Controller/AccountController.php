@@ -233,7 +233,7 @@ class AccountController extends SimpleController
      * @param array    $args
      */
     // TODO : Move to Theme repo ?
-    public function pageForgotPassword(Request $request, Response $response, $args)
+    /*public function pageForgotPassword(Request $request, Response $response, $args)
     {
         // Load validation rules
         $schema = new RequestSchema('schema://requests/forgot-password.yaml');
@@ -246,7 +246,7 @@ class AccountController extends SimpleController
                 ],
             ],
         ]);
-    }
+    }*/
 
     /**
      * Render the "resend verification email" page.
@@ -264,7 +264,7 @@ class AccountController extends SimpleController
      * @param array    $args
      */
     // TODO : Move to Theme repo ?
-    public function pageResendVerification(Request $request, Response $response, $args)
+    /*public function pageResendVerification(Request $request, Response $response, $args)
     {
         // Load validation rules
         $schema = new RequestSchema('schema://requests/resend-verification.yaml');
@@ -277,7 +277,7 @@ class AccountController extends SimpleController
                 ],
             ],
         ]);
-    }
+    }*/
 
     /**
      * Reset password page.
@@ -294,9 +294,9 @@ class AccountController extends SimpleController
      * @param array    $args
      */
     // TODO : Move to Theme repo ?
-    public function pageResetPassword(Request $request, Response $response, $args)
+    /*public function pageResetPassword(Request $request, Response $response, $args)
     {
-        /** @var \UserFrosting\Support\Repository\Repository $config */
+        /** @var \UserFrosting\Support\Repository\Repository $config * /
         $config = $this->ci->config;
 
         // Insert the user's secret token from the link into the password reset form
@@ -318,7 +318,7 @@ class AccountController extends SimpleController
             ],
             'token' => isset($params['token']) ? $params['token'] : '',
         ]);
-    }
+    }*/
 
     /**
      * Render the "set password" page.
@@ -529,105 +529,6 @@ class AccountController extends SimpleController
     }
 
     /**
-     * Processes a request to resend the verification email for a new user account.
-     *
-     * Processes the request from the resend verification email form, checking that:
-     * 1. The rate limit on this type of request is observed;
-     * 2. The provided email is associated with an existing user account;
-     * 3. The user account is not already verified;
-     * 4. The submitted data is valid.
-     * This route is "public access".
-     *
-     * AuthGuard: false
-     * Route: /account/resend-verification
-     * Route Name: {none}
-     * Request type: POST
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     */
-    public function resendVerification(Request $request, Response $response, $args)
-    {
-        /** @var \UserFrosting\Sprinkle\Core\Alert\AlertStream $ms */
-        $ms = $this->ci->alerts;
-
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = $this->ci->classMapper;
-
-        /** @var \UserFrosting\Support\Repository\Repository $config */
-        $config = $this->ci->config;
-
-        // Get POST parameters
-        $params = $request->getParsedBody();
-
-        // Load the request schema
-        $schema = new RequestSchema('schema://requests/resend-verification.yaml');
-
-        // Whitelist and set parameter defaults
-        $transformer = new RequestDataTransformer($schema);
-        $data = $transformer->transform($params);
-
-        // Validate, and halt on validation errors.  Failed validation attempts do not count towards throttling limit.
-        $validator = new ServerSideValidator($schema, $this->ci->translator);
-        if (!$validator->validate($data)) {
-            $ms->addValidationErrors($validator);
-
-            return $response->withJson([], 400);
-        }
-
-        // Throttle requests
-
-        /** @var \UserFrosting\Sprinkle\Core\Throttle\Throttler $throttler */
-        $throttler = $this->ci->throttler;
-
-        $throttleData = [
-            'email' => $data['email'],
-        ];
-        $delay = $throttler->getDelay('verification_request', $throttleData);
-
-        if ($delay > 0) {
-            $ms->addMessageTranslated('danger', 'RATE_LIMIT_EXCEEDED', ['delay' => $delay]);
-
-            return $response->withJson([], 429);
-        }
-
-        // All checks passed!  log events/activities, create user, and send verification email (if required)
-        // Begin transaction - DB will be rolled back if an exception occurs
-        Capsule::transaction(function () use ($classMapper, $data, $throttler, $throttleData, $config) {
-            // Log throttleable event
-            $throttler->logEvent('verification_request', $throttleData);
-
-            // Load the user, by email address
-            $user = $classMapper->getClassMapping('user')::where('email', $data['email'])->first();
-
-            // Check that the user exists and is not already verified.
-            // If there is no user with that email address, or the user exists and is already verified,
-            // we pretend like we succeeded to prevent account enumeration
-            if ($user && $user->flag_verified != '1') {
-                // We're good to go - record user activity and send the email
-                $verification = $this->ci->repoVerification->create($user, $config['verification.timeout']);
-
-                // Create and send verification email
-                $message = new TwigMailMessage($this->ci->view, 'mail/resend-verification.html.twig');
-
-                $message->from($config['address_book.admin'])
-                        ->addEmailRecipient(new EmailRecipient($user->email, $user->full_name))
-                        ->addParams([
-                            'user'  => $user,
-                            'token' => $verification->getToken(),
-                        ]);
-
-                $this->ci->mailer->send($message);
-            }
-        });
-
-        $ms->addMessageTranslated('success', 'ACCOUNT.VERIFICATION.NEW_LINK_SENT', ['email' => $data['email']]);
-
-        return $response->withJson([], 200);
-    }
-
-    /**
      * Processes a request to set the password for a new or current user.
      *
      * Processes the request from the password create/reset form, which should have the secret token embedded in it, checking that:
@@ -826,67 +727,5 @@ class AccountController extends SimpleController
         $ms->addMessageTranslated('success', 'ACCOUNT.SETTINGS.UPDATED');
 
         return $response->withJson([], 200);
-    }
-
-    /**
-     * Processes an new email verification request.
-     *
-     * Processes the request from the email verification link that was emailed to the user, checking that:
-     * 1. The token provided matches a user in the database;
-     * 2. The user account is not already verified;
-     * This route is "public access".
-     *
-     * AuthGuard: false
-     * Route: /account/verify
-     * Route Name: {none}
-     * Request type: GET
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     */
-    public function verify(Request $request, Response $response, $args)
-    {
-        /** @var \UserFrosting\Sprinkle\Core\Alert\AlertStream $ms */
-        $ms = $this->ci->alerts;
-
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = $this->ci->classMapper;
-
-        /** @var \UserFrosting\Support\Repository\Repository $config */
-        $config = $this->ci->config;
-
-        $loginPage = $this->ci->router->pathFor('login');
-
-        // GET parameters
-        $params = $request->getQueryParams();
-
-        // Load request schema
-        $schema = new RequestSchema('schema://requests/account-verify.yaml');
-
-        // Whitelist and set parameter defaults
-        $transformer = new RequestDataTransformer($schema);
-        $data = $transformer->transform($params);
-
-        // Validate, and halt on validation errors.  This is a GET request, so we redirect on validation error.
-        $validator = new ServerSideValidator($schema, $this->ci->translator);
-        if (!$validator->validate($data)) {
-            $ms->addValidationErrors($validator);
-
-            return $response->withRedirect($loginPage);
-        }
-
-        $verification = $this->ci->repoVerification->complete($data['token']);
-
-        if (!$verification) {
-            $ms->addMessageTranslated('danger', 'ACCOUNT.VERIFICATION.TOKEN_NOT_FOUND');
-
-            return $response->withRedirect($loginPage);
-        }
-
-        $ms->addMessageTranslated('success', 'ACCOUNT.VERIFICATION.COMPLETE');
-
-        // Forward to login page
-        return $response->withRedirect($loginPage);
     }
 }

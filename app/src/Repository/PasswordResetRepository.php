@@ -20,7 +20,7 @@ use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 /**
  * Token repository class for password reset requests.
  */
-final class PasswordResetRepository extends TokenRepository
+class PasswordResetRepository extends TokenRepository
 {
     /**
      * Inject Dependencies.

@@ -19,7 +19,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
-use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
 use UserFrosting\Sprinkle\Core\Log\MixedFormatter;
 
 /**
@@ -36,31 +35,6 @@ class ServicesProvider
      */
     public function register(ContainerInterface $container)
     {
-        /*
-         * Extends the 'view' service with the AccountExtension for Twig.
-         *
-         * Adds account-specific functions, globals, filters, etc to Twig, and the path to templates for the user theme.
-         *
-         * @return \Slim\Views\Twig
-         */
-        $container->extend('view', function ($view, $c) {
-            $twig = $view->getEnvironment();
-            $extension = new AccountExtension($c);
-            $twig->addExtension($extension);
-
-            // Add paths for user theme, if a user is logged in
-            // We catch any authorization-related exceptions, so that error pages can be rendered.
-            try {
-                /** @var \UserFrosting\Sprinkle\Account\Authenticate\Authenticator $authenticator */
-                $authenticator = $c->authenticator;
-                $currentUser = $c->currentUser;
-            } catch (\Exception $e) {
-                return $view;
-            }
-
-            return $view;
-        });
-
         /*
          * Authorization check logging with Monolog.
          *
