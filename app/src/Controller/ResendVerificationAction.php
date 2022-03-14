@@ -110,7 +110,7 @@ class ResendVerificationAction
 
             // Log throttle-able event
             $this->throttler->logEvent($this->throttlerSlug, [
-                'email' => $data['email']
+                'email' => $data['email'],
             ]);
 
             // Load the user, by email address
