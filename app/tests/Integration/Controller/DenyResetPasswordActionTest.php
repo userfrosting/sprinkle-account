@@ -15,25 +15,23 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
-use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
+use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
-use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
-class VerifyActionTest extends AccountTestCase
+class DenyResetPasswordActionTest extends AccountTestCase
 {
-    // use RefreshDatabase;
     use MockeryPHPUnitIntegration;
 
-    public function testVerify(): void
+    public function testDenyResetPassword(): void
     {
-        // Mock VerificationRepository
-        $repoVerification = Mockery::mock(VerificationRepository::class)
-            ->shouldReceive('complete')->once()->with('potato')->andReturn(true)
+        // Mock PasswordResetRepository
+        $repoPasswordReset = Mockery::mock(PasswordResetRepository::class)
+            ->shouldReceive('cancel')->once()->with('potato')->andReturn(true)
             ->getMock();
-        $this->ci->set(VerificationRepository::class, $repoVerification);
+        $this->ci->set(PasswordResetRepository::class, $repoPasswordReset);
 
         // Create request with method and url and fetch response
-        $request = $this->createJsonRequest('GET', '/account/verify')
+        $request = $this->createJsonRequest('GET', '/account/set-password/deny')
             ->withQueryParams(['token' => 'potato']);
         $response = $this->handleRequest($request);
 
@@ -48,16 +46,16 @@ class VerifyActionTest extends AccountTestCase
         $this->assertSame('success', end($messages)['type']);
     }
 
-    public function testVerifyWithFailedVerification(): void
+    public function testDenyResetPasswordWithFailedPasswordReset(): void
     {
-        // Mock VerificationRepository
-        $repoVerification = Mockery::mock(VerificationRepository::class)
-            ->shouldReceive('complete')->once()->with('potato')->andReturn(false)
+        // Mock PasswordResetRepository
+        $repoPasswordReset = Mockery::mock(PasswordResetRepository::class)
+            ->shouldReceive('cancel')->once()->with('potato')->andReturn(false)
             ->getMock();
-        $this->ci->set(VerificationRepository::class, $repoVerification);
+        $this->ci->set(PasswordResetRepository::class, $repoPasswordReset);
 
         // Create request with method and url and fetch response
-        $request = $this->createJsonRequest('GET', '/account/verify')
+        $request = $this->createJsonRequest('GET', '/account/set-password/deny')
             ->withQueryParams(['token' => 'potato']);
         $response = $this->handleRequest($request);
 
@@ -72,16 +70,16 @@ class VerifyActionTest extends AccountTestCase
         $this->assertSame('danger', end($messages)['type']);
     }
 
-    public function testVerifyWithFailedValidation(): void
+    public function testDenyResetPasswordWithFailedValidation(): void
     {
         // Mock VerificationRepository
         $repoVerification = Mockery::mock(VerificationRepository::class)
-            ->shouldNotReceive('complete')
+            ->shouldNotReceive('cancel')
             ->getMock();
         $this->ci->set(VerificationRepository::class, $repoVerification);
 
         // Create request with method and url and fetch response
-        $request = $this->createJsonRequest('GET', '/account/verify');
+        $request = $this->createJsonRequest('GET', '/account/set-password/deny');
         $response = $this->handleRequest($request);
 
         // Assert response status & body

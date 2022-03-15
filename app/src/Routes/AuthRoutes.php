@@ -17,6 +17,8 @@ use UserFrosting\Sprinkle\Account\Authenticate\AuthGuard;
 use UserFrosting\Sprinkle\Account\Authenticate\GuestGuard;
 use UserFrosting\Sprinkle\Account\Controller\CaptchaAction;
 use UserFrosting\Sprinkle\Account\Controller\CheckUsernameAction;
+use UserFrosting\Sprinkle\Account\Controller\DenyResetPasswordAction;
+use UserFrosting\Sprinkle\Account\Controller\ForgetPasswordAction;
 use UserFrosting\Sprinkle\Account\Controller\LoginAction;
 use UserFrosting\Sprinkle\Account\Controller\LogoutAction;
 use UserFrosting\Sprinkle\Account\Controller\RegisterAction;
@@ -35,6 +37,8 @@ class AuthRoutes implements RouteDefinitionInterface
             $group->post('/register', RegisterAction::class)->setName('account.register');
             $group->get('/verify', VerifyAction::class)->setName('account.verify');
             $group->post('/resend-verification', ResendVerificationAction::class)->setName('account.resendVerification');
+            $group->post('/forgot-password', ForgetPasswordAction::class)->setName('account.forgotPassword');
+            $group->get('/set-password/deny', DenyResetPasswordAction::class)->setName('account.setPassword.deny');
         })->add(GuestGuard::class); //->add(new NoCache()); TODO
 
         // Auth Guard

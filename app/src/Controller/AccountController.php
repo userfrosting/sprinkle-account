@@ -10,8 +10,6 @@
 
 namespace UserFrosting\Sprinkle\Account\Controller;
 
-use Carbon\Carbon;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Fortress\Adapter\JqueryValidationAdapter;
@@ -21,8 +19,6 @@ use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Core\Controller\SimpleController;
-use UserFrosting\Sprinkle\Core\Mail\EmailRecipient;
-use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 use UserFrosting\Support\Exception\ForbiddenException;
 
 /**
@@ -34,169 +30,6 @@ use UserFrosting\Support\Exception\ForbiddenException;
  */
 class AccountController extends SimpleController
 {
-    /**
-     * Processes a request to cancel a password reset request.
-     *
-     * This is provided so that users can cancel a password reset request, if they made it in error or if it was not initiated by themselves.
-     * Processes the request from the password reset link, checking that:
-     * 1. The provided token is associated with an existing user account, who has a pending password reset request.
-     *
-     * AuthGuard: false
-     * Route: /account/set-password/deny
-     * Route Name: {none}
-     * Request type: GET
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     */
-    public function denyResetPassword(Request $request, Response $response, $args)
-    {
-        // GET parameters
-        $params = $request->getQueryParams();
-
-        /** @var \UserFrosting\Sprinkle\Core\Alert\AlertStream $ms */
-        $ms = $this->ci->alerts;
-
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = $this->ci->classMapper;
-
-        $loginPage = $this->ci->router->pathFor('login');
-
-        // Load validation rules
-        $schema = new RequestSchema('schema://requests/deny-password.yaml');
-
-        // Whitelist and set parameter defaults
-        $transformer = new RequestDataTransformer($schema);
-        $data = $transformer->transform($params);
-
-        // Validate, and halt on validation errors.  Since this is a GET request, we need to redirect on failure
-        $validator = new ServerSideValidator($schema, $this->ci->translator);
-        if (!$validator->validate($data)) {
-            $ms->addValidationErrors($validator);
-
-            return $response->withRedirect($loginPage);
-        }
-
-        /** @var \UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository $passwordReset */
-        $passwordReset = $this->ci->repoPasswordReset->cancel($data['token']);
-
-        if (!$passwordReset) {
-            $ms->addMessageTranslated('danger', 'PASSWORD.FORGET.INVALID');
-
-            return $response->withRedirect($loginPage);
-        }
-
-        $ms->addMessageTranslated('success', 'PASSWORD.FORGET.REQUEST_CANNED');
-
-        return $response->withRedirect($loginPage);
-    }
-
-    /**
-     * Processes a request to email a forgotten password reset link to the user.
-     *
-     * Processes the request from the form on the "forgot password" page, checking that:
-     * 1. The rate limit for this type of request is being observed.
-     * 2. The provided email address belongs to a registered account;
-     * 3. The submitted data is valid.
-     * Note that we have removed the requirement that a password reset request not already be in progress.
-     * This is because we need to allow users to re-request a reset, even if they lose the first reset email.
-     * This route is "public access".
-     *
-     * @todo require additional user information
-     * @todo prevent password reset requests for root account?
-     *
-     * AuthGuard: false
-     * Route: /account/forgot-password
-     * Route Name: {none}
-     * Request type: POST
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
-     */
-    public function forgotPassword(Request $request, Response $response, $args)
-    {
-        /** @var \UserFrosting\Sprinkle\Core\Alert\AlertStream $ms */
-        $ms = $this->ci->alerts;
-
-        /** @var \UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
-        $classMapper = $this->ci->classMapper;
-
-        /** @var \UserFrosting\Support\Repository\Repository $config */
-        $config = $this->ci->config;
-
-        // Get POST parameters
-        $params = $request->getParsedBody();
-
-        // Load the request schema
-        $schema = new RequestSchema('schema://requests/forgot-password.yaml');
-
-        // Whitelist and set parameter defaults
-        $transformer = new RequestDataTransformer($schema);
-        $data = $transformer->transform($params);
-
-        // Validate, and halt on validation errors.  Failed validation attempts do not count towards throttling limit.
-        $validator = new ServerSideValidator($schema, $this->ci->translator);
-        if (!$validator->validate($data)) {
-            $ms->addValidationErrors($validator);
-
-            return $response->withJson([], 400);
-        }
-
-        // Throttle requests
-        /** @var \UserFrosting\Sprinkle\Core\Throttle\Throttler $throttler */
-        $throttler = $this->ci->throttler;
-
-        $throttleData = [
-            'email' => $data['email'],
-        ];
-        $delay = $throttler->getDelay('password_reset_request', $throttleData);
-
-        if ($delay > 0) {
-            $ms->addMessageTranslated('danger', 'RATE_LIMIT_EXCEEDED', ['delay' => $delay]);
-
-            return $response->withJson([], 429);
-        }
-
-        // All checks passed!  log events/activities, update user, and send email
-        // Begin transaction - DB will be rolled back if an exception occurs
-        Capsule::transaction(function () use ($classMapper, $data, $throttler, $throttleData, $config) {
-
-            // Log throttleable event
-            $throttler->logEvent('password_reset_request', $throttleData);
-
-            // Load the user, by email address
-            $user = $classMapper->getClassMapping('user')::where('email', $data['email'])->first();
-
-            // Check that the email exists.
-            // If there is no user with that email address, we should still pretend like we succeeded, to prevent account enumeration
-            if ($user) {
-                // Try to generate a new password reset request.
-                // Use timeout for "reset password"
-                $passwordReset = $this->ci->repoPasswordReset->create($user, $config['password_reset.timeouts.reset']);
-
-                // Create and send email
-                $message = new TwigMailMessage($this->ci->view, 'mail/password-reset.html.twig');
-                $message->from($config['address_book.admin'])
-                        ->addEmailRecipient(new EmailRecipient($user->email, $user->full_name))
-                        ->addParams([
-                            'user'         => $user,
-                            'token'        => $passwordReset->getToken(),
-                            'request_date' => Carbon::now()->format('Y-m-d H:i:s'),
-                        ]);
-
-                $this->ci->mailer->send($message);
-            }
-        });
-
-        // TODO: create delay to prevent timing-based attacks
-
-        $ms->addMessageTranslated('success', 'PASSWORD.FORGET.REQUEST_SENT', ['email' => $data['email']]);
-
-        return $response->withJson([], 200);
-    }
-
     /**
      * Returns a modal containing account terms of service.
      *
@@ -212,10 +45,10 @@ class AccountController extends SimpleController
      * @param array    $args
      */
     // TODO : Move to Theme repo
-    public function getModalAccountTos(Request $request, Response $response, $args)
+    /*public function getModalAccountTos(Request $request, Response $response, $args)
     {
         return $this->ci->view->render($response, 'modals/tos.html.twig');
-    }
+    }*/
 
     /**
      * Render the "forgot password" page.
@@ -336,9 +169,9 @@ class AccountController extends SimpleController
      * @param array    $args
      */
     // TODO : Move to Theme repo ?
-    public function pageSetPassword(Request $request, Response $response, $args)
+    /*public function pageSetPassword(Request $request, Response $response, $args)
     {
-        /** @var \UserFrosting\Support\Repository\Repository $config */
+        /** @var \UserFrosting\Support\Repository\Repository $config * /
         $config = $this->ci->config;
 
         // Insert the user's secret token from the link into the password set form
@@ -360,7 +193,7 @@ class AccountController extends SimpleController
             ],
             'token' => isset($params['token']) ? $params['token'] : '',
         ]);
-    }
+    }*/
 
     /**
      * Account settings page.
@@ -381,15 +214,15 @@ class AccountController extends SimpleController
      * @throws ForbiddenException If user is not authorized to access page
      */
     // TODO : Move to Theme repo ?
-    public function pageSettings(Request $request, Response $response, $args)
+    /*public function pageSettings(Request $request, Response $response, $args)
     {
-        /** @var \UserFrosting\Support\Repository\Repository $config */
+        /** @var \UserFrosting\Support\Repository\Repository $config * /
         $config = $this->ci->config;
 
-        /** @var \UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager */
+        /** @var \UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager * /
         $authorizer = $this->ci->authorizer;
 
-        /** @var \UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface $currentUser */
+        /** @var \UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface $currentUser * /
         $currentUser = $this->ci->currentUser;
 
         // Access-controlled page
@@ -431,7 +264,7 @@ class AccountController extends SimpleController
                 'visibility' => ($authorizer->checkAccess($currentUser, 'update_account_settings') ? '' : 'disabled'),
             ],
         ]);
-    }
+    }*/
 
     /**
      * Processes a request to update a user's profile information.

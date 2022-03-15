@@ -29,12 +29,9 @@ class AccountRoutes implements RouteDefinitionInterface
             // TODO : Move to theme repo
             // $this->get('/set-password/confirm', 'UserFrosting\Sprinkle\Account\Controller\AccountController:pageResetPassword');
 
-            $this->get('/set-password/deny', 'UserFrosting\Sprinkle\Account\Controller\AccountController:denyResetPassword');
-
-            $this->get('/settings', 'UserFrosting\Sprinkle\Account\Controller\AccountController:pageSettings')
-                ->add('authGuard');
-
-            $this->post('/forgot-password', 'UserFrosting\Sprinkle\Account\Controller\AccountController:forgotPassword');
+            // TODO : Move to theme repo
+            // $this->get('/settings', 'UserFrosting\Sprinkle\Account\Controller\AccountController:pageSettings')
+            //    ->add('authGuard');
 
             $this->post('/set-password', 'UserFrosting\Sprinkle\Account\Controller\AccountController:setPassword');
 

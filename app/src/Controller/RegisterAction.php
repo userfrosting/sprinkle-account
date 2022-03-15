@@ -170,7 +170,7 @@ class RegisterAction
 
             // Send activation email
             if ($this->requireEmailVerification() === true) {
-                $this->verificationEmail->send($user);
+                $this->verificationEmail->send($user, 'mail/verify-account.html.twig');
             }
 
             return $user;

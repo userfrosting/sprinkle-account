@@ -12,23 +12,24 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Mail;
 
+use Carbon\Carbon;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
+use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
 use UserFrosting\Sprinkle\Core\Mail\EmailRecipient;
 use UserFrosting\Sprinkle\Core\Mail\Mailer;
 use UserFrosting\Sprinkle\Core\Mail\TwigMailMessage;
 
-class VerificationEmail
+class PasswordResetEmail
 {
     /**
      * Inject dependencies.
      */
     public function __construct(
         protected Config $config,
-        protected VerificationRepository $verificationRepository,
+        protected PasswordResetRepository $repoPasswordReset,
         protected Twig $twig,
         protected Mailer $mailer,
     ) {
@@ -39,11 +40,11 @@ class VerificationEmail
      *
      * @param UserInterface $user The user to send the email for
      */
-    public function send(UserInterface $user, string $template = 'mail/verify-account.html.twig'): void
+    public function send(UserInterface $user, string $template = 'mail/password-reset.html.twig'): void
     {
         // Try to generate a new verification request
-        $timeout = intval($this->config->get('verification.timeout'));
-        $verification = $this->verificationRepository->create($user, $timeout);
+        $timeout = $this->config->getInt('password_reset.timeouts.reset');
+        $passwordReset = $this->repoPasswordReset->create($user, $timeout);
 
         // Create and send verification email
         $message = new TwigMailMessage($this->twig, $template);
@@ -52,8 +53,9 @@ class VerificationEmail
         $message->from($this->config->get('address_book.admin'))
                 ->addEmailRecipient(new EmailRecipient($user->email, $user->full_name))
                 ->addParams([
-                    'user'  => $user,
-                    'token' => $verification->getToken(),
+                    'user'         => $user,
+                    'token'        => $passwordReset->getToken(),
+                    'request_date' => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
         $this->mailer->send($message);
