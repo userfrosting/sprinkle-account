@@ -15,8 +15,7 @@ use UserFrosting\Support\Message\UserMessage;
 /**
  * Forbidden Exception. Used when an account doesn't have access to a resource.
  */
-final class ForbiddenException extends AccountException
+final class PasswordResetInvalidException extends AccountException
 {
-    protected string $title = 'ACCOUNT.EXCEPTION.ACCESS_DENIED.TITLE';
-    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.ACCESS_DENIED.DESCRIPTION';
+    protected string|UserMessage $description = 'PASSWORD.FORGET.INVALID';
 }

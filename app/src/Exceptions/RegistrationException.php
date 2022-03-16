@@ -10,6 +10,8 @@
 
 namespace UserFrosting\Sprinkle\Account\Exceptions;
 
+use UserFrosting\Support\Message\UserMessage;
+
 /**
  * Registration exception.
  * Used when an exception is encountered by the registration mechanism.
@@ -18,5 +20,5 @@ namespace UserFrosting\Sprinkle\Account\Exceptions;
 final class RegistrationException extends AccountException
 {
     protected string $title = 'REGISTRATION.ERROR';
-    protected string $description = 'REGISTRATION.UNKNOWN';
+    protected string|UserMessage $description = 'REGISTRATION.UNKNOWN';
 }

@@ -22,7 +22,7 @@ use UserFrosting\Support\Exception\FileNotFoundException;
 class TranslatorServicesProviderTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use withTestUser;
+    // use withTestUser;
 
     /**
      * @var bool DB is initialized for normal db

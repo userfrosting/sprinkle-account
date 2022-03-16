@@ -18,7 +18,7 @@ use UserFrosting\Support\Message\UserMessage;
 final class EmailNotUniqueException extends AccountException
 {
     protected string $title = 'EMAIL.INVALID';
-    protected string $description = 'EMAIL.IN_USE';
+    protected string|UserMessage $description = 'EMAIL.IN_USE';
     protected string $email = '';
 
     /**

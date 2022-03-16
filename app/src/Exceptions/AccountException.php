@@ -22,7 +22,7 @@ use UserFrosting\Support\Message\UserMessage;
 class AccountException extends Exception implements TwigRenderedException, UserMessageException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.TITLE';
-    protected string $description = 'ACCOUNT.EXCEPTION.DESCRIPTION';
+    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.DESCRIPTION';
     protected string $twigTemplate = 'pages/error/auth.html.twig';
 
     /**
@@ -77,7 +77,7 @@ class AccountException extends Exception implements TwigRenderedException, UserM
      *
      * @return static
      */
-    public function setDescription(string $description): static
+    public function setDescription(string|UserMessage $description): static
     {
         $this->description = $description;
 

@@ -14,11 +14,8 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
 use UserFrosting\Sprinkle\Core\Log\MixedFormatter;
 
 /**
@@ -180,42 +177,6 @@ class ServicesProvider
             $authorizer = new AuthorizationManager($c, $callbacks);
 
             return $authorizer;
-        };
-
-        /*
-         * Returns a callback that forwards to dashboard if user is already logged in.
-         *
-         * @return callable
-         */
-        $container['redirect.onAlreadyLoggedIn'] = function ($c) {
-            /*
-             * This method is invoked when a user attempts to perform certain public actions when they are already logged in.
-             *
-             * @todo Forward to user's landing page or last visited page
-             * @param  \Psr\Http\Message\ServerRequestInterface $request
-             * @param  \Psr\Http\Message\ResponseInterface      $response
-             * @param  array                                    $args
-             * @return \Psr\Http\Message\ResponseInterface
-             */
-            return function (Request $request, Response $response, array $args) use ($c) {
-                $redirect = $c->router->pathFor('dashboard');
-
-                return $response->withRedirect($redirect);
-            };
-        };
-
-        /*
-         * Repository for password reset requests.
-         *
-         * @return \UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository
-         */
-        $container['repoPasswordReset'] = function ($c) {
-            $classMapper = $c->classMapper;
-            $config = $c->config;
-
-            $repo = new PasswordResetRepository($classMapper, $config['password_reset.algorithm']);
-
-            return $repo;
         };
     }
 }

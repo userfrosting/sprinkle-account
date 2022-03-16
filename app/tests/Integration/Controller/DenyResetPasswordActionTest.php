@@ -16,6 +16,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
+use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 
 class DenyResetPasswordActionTest extends AccountTestCase

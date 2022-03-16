@@ -10,11 +10,13 @@
 
 namespace UserFrosting\Sprinkle\Account\Exceptions;
 
+use UserFrosting\Support\Message\UserMessage;
+
 /**
  * Invalid account exception. Used when an account has been removed during an active session.
  */
 final class AccountInvalidException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.INVALID.TITLE';
-    protected string $description = 'ACCOUNT.EXCEPTION.INVALID.DESCRIPTION';
+    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.INVALID.DESCRIPTION';
 }

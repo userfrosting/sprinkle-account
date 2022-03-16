@@ -42,7 +42,11 @@ class GuestGuard
         if ($this->authenticator->check()) {
             // TODO : While ForbiddenException would be right, a 404 page on the "login"  page is not.
             //        This might required a custom handler, as a Json Request
-            //        will required a message, but HTTP might required a redirect.
+            //        will required a message, but HTTP might required a redirect (bellow).
+            /*
+            $redirect = $c->router->pathFor('dashboard');
+            return $response->withRedirect($redirect);
+            */
             throw new LoggedInException();
         }
 

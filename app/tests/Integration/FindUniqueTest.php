@@ -23,7 +23,7 @@ use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 class FindUniqueTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use withTestUser;
+    // use withTestUser;
 
     /**
      * Setup the database schema.

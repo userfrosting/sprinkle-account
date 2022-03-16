@@ -10,11 +10,13 @@
 
 namespace UserFrosting\Sprinkle\Account\Exceptions;
 
+use UserFrosting\Support\Message\UserMessage;
+
 /**
  * Invalid credentials exception. Used when an account fails authentication for some reason.
  */
 final class InvalidCredentialsException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.INVALID_CREDENTIALS.TITLE';
-    protected string $description = 'ACCOUNT.EXCEPTION.INVALID_CREDENTIALS.DESCRIPTION';
+    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.INVALID_CREDENTIALS.DESCRIPTION';
 }

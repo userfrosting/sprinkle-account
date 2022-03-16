@@ -22,7 +22,7 @@ use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 class AuthorizationManagerTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use withTestUser;
+    // use withTestUser;
 
     /**
      * Setup the test database.

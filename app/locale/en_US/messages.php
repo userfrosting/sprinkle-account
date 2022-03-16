@@ -151,7 +151,7 @@ return [
             'COULD_NOT_UPDATE'  => "Couldn't update password.",
             'EMAIL'             => 'Please enter the email address you used to sign up. A link with instructions to reset your password will be emailed to you.',
             'EMAIL_SEND'        => 'Email Password Reset Link',
-            'INVALID'           => 'This password reset request could not be found, or has expired.  Please try <a href="{{url}}">resubmitting your request<a>.',
+            'INVALID'           => 'This password reset request could not be found, or has expired.',
             'PAGE'              => 'Get a link to reset your password.',
             'REQUEST_CANNED'    => 'Lost password request cancelled.',
             'REQUEST_SENT'      => 'If the email <strong>{{email}}</strong> matches an account in our system, a password reset link will be sent to <strong>{{email}}</strong>.',

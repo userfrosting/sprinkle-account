@@ -15,7 +15,6 @@ use UserFrosting\Sprinkle\Account\Controller\AccountController;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Facades\Password;
-use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
 use UserFrosting\Sprinkle\Account\Testing\withTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
@@ -30,7 +29,7 @@ use UserFrosting\Support\Exception\NotFoundException;
 class AccountControllerTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use withTestUser;
+    // use withTestUser;
     // use withController;
 
     /**
@@ -69,30 +68,6 @@ class AccountControllerTest extends AccountTestCase
         $this->assertInstanceOf(AccountController::class, $controller);
 
         return $controller;
-    }*/
-
-    /**
-     * N.B.: Must be first test, before any master user is created
-     * @depends testControllerConstructor
-     * @param AccountController $controller
-     */
-    /*public function testRegisterWithNoMasterUser(AccountController $controller)
-    {
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'spiderbro' => 'http://',
-        ]);
-
-        $result = $controller->register($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 403);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
     }*/
 
     /**
@@ -218,7 +193,7 @@ class AccountControllerTest extends AccountTestCase
     /**
      * @param AccountController $controller
      */
-    protected function actualpageSettings(AccountController $controller)
+    /*protected function actualpageSettings(AccountController $controller)
     {
         $result = $controller->pageSettings($this->getRequest(), $this->getResponse(), []);
         $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
@@ -310,7 +285,7 @@ class AccountControllerTest extends AccountTestCase
      * @param AccountController $controller
      * @param UserInterface     $user
      */
-    protected function performActualProfileTests(AccountController $controller, UserInterface $user)
+    /*protected function performActualProfileTests(AccountController $controller, UserInterface $user)
     {
         // Set POST
         $request = $this->getRequest()->withParsedBody([
@@ -430,110 +405,6 @@ class AccountControllerTest extends AccountTestCase
         $ms = $this->ci->alerts;
         $messages = $ms->getAndClearMessages();
         $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     */
-    /*public function testRegisterWithLoggedInUser()
-    {
-        // Create test user
-        $user = $this->createTestUser(false, true);
-
-        // Recreate controller to use user
-        $controller = $this->getController();
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'spiderbro' => 'http://',
-        ]);
-
-        $result = $controller->register($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 403);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     */
-    /*public function testSetPassword()
-    {
-        // Create fake user to test
-        $user = $this->createTestUser(false, true);
-
-        // Create fake PasswordResetRepository
-        $resetModel = $this->ci->repoPasswordReset->create($user, 9999);
-
-        // Recreate controller to use fake PasswordResetRepository
-        $controller = $this->getController();
-
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'password'  => 'testSetPassword',
-            'passwordc' => 'testSetPassword',
-            'token'     => $resetModel->getToken(),
-        ]);
-
-        $result = $controller->setPassword($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 200);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testSetPassword
-     * @param AccountController $controller
-     */
-    /*public function testSetPasswordWithNoToken(AccountController $controller)
-    {
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([
-            'password'  => 'testSetPassword',
-            'passwordc' => 'testSetPassword',
-            'token'     => 'potato',
-        ]);
-
-        $result = $controller->setPassword($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 400);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
-
-        // Test message
-        $ms = $this->ci->alerts;
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
-    }
-
-    /**
-     * @depends testControllerConstructor
-     * @depends testSetPassword
-     * @param AccountController $controller
-     */
-    /*public function testsetPasswordWithFailedValidation(AccountController $controller)
-    {
-        // Set POST
-        $request = $this->getRequest()->withParsedBody([]);
-
-        $result = $controller->setPassword($request, $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 400);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
     }
 
     /**

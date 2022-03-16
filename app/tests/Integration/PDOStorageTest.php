@@ -24,7 +24,7 @@ use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 class PDOStorageTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use withTestUser;
+    // use withTestUser;
 
     /**
      * @var PDOStorage

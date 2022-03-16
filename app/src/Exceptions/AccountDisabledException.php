@@ -10,11 +10,13 @@
 
 namespace UserFrosting\Sprinkle\Account\Exceptions;
 
+use UserFrosting\Support\Message\UserMessage;
+
 /**
  * Disabled account exception. Used when an account has been disabled.
  */
 final class AccountDisabledException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.DISABLED.TITLE';
-    protected string $description = 'ACCOUNT.EXCEPTION.DISABLED.DESCRIPTION';
+    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.DISABLED.DESCRIPTION';
 }

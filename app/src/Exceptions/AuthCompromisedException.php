@@ -10,11 +10,13 @@
 
 namespace UserFrosting\Sprinkle\Account\Exceptions;
 
+use UserFrosting\Support\Message\UserMessage;
+
 /**
  * Compromised authentication exception. Used when we suspect theft of the rememberMe cookie.
  */
 final class AuthCompromisedException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.COMPROMISED.TITLE';
-    protected string $description = 'ACCOUNT.EXCEPTION.COMPROMISED.DESCRIPTION';
+    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.COMPROMISED.DESCRIPTION';
 }

@@ -18,7 +18,7 @@ use UserFrosting\Support\Message\UserMessage;
 final class MissingRequiredParamException extends AccountException
 {
     protected string $title = 'ACCOUNT.ERROR';
-    protected string $description = 'ACCOUNT.ERROR.MISSING_PARAM';
+    protected string|UserMessage $description = 'ACCOUNT.ERROR.MISSING_PARAM';
     protected string $param = '';
 
     /**

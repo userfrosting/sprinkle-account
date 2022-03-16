@@ -10,11 +10,13 @@
 
 namespace UserFrosting\Sprinkle\Account\Exceptions;
 
+use UserFrosting\Support\Message\UserMessage;
+
 /**
  * Expired authentication exception. Used when the user needs to authenticate/reauthenticate.
  */
 final class LoggedInException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.LOGGEDIN.TITLE';
-    protected string $description = 'ACCOUNT.EXCEPTION.LOGGEDIN.DESCRIPTION';
+    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.LOGGEDIN.DESCRIPTION';
 }

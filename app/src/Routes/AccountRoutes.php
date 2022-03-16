@@ -33,8 +33,6 @@ class AccountRoutes implements RouteDefinitionInterface
             // $this->get('/settings', 'UserFrosting\Sprinkle\Account\Controller\AccountController:pageSettings')
             //    ->add('authGuard');
 
-            $this->post('/set-password', 'UserFrosting\Sprinkle\Account\Controller\AccountController:setPassword');
-
             $this->post('/settings', 'UserFrosting\Sprinkle\Account\Controller\AccountController:settings')
                 ->add('authGuard')
                 ->setName('settings');

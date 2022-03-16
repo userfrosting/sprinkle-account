@@ -18,7 +18,7 @@ use UserFrosting\Support\Message\UserMessage;
 final class UsernameNotUniqueException extends AccountException
 {
     protected string $title = 'USERNAME.INVALID';
-    protected string $description = 'USERNAME.IN_USE';
+    protected string|UserMessage $description = 'USERNAME.IN_USE';
     protected string $username = '';
 
     /**
