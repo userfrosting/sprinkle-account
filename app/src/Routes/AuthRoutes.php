@@ -24,6 +24,7 @@ use UserFrosting\Sprinkle\Account\Controller\LogoutAction;
 use UserFrosting\Sprinkle\Account\Controller\RegisterAction;
 use UserFrosting\Sprinkle\Account\Controller\ResendVerificationAction;
 use UserFrosting\Sprinkle\Account\Controller\SetPasswordAction;
+use UserFrosting\Sprinkle\Account\Controller\SettingsAction;
 use UserFrosting\Sprinkle\Account\Controller\SuggestUsernameAction;
 use UserFrosting\Sprinkle\Account\Controller\VerifyAction;
 use UserFrosting\Sprinkle\Core\Util\NoCache;
@@ -46,6 +47,7 @@ class AuthRoutes implements RouteDefinitionInterface
         // Auth Guard
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->get('/logout', LogoutAction::class)->setName('account.logout');
+            $group->post('/settings', SettingsAction::class)->setName('settings');
         })->add(AuthGuard::class); //->add(new NoCache()); TODO
 
         // No guard

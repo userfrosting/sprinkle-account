@@ -33,10 +33,6 @@ class AccountRoutes implements RouteDefinitionInterface
             // $this->get('/settings', 'UserFrosting\Sprinkle\Account\Controller\AccountController:pageSettings')
             //    ->add('authGuard');
 
-            $this->post('/settings', 'UserFrosting\Sprinkle\Account\Controller\AccountController:settings')
-                ->add('authGuard')
-                ->setName('settings');
-
             $this->post('/settings/profile', 'UserFrosting\Sprinkle\Account\Controller\AccountController:profile')
                 ->add('authGuard');
         })->add(new NoCache());
