@@ -104,7 +104,7 @@ return [
     'LAST_NAME' => 'Last name',
     'LOCALE'    => [
         'ACCOUNT' => 'The language and locale to use for your account',
-        'INVALID' => '<strong>{{locale}}</strong> is not a valid locale.',
+        'INVALID' => '{{locale}} is not a valid locale.',
     ],
     'LOGIN' => [
         '@TRANSLATION'      => 'Login',

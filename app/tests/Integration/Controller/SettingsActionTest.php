@@ -15,7 +15,6 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
-use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
@@ -65,6 +64,12 @@ class SettingsActionTest extends AccountTestCase
         $ms = $this->ci->get(AlertStream::class);
         $messages = $ms->getAndClearMessages();
         $this->assertSame('success', end($messages)['type']);
+
+        // Refresh user, make sure password was hashed, and it actually changed.
+        /** @var User */
+        $freshUser = User::find($user->id);
+        $this->assertNotSame('testrSetPassword', $freshUser->password);
+        $this->assertTrue($freshUser->comparePassword('testrSetPassword'));
     }
 
     public function testSettingsOnlyEmailNoLocale(): void
@@ -78,14 +83,6 @@ class SettingsActionTest extends AccountTestCase
             ->shouldReceive('user')->andReturn($user)
             ->getMock();
         $this->ci->set(Authenticator::class, $authenticator);
-
-        // Force locale config
-        /** @var Config */
-        $config = $this->ci->get(Config::class);
-        $config->set('site.registration.user_defaults.locale', 'en_US');
-        $config->set('site.locales.available', [
-            'en_US' => true,
-        ]);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings', [
