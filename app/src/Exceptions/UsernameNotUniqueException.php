@@ -18,7 +18,6 @@ use UserFrosting\Support\Message\UserMessage;
 final class UsernameNotUniqueException extends AccountException
 {
     protected string $title = 'USERNAME.INVALID';
-    protected string|UserMessage $description = 'USERNAME.IN_USE';
     protected string $username = '';
 
     /**
@@ -26,7 +25,7 @@ final class UsernameNotUniqueException extends AccountException
      */
     public function getDescription(): string|UserMessage
     {
-        return new UserMessage($this->description, ['user_name' => $this->username]);
+        return new UserMessage('USERNAME.IN_USE', ['user_name' => $this->username]);
     }
 
     /**

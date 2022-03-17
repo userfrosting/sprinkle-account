@@ -18,7 +18,6 @@ use UserFrosting\Support\Message\UserMessage;
 final class EmailNotUniqueException extends AccountException
 {
     protected string $title = 'EMAIL.INVALID';
-    protected string|UserMessage $description = 'EMAIL.IN_USE';
     protected string $email = '';
 
     /**
@@ -26,7 +25,7 @@ final class EmailNotUniqueException extends AccountException
      */
     public function getDescription(): string|UserMessage
     {
-        return new UserMessage($this->description, ['email' => $this->email]);
+        return new UserMessage('EMAIL.IN_USE', ['email' => $this->email]);
     }
 
     /**
