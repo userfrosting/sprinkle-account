@@ -215,6 +215,7 @@ jobs:
       - name: Setup PostgreSQL
         uses: harmon758/postgresql-action@v1
         with:
+          postgresql version: '14'
           postgresql db: 'userfrosting'
           postgresql user: 'userfrosting'
           postgresql password: 'password'
