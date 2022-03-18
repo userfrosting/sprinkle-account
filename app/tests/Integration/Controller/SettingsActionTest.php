@@ -182,7 +182,7 @@ class SettingsActionTest extends AccountTestCase
         // Assert response status & body
         $this->assertJsonResponse('Account Exception', $response, 'title');
         $this->assertJsonResponse("Current password doesn't match the one we have on record", $response, 'description');
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testSettingsWithEmailInUse(): void
@@ -211,6 +211,6 @@ class SettingsActionTest extends AccountTestCase
 
         // Assert response status & body
         $this->assertJsonResponse('Invalid email', $response, 'title');
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 }

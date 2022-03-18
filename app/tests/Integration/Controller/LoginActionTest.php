@@ -120,7 +120,7 @@ class LoginActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testLoginWithFailedValidation(): void

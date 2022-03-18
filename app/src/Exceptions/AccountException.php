@@ -24,16 +24,14 @@ class AccountException extends Exception implements TwigRenderedException, UserM
     protected string $title = 'ACCOUNT.EXCEPTION.TITLE';
     protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.DESCRIPTION';
     protected string $twigTemplate = 'pages/error/auth.html.twig';
+    protected int $httpCode = 400; // Force all AuthException to 400 code.
 
     /**
      * {@inheritDoc}
      */
     public function __construct(string $message = '', int $code = 0, ?Throwable $previous = null)
     {
-        // Force all AuthException to 403 code.
-        $code = 403;
-
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, $this->httpCode, $previous);
     }
 
     /**

@@ -166,7 +166,7 @@ class ProfileActionTest extends AccountTestCase
 
         // Assert response status & body
         $this->assertJsonResponse('foobarfoo is not a valid locale.', $response, 'description');
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
 
         // Make sure user was NOT updated
         /** @var User */

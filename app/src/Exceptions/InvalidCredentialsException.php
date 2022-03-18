@@ -19,4 +19,5 @@ final class InvalidCredentialsException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.INVALID_CREDENTIALS.TITLE';
     protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.INVALID_CREDENTIALS.DESCRIPTION';
+    protected int $httpCode = 403;
 }

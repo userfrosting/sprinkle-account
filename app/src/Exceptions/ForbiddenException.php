@@ -19,4 +19,5 @@ final class ForbiddenException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.ACCESS_DENIED.TITLE';
     protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.ACCESS_DENIED.DESCRIPTION';
+    protected int $httpCode = 403;
 }

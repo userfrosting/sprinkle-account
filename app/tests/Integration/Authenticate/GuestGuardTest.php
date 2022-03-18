@@ -64,7 +64,7 @@ class GuestGuardTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Asserts
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
         $body = (string) $response->getBody();
         $this->assertNotSame('Hello', $body);
         $this->assertStringContainsString('already logged-in', $body);

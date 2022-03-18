@@ -74,7 +74,7 @@ class SetPasswordActionTest extends AccountTestCase
 
         // Assert response status & body
         $this->assertJsonResponse('Account Exception', $response, 'title');
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testSetPasswordWithFailedValidation(): void

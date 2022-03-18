@@ -55,9 +55,9 @@ class RegisterActionTest extends AccountTestCase
         $this->assertJsonResponse([
             'title'       => 'Already Logged-in',
             'description' => "Can't access this resource, as you're already logged-in",
-            'status'      => 403,
+            'status'      => 400,
         ], $response);
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testWithDisabledRegistration(): void
@@ -74,9 +74,9 @@ class RegisterActionTest extends AccountTestCase
         $this->assertJsonResponse([
             'title'       => 'Registration error',
             'description' => "We're sorry, account registration has been disabled.",
-            'status'      => 403,
+            'status'      => 400,
         ], $response);
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testWithFailedHoneypot(): void
@@ -89,9 +89,9 @@ class RegisterActionTest extends AccountTestCase
         $this->assertJsonResponse([
             'title'       => 'Registration error',
             'description' => 'A problem was encountered during the account registration process.',
-            'status'      => 403,
+            'status'      => 400,
         ], $response);
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testWithNoMasterId(): void
@@ -106,9 +106,9 @@ class RegisterActionTest extends AccountTestCase
         $this->assertJsonResponse([
             'title'       => 'Registration error',
             'description' => 'You cannot register an account until the master account has been created!',
-            'status'      => 403,
+            'status'      => 400,
         ], $response);
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testWihFailedCaptcha(): void
@@ -125,9 +125,9 @@ class RegisterActionTest extends AccountTestCase
         $this->assertJsonResponse([
             'title'       => 'Registration error',
             'description' => 'You did not enter the captcha code correctly.',
-            'status'      => 403,
+            'status'      => 400,
         ], $response);
-        $this->assertResponseStatus(403, $response);
+        $this->assertResponseStatus(400, $response);
     }
 
     public function testRegister(): void
