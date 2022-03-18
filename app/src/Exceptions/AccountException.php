@@ -31,7 +31,9 @@ class AccountException extends Exception implements TwigRenderedException, UserM
      */
     public function __construct(string $message = '', int $code = 0, ?Throwable $previous = null)
     {
-        parent::__construct($message, $this->httpCode, $previous);
+        $code = ($code === 0) ? $this->httpCode : $code;
+
+        parent::__construct($message, $code, $previous);
     }
 
     /**
