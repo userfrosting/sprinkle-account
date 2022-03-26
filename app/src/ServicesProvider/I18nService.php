@@ -19,7 +19,7 @@ class I18nService implements ServicesProviderInterface
     public function register(): array
     {
         return [
-            SiteLocaleInterface::class => \DI\autowire(SiteLocale::class)
+            SiteLocaleInterface::class => \DI\autowire(SiteLocale::class),
         ];
     }
 }
