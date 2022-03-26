@@ -36,7 +36,6 @@ use UserFrosting\Sprinkle\Account\Event\UserAuthenticatedEvent;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Event\UserLoggedInEvent;
 use UserFrosting\Sprinkle\Account\Event\UserLoggedOutEvent;
-use UserFrosting\Sprinkle\Account\I18n\LocaleServicesProvider;
 use UserFrosting\Sprinkle\Account\Listener\AssignDefaultGroups;
 use UserFrosting\Sprinkle\Account\Listener\AssignDefaultRoles;
 use UserFrosting\Sprinkle\Account\Listener\UpgradePassword;
@@ -45,6 +44,7 @@ use UserFrosting\Sprinkle\Account\Listener\UserSignInActivity;
 use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ErrorHandlerService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\I18nService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ModelsService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\UserActivityLoggerService;
 use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
@@ -113,10 +113,10 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
     public function getServices(): array
     {
         return [
-            // LocaleServicesProvider::class, // TODO
             AuthService::class,
-            ModelsService::class,
             ErrorHandlerService::class,
+            ModelsService::class,
+            I18nService::class,
             UserActivityLoggerService::class,
         ];
     }

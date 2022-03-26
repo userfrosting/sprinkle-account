@@ -10,35 +10,43 @@
 
 namespace UserFrosting\Sprinkle\Account\I18n;
 
+use Exception;
+use UserFrosting\Config\Config;
+use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale as CoreSiteLocale;
 
 /**
  * Helper methods for the locale system.
- *
- * @author Louis Charette
  */
 class SiteLocale extends CoreSiteLocale
 {
     /**
-     * Returns the locale intentifier (ie. en_US) to use.
-     *
-     * @return string Locale intentifier
+     * @param Config        $config
+     * @param Authenticator $authenticator
      */
-    public function getLocaleIndentifier(): string
+    public function __construct(
+        protected Config $config,
+        protected Authenticator $authenticator,
+    ) {
+        parent::__construct($config);
+    }
+
+    /**
+     * Returns the locale identifier (ie. en_US) to use.
+     *
+     * @return string Locale identifier
+     */
+    public function getLocaleIdentifier(): string
     {
-        /** @var \UserFrosting\Sprinkle\Account\Authenticate\Authenticator $authenticator */
-        $authenticator = $this->ci->authenticator;
-
-        /** @var \UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface */
-        $currentUser = $this->ci->currentUser;
-
         // If user is note logged in, get original translator
         try {
-            if (!$authenticator->check()) {
-                return parent::getLocaleIndentifier();
-            }
-        } catch (\Exception $e) {
-            return parent::getLocaleIndentifier();
+            $currentUser = $this->authenticator->user();
+        } catch (Exception $e) {
+            return parent::getLocaleIdentifier();
+        }
+
+        if ($currentUser === null) {
+            return parent::getLocaleIdentifier();
         }
 
         // Get user locale identifier
@@ -46,7 +54,7 @@ class SiteLocale extends CoreSiteLocale
 
         // Make sure identifier exist. If not, fallback to default locale/translator
         if (!$this->isAvailable($userLocale)) {
-            return parent::getLocaleIndentifier();
+            return parent::getLocaleIdentifier();
         }
 
         return $userLocale;
