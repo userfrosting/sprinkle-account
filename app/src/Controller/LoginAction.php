@@ -130,7 +130,7 @@ class LoginAction
 
         // Try to authenticate the user.  Authenticator will throw an exception on failure.
         try {
-            $currentUser = $this->authenticator->attempt(($isEmail == true ? 'email' : 'user_name'), $userIdentifier, $data['password'], $data['rememberme']);
+            $currentUser = $this->authenticator->attempt(($isEmail == true ? 'email' : 'user_name'), $userIdentifier, $data['password'], ($data['rememberme'] == true));
         } catch (AccountException $e) {
             // only let unsuccessful logins count toward the throttling limit
             $this->throttler->logEvent('sign_in_attempt', [
