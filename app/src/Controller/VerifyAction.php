@@ -124,6 +124,6 @@ class VerifyAction
      */
     protected function getRedirectDestination(): string
     {
-        return $this->routeParser->urlFor('account.login');
+        return $this->routeParser->urlFor('index');
     }
 }
