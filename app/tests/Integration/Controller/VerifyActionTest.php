@@ -15,14 +15,16 @@ namespace UserFrosting\Sprinkle\Account\Tests\Integration\Controller;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
+use UserFrosting\Sprinkle\Account\Account;
+use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterVerificationEvent;
 use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
-use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
 class VerifyActionTest extends AccountTestCase
 {
-    // use RefreshDatabase;
     use MockeryPHPUnitIntegration;
+
+    protected string $mainSprinkle = VerifyActionSprinkle::class;
 
     public function testVerify(): void
     {
@@ -38,8 +40,11 @@ class VerifyActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertResponseStatus(302, $response);
-        $this->assertSame('/account/login', $response->getHeaderLine('Location'));
+        $this->assertJsonResponse([], $response);
+        $this->assertResponseStatus(200, $response);
+
+        // Assert Event Redirect
+        $this->assertSame('/home', $response->getHeaderLine('UF-Redirect'));
 
         // Test message
         /** @var AlertStream */
@@ -62,8 +67,11 @@ class VerifyActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertResponseStatus(302, $response);
-        $this->assertSame('/account/login', $response->getHeaderLine('Location'));
+        $this->assertJsonResponse([], $response);
+        $this->assertResponseStatus(200, $response);
+
+        // Assert Event Redirect
+        $this->assertSame('/home', $response->getHeaderLine('UF-Redirect'));
 
         // Test message
         /** @var AlertStream */
@@ -85,13 +93,40 @@ class VerifyActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertResponseStatus(302, $response);
-        $this->assertSame('/account/login', $response->getHeaderLine('Location'));
+        $this->assertJsonResponse([], $response);
+        $this->assertResponseStatus(200, $response);
+
+        // Assert Event Redirect
+        $this->assertSame('/home', $response->getHeaderLine('UF-Redirect'));
 
         // Test message
         /** @var AlertStream */
         $ms = $this->ci->get(AlertStream::class);
         $messages = $ms->getAndClearMessages();
         $this->assertSame('danger', end($messages)['type']);
+    }
+}
+
+class VerifyActionSprinkle extends Account
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventListeners(): array
+    {
+        return [
+            UserRedirectedAfterVerificationEvent::class => [
+                UserRedirectedAfterVerificationListener::class,
+            ],
+        ];
+    }
+}
+
+class UserRedirectedAfterVerificationListener
+{
+    public function __invoke(UserRedirectedAfterVerificationEvent $event): void
+    {
+        $event->setRedirect('/home');
+        $event->stop();
     }
 }

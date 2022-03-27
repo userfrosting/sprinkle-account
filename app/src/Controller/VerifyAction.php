@@ -16,11 +16,13 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteParserInterface;
 use UserFrosting\Alert\AlertStream;
+use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
 use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\I18n\Translator;
+use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterVerificationEvent;
 use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 
 /**
@@ -46,6 +48,7 @@ class VerifyAction
      */
     public function __construct(
         protected AlertStream $alert,
+        protected EventDispatcher $eventDispatcher,
         protected RouteParserInterface $routeParser,
         protected Translator $translator,
         protected VerificationRepository $repoVerification,
@@ -62,11 +65,18 @@ class VerifyAction
     public function __invoke(Request $request, Response $response): Response
     {
         $this->handle($request);
-        $destination = $this->getRedirectDestination();
 
-        return $response
-            ->withHeader('Location', $destination)
-            ->withStatus(302);
+        // Get redirect target and add Header
+        $event = $this->eventDispatcher->dispatch(new UserRedirectedAfterVerificationEvent());
+        if ($event->getRedirect() !== null) {
+            $response = $response->withHeader('UF-Redirect', $event->getRedirect());
+        }
+
+        // Write empty response
+        $payload = json_encode([], JSON_THROW_ON_ERROR);
+        $response->getBody()->write($payload);
+
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -115,15 +125,5 @@ class VerifyAction
     protected function getSchema(): RequestSchemaInterface
     {
         return new RequestSchema($this->schema);
-    }
-
-    /**
-     * Return redirection destination.
-     *
-     * @return string
-     */
-    protected function getRedirectDestination(): string
-    {
-        return $this->routeParser->urlFor('index');
     }
 }
