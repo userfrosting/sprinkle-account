@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Controller;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterLogoutEvent;
 
@@ -39,10 +39,12 @@ class LogoutAction
 {
     /**
      * Inject dependencies.
+     *
+     * @param \UserFrosting\Event\EventDispatcher $eventDispatcher
      */
     public function __construct(
         protected Authenticator $authenticator,
-        protected EventDispatcher $eventDispatcher,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

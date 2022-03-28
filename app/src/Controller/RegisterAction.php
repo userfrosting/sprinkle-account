@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Controller;
 
 use Illuminate\Database\Connection;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
-use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
@@ -65,12 +65,14 @@ class RegisterAction
 
     /**
      * Inject dependencies.
+     *
+     * @param \UserFrosting\Event\EventDispatcher $eventDispatcher
      */
     public function __construct(
         protected AlertStream $alert,
         protected Config $config,
         protected Connection $db,
-        protected EventDispatcher $eventDispatcher,
+        protected EventDispatcherInterface $eventDispatcher,
         protected Session $session,
         protected SiteLocale $locale,
         protected Translator $translator,

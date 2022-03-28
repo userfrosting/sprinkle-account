@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Controller;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
-use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
@@ -54,12 +54,14 @@ class LoginAction
 
     /**
      * Inject dependencies.
+     *
+     * @param \UserFrosting\Event\EventDispatcher $eventDispatcher
      */
     public function __construct(
         protected AlertStream $alert,
         protected Authenticator $authenticator,
         protected Config $config,
-        protected EventDispatcher $eventDispatcher,
+        protected EventDispatcherInterface $eventDispatcher,
         protected Translator $translator,
         protected Throttler $throttler,
     ) {

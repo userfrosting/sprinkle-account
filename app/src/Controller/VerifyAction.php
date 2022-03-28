@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Controller;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteParserInterface;
 use UserFrosting\Alert\AlertStream;
-use UserFrosting\Event\EventDispatcher;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
@@ -45,10 +45,12 @@ class VerifyAction
 
     /**
      * Inject dependencies.
+     *
+     * @param \UserFrosting\Event\EventDispatcher $eventDispatcher
      */
     public function __construct(
         protected AlertStream $alert,
-        protected EventDispatcher $eventDispatcher,
+        protected EventDispatcherInterface $eventDispatcher,
         protected RouteParserInterface $routeParser,
         protected Translator $translator,
         protected VerificationRepository $repoVerification,
@@ -69,7 +71,9 @@ class VerifyAction
         // Get redirect target and add Header
         $event = $this->eventDispatcher->dispatch(new UserRedirectedAfterVerificationEvent());
         if ($event->getRedirect() !== null) {
-            $response = $response->withHeader('UF-Redirect', $event->getRedirect());
+            return $response
+                ->withHeader('Location', $event->getRedirect())
+                ->withStatus(302);
         }
 
         // Write empty response
