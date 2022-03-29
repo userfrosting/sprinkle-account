@@ -13,7 +13,7 @@ namespace UserFrosting\Sprinkle\Account\Authenticate;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
-use UserFrosting\Sprinkle\Account\Exceptions\AuthExpiredException;
+use UserFrosting\Sprinkle\Account\Exceptions\AuthGuardException;
 
 /**
  * Middleware to catch requests that fail because they require user authentication.
@@ -29,7 +29,9 @@ class AuthGuard
     }
 
     /**
-     * Invoke the AuthGuard middleware, throwing an exception if there is no authenticated user in the session.
+     * Invoke the AuthGuard middleware, throwing an exception if there is no
+     * authenticated user in the session. Sprinkle can handle this exception
+     * to handle the way they want.
      *
      * @param Request        $request
      * @param RequestHandler $handler
@@ -39,9 +41,7 @@ class AuthGuard
     public function __invoke(Request $request, RequestHandler $handler): ResponseInterface
     {
         if (!$this->authenticator->check()) {
-            // TODO : Expired might not be right here, and produce wrong user message.
-            // Could probably used a "not logged in" exception ?
-            throw new AuthExpiredException();
+            throw new AuthGuardException();
         }
 
         return $handler->handle($request);

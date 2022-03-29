@@ -57,6 +57,10 @@ return [
                 'TITLE'       => 'Already Logged-in',
                 'DESCRIPTION' => "Can't access this resource, as you're already logged-in",
             ],
+            'LOGIN_REQUIRED' => [
+                'TITLE'       => 'Login Required',
+                'DESCRIPTION' => "Please login to continue",
+            ],
         ],
 
         'EMAIL_UPDATED' => 'Account email updated',
