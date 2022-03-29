@@ -66,9 +66,7 @@ class AuthGuardTest extends AccountTestCase
         $this->assertResponseStatus(400, $response);
         $body = (string) $response->getBody();
         $this->assertNotSame('Hello', $body);
-        $this->assertStringContainsString('Session expired', $body);
-
-        // TODO : This will change once we implement "redirect" behavior.
+        $this->assertStringContainsString('Login Required', $body);
     }
 }
 
