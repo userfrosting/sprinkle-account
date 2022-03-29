@@ -386,6 +386,12 @@ class Authenticator
     protected function validateRememberMeCookie(): bool
     {
         $cookieValue = $this->rememberMe->getCookie()->getValue();
+
+        // Empty cookie means nothing to validate.
+        if ($cookieValue === '') {
+            return true;
+        }
+
         $triplet = RememberMeTriplet::fromString($cookieValue);
 
         return $triplet->isValid();

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Authenticate;
 
 use Birke\Rememberme\Authenticator as RememberMe;
+use Birke\Rememberme\Cookie\PHPCookie;
 use Birke\Rememberme\LoginResult;
 use Birke\Rememberme\Storage\StorageInterface;
 use Mockery;
@@ -335,7 +336,7 @@ class AuthenticatorTest extends AccountTestCase
         $session->start();
 
         // Perform login
-        $authenticator->login($testUser, true);
+        $authenticator->login($testUser);
 
         // Now go through the `loginSessionUser` process
         // First, we'll simulate a page refresh by creating a new authenticator
@@ -359,6 +360,17 @@ class AuthenticatorTest extends AccountTestCase
 
     public function testLoginSessionUserWithAuthExpired(): void
     {
+        // Mock RememberMe to simulate a fake cookie.
+        $storageInterface = $this->ci->get(StorageInterface::class);
+        $cookie = Mockery::mock(PHPCookie::class)
+            ->makePartial()
+            ->shouldReceive('getValue')->andReturn('foo')
+            ->getMock();
+        $rememberMe = Mockery::mock(RememberMe::class . '[getCookie]', [$storageInterface])
+            ->shouldReceive('getCookie')->andReturn($cookie)
+            ->getMock();
+        $this->ci->set(RememberMe::class, $rememberMe);
+
         /** @var User */
         $testUser = User::factory()->create();
 
