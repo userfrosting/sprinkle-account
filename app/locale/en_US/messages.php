@@ -59,7 +59,7 @@ return [
             ],
             'LOGIN_REQUIRED' => [
                 'TITLE'       => 'Login Required',
-                'DESCRIPTION' => "Please login to continue",
+                'DESCRIPTION' => 'Please login to continue',
             ],
         ],
 
