@@ -70,7 +70,7 @@ class ProfileActionTest extends AccountTestCase
         /** @var AlertStream */
         $ms = $this->ci->get(AlertStream::class);
         $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', end($messages)['type']);
+        $this->assertSame('success', array_reverse($messages)[0]['type']);
     }
 
     /*public function testProfileWithNoPermissions()
@@ -84,7 +84,7 @@ class ProfileActionTest extends AccountTestCase
         // Test message
         $ms = $this->ci->alerts;
         $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', end($messages)['type']);
+        $this->assertSame('danger', array_reverse($messages)[0]['type']);
     }*/
 
     public function testProfileWithOneLocale(): void

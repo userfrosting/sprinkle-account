@@ -61,7 +61,7 @@ class ResendVerificationActionTest extends AccountTestCase
         /** @var AlertStream */
         $ms = $this->ci->get(AlertStream::class);
         $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', end($messages)['type']);
+        $this->assertSame('success', array_reverse($messages)[0]['type']);
     }
 
     public function testResendVerificationWithVerifiedUser(): void
@@ -90,7 +90,7 @@ class ResendVerificationActionTest extends AccountTestCase
         /** @var AlertStream */
         $ms = $this->ci->get(AlertStream::class);
         $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', end($messages)['type']);
+        $this->assertSame('success', array_reverse($messages)[0]['type']);
     }
 
     public function testResendVerificationWithFailedThrottle(): void
