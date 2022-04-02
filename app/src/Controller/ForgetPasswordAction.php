@@ -81,8 +81,10 @@ class ForgetPasswordAction
     public function __invoke(Request $request, Response $response): Response
     {
         $this->handle($request);
+        $payload = json_encode([], JSON_THROW_ON_ERROR);
+        $response->getBody()->write($payload);
 
-        return $response;
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     /**

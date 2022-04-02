@@ -54,7 +54,7 @@ class ForgetPasswordActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertResponse('', $response);
+        $this->assertJsonResponse([], $response);
         $this->assertResponseStatus(200, $response);
 
         // Test message
