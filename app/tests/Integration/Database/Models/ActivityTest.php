@@ -81,6 +81,11 @@ class ActivityTest extends AccountTestCase
         $activities = Activity::factory()
             ->count(3)
             ->state(new Sequence(
+                ['type' => 'one'],
+                ['type' => 'two'],
+                ['type' => 'three'],
+            ))
+            ->state(new Sequence(
                 fn ($sequence) => ['occurred_at' => new \DateTime("now -{$sequence->index} day")],
             ))
             ->for($user)
