@@ -64,7 +64,7 @@ return [
             'PASSWORD_RESET' => [
                 'TITLE'       => 'Invalid Password Reset Token',
                 'DESCRIPTION' => 'This password reset request could not be found, or has expired.',
-            ]
+            ],
         ],
 
         'EMAIL_UPDATED' => 'Account email updated',
