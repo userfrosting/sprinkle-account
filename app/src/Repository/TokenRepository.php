@@ -163,7 +163,7 @@ abstract class TokenRepository
      * Validate token is valid and unexpired.
      *
      * @param string $token
-     * 
+     *
      * @return bool
      */
     public function validate(string $token): bool
