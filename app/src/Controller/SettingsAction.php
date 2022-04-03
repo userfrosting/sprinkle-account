@@ -121,6 +121,11 @@ class SettingsAction
             throw new EmailNotUniqueException();
         }
 
+        // If password is empty, remove it from the data array
+        if ($data['password'] === '') {
+            unset($data['password']);
+        }
+
         // Looks good, let's update with new values!
         // Note that only fields listed in `account-settings.yaml` will be
         // permitted in $data, so this prevents the user from updating all columns in the DB
