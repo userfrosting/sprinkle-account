@@ -17,5 +17,6 @@ use UserFrosting\Support\Message\UserMessage;
  */
 final class PasswordResetInvalidException extends AccountException
 {
-    protected string|UserMessage $description = 'PASSWORD.FORGET.INVALID';
+    protected string $title = 'ACCOUNT.EXCEPTION.PASSWORD_RESET.TITLE';
+    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.PASSWORD_RESET.DESCRIPTION';
 }

@@ -68,7 +68,7 @@ class DenyResetPasswordActionTest extends AccountTestCase
         /** @var AlertStream */
         $ms = $this->ci->get(AlertStream::class);
         $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger',array_reverse($messages)[0]['type']);
+        $this->assertSame('danger', array_reverse($messages)[0]['type']);
     }
 
     public function testDenyResetPasswordWithFailedValidation(): void

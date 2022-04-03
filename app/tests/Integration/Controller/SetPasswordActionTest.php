@@ -73,7 +73,7 @@ class SetPasswordActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertJsonResponse('Account Exception', $response, 'title');
+        $this->assertJsonResponse('Invalid Password Reset Token', $response, 'title');
         $this->assertResponseStatus(400, $response);
     }
 
