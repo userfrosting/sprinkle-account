@@ -64,8 +64,10 @@ class VerificationRepositoryTest extends AccountTestCase
 
         $verification = $repo->create($user, 3600);
         $this->assertTrue($repo->exists($user));
+        $this->assertTrue($repo->validate($verification->getToken()));
         $this->assertTrue($repo->complete($verification->getToken()));
         $this->assertFalse($repo->exists($user));
+        $this->assertFalse($repo->validate($verification->getToken()));
     }
 
     public function testCompleteWithUserGone(): void

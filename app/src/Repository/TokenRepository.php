@@ -160,6 +160,32 @@ abstract class TokenRepository
     }
 
     /**
+     * Validate token is valid and unexpired.
+     *
+     * @param string $token
+     * 
+     * @return bool
+     */
+    public function validate(string $token): bool
+    {
+        // Hash the token for the stored version
+        $hash = hash($this->algorithm, $token);
+
+        // Find an unexpired, incomplete token for the specified hash
+        $model = $this->getModelIdentifier()
+            ->where('hash', $hash)
+            ->where('completed', false)
+            ->where('expires_at', '>', Carbon::now())
+            ->first();
+
+        if ($model === null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Delete all existing tokens from the database for a particular user.
      *
      * @param UserInterface $user
