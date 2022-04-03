@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Controller;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteParserInterface;
@@ -22,6 +23,7 @@ use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
 use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\I18n\Translator;
+use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterDenyResetPasswordEvent;
 use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
 
 /**
@@ -43,9 +45,12 @@ class DenyResetPasswordAction
 
     /**
      * Inject dependencies.
+     *
+     * @param \UserFrosting\Event\EventDispatcher $eventDispatcher
      */
     public function __construct(
         protected AlertStream $alert,
+        protected EventDispatcherInterface $eventDispatcher,
         protected Config $config,
         protected RouteParserInterface $routeParser,
         protected Translator $translator,
@@ -63,11 +68,20 @@ class DenyResetPasswordAction
     public function __invoke(Request $request, Response $response): Response
     {
         $this->handle($request);
-        $destination = $this->getRedirectDestination();
 
-        return $response
-            ->withHeader('Location', $destination)
-            ->withStatus(302);
+        // Get redirect target and add Header
+        $event = $this->eventDispatcher->dispatch(new UserRedirectedAfterDenyResetPasswordEvent());
+        if ($event->getRedirect() !== null) {
+            return $response
+                ->withHeader('Location', $event->getRedirect())
+                ->withStatus(302);
+        }
+
+        // Write empty response
+        $payload = json_encode([], JSON_THROW_ON_ERROR);
+        $response->getBody()->write($payload);
+
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -114,15 +128,5 @@ class DenyResetPasswordAction
     protected function getSchema(): RequestSchemaInterface
     {
         return new RequestSchema($this->schema);
-    }
-
-    /**
-     * Return redirection destination.
-     *
-     * @return string
-     */
-    protected function getRedirectDestination(): string
-    {
-        return $this->routeParser->urlFor('account.login');
     }
 }
