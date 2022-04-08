@@ -62,7 +62,7 @@ class PasswordReset extends Model implements PasswordResetInterface
     public function user(): BelongsTo
     {
         /** @var string */
-        $relation = static::$ci->get(UserInterface::class);
+        $relation = static::$ci?->get(UserInterface::class);
 
         return $this->belongsTo($relation);
     }

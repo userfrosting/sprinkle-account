@@ -180,7 +180,7 @@ class User extends Model implements UserInterface
     public function setPasswordAttribute(string $value): void
     {
         /** @var HasherInterface */
-        $hasher = static::$ci->get(HasherInterface::class);
+        $hasher = static::$ci?->get(HasherInterface::class);
 
         // TODO : Might be worth using null instead.
         if ($value !== '') {
@@ -200,7 +200,7 @@ class User extends Model implements UserInterface
     public function comparePassword(string $password): bool
     {
         /** @var HasherInterface */
-        $hasher = static::$ci->get(HasherInterface::class);
+        $hasher = static::$ci?->get(HasherInterface::class);
 
         return $hasher->verify($password, $this->password);
     }
@@ -213,7 +213,7 @@ class User extends Model implements UserInterface
     public function getCache(): Cache
     {
         /** @var Cache */
-        $cache = static::$ci->get(Cache::class);
+        $cache = static::$ci?->get(Cache::class);
 
         return $cache->tags('_u' . $this->id);
     }
@@ -228,10 +228,10 @@ class User extends Model implements UserInterface
     public static function findCached(int $id): ?self
     {
         /** @var Cache */
-        $cache = static::$ci->get(Cache::class);
+        $cache = static::$ci?->get(Cache::class);
 
         /** @var Config */
-        $config = static::$ci->get(Config::class);
+        $config = static::$ci?->get(Config::class);
 
         // Get config values
         $key = $config->get('cache.user.key') . $id;
@@ -251,10 +251,10 @@ class User extends Model implements UserInterface
     public function forgetCache(): static
     {
         /** @var Cache */
-        $cache = static::$ci->get(Cache::class);
+        $cache = static::$ci?->get(Cache::class);
 
         /** @var Config */
-        $config = static::$ci->get(Config::class);
+        $config = static::$ci?->get(Config::class);
 
         // Get config values
         $key = $config->get('cache.user.key') . $this->id;
@@ -298,7 +298,7 @@ class User extends Model implements UserInterface
     public function isMaster(): bool
     {
         /** @var Config */
-        $config = static::$ci->get(Config::class);
+        $config = static::$ci?->get(Config::class);
         $masterId = intval($config->get('reserved_user_ids.master'));
 
         // Need to use loose comparison for now, because some DBs return `id` as a string
@@ -313,7 +313,7 @@ class User extends Model implements UserInterface
     public function activities(): HasMany
     {
         /** @var string */
-        $relation = static::$ci->get(ActivityInterface::class);
+        $relation = static::$ci?->get(ActivityInterface::class);
 
         return $this->hasMany($relation);
     }
@@ -388,7 +388,7 @@ class User extends Model implements UserInterface
     public function group(): BelongsTo
     {
         /** @var string */
-        $relation = static::$ci->get(GroupInterface::class);
+        $relation = static::$ci?->get(GroupInterface::class);
 
         return $this->belongsTo($relation);
     }
@@ -401,7 +401,7 @@ class User extends Model implements UserInterface
     public function passwordResets(): HasMany
     {
         /** @var string */
-        $relation = static::$ci->get(PasswordResetInterface::class);
+        $relation = static::$ci?->get(PasswordResetInterface::class);
 
         return $this->hasMany($relation);
     }
@@ -414,7 +414,7 @@ class User extends Model implements UserInterface
     public function verifications(): HasMany
     {
         /** @var string */
-        $relation = static::$ci->get(VerificationInterface::class);
+        $relation = static::$ci?->get(VerificationInterface::class);
 
         return $this->hasMany($relation);
     }
@@ -427,7 +427,7 @@ class User extends Model implements UserInterface
     public function persistences(): HasMany
     {
         /** @var string */
-        $relation = static::$ci->get(PersistenceInterface::class);
+        $relation = static::$ci?->get(PersistenceInterface::class);
 
         return $this->hasMany($relation);
     }
@@ -440,10 +440,10 @@ class User extends Model implements UserInterface
     public function permissions(): BelongsToManyThrough
     {
         /** @var string */
-        $permissionRelation = static::$ci->get(PermissionInterface::class);
+        $permissionRelation = static::$ci?->get(PermissionInterface::class);
 
         /** @var string */
-        $roleRelation = static::$ci->get(RoleInterface::class);
+        $roleRelation = static::$ci?->get(RoleInterface::class);
 
         return $this->belongsToManyThrough(
             $permissionRelation,
@@ -461,7 +461,7 @@ class User extends Model implements UserInterface
     public function roles(): BelongsToMany
     {
         /** @var string */
-        $relation = static::$ci->get(RoleInterface::class);
+        $relation = static::$ci?->get(RoleInterface::class);
 
         return $this->belongsToMany($relation, 'role_users')->withTimestamps();
     }

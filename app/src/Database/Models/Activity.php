@@ -96,7 +96,7 @@ class Activity extends Model implements ActivityInterface
     public function user(): BelongsTo
     {
         /** @var string */
-        $relation = static::$ci->get(UserInterface::class);
+        $relation = static::$ci?->get(UserInterface::class);
 
         return $this->belongsTo($relation, 'user_id');
     }

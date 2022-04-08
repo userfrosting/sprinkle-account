@@ -111,7 +111,7 @@ class RegisterActionTest extends AccountTestCase
         $this->assertResponseStatus(400, $response);
     }
 
-    public function testWihFailedCaptcha(): void
+    public function testWithFailedCaptcha(): void
     {
         $this->setMasterUser();
 

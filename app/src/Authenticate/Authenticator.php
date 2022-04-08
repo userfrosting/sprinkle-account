@@ -326,8 +326,16 @@ class Authenticator
         }
 
         $userId = intval($loginResult->getCredential());
+
+        // If the user id is 0, then the user was not found.
+        if ($userId === 0) {
+            return null;
+        }
+
+        // Get cached user model.
         $user = $this->userModel::findCached($userId);
 
+        // Null model, then the user was not found.
         if ($user === null) {
             return null;
         }
@@ -347,6 +355,11 @@ class Authenticator
      */
     protected function loginSessionUser(): ?UserInterface
     {
+        // If sessions is not started, then we can't do anything.
+        if ($this->session->status() === PHP_SESSION_NONE) {
+            return null;
+        }
+
         $key = strval($this->config->get('session.keys.current_user_id'));
         $userId = $this->session->get($key);
 

@@ -82,7 +82,7 @@ class Role extends Model implements RoleInterface
     public function permissions(): BelongsToMany
     {
         /** @var string */
-        $relation = static::$ci->get(PermissionInterface::class);
+        $relation = static::$ci?->get(PermissionInterface::class);
 
         return $this->belongsToMany($relation, 'permission_roles', 'role_id', 'permission_id')->withTimestamps();
     }
@@ -116,7 +116,7 @@ class Role extends Model implements RoleInterface
     public function users(): BelongsToMany
     {
         /** @var string */
-        $relation = static::$ci->get(UserInterface::class);
+        $relation = static::$ci?->get(UserInterface::class);
 
         return $this->belongsToMany($relation, 'role_users');
     }

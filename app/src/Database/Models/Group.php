@@ -65,7 +65,7 @@ class Group extends Model implements GroupInterface
     public function users(): HasMany
     {
         /** @var string */
-        $relation = static::$ci->get(UserInterface::class);
+        $relation = static::$ci?->get(UserInterface::class);
 
         return $this->hasMany($relation, 'group_id');
     }

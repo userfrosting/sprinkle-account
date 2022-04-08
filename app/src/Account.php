@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account;
 
 use UserFrosting\Event\EventListenerRecipe;
-use UserFrosting\Sprinkle\Account\Bakery\BakeCommand;
+use UserFrosting\Sprinkle\Account\Bakery\BakeCommandListener;
 use UserFrosting\Sprinkle\Account\Bakery\CreateAdminUser;
+use UserFrosting\Sprinkle\Account\Bakery\CreateUser;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\ActivitiesTable;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\GroupsTable;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PasswordResetsTable;
@@ -48,6 +49,7 @@ use UserFrosting\Sprinkle\Account\ServicesProvider\I18nService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ModelsService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\UserActivityLoggerService;
 use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
+use UserFrosting\Sprinkle\Core\Bakery\Event\BakeCommandEvent;
 use UserFrosting\Sprinkle\Core\Core;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\SeedRecipe;
@@ -78,8 +80,8 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
     public function getBakeryCommands(): array
     {
         return [
-            // BakeCommand::class,
-            // CreateAdminUser::class,
+            CreateAdminUser::class,
+            CreateUser::class,
         ];
     }
 
@@ -176,6 +178,9 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
     public function getEventListeners(): array
     {
         return [
+            BakeCommandEvent::class => [
+                BakeCommandListener::class,
+            ],
             UserCreatedEvent::class => [
                 AssignDefaultRoles::class,
                 AssignDefaultGroups::class,
