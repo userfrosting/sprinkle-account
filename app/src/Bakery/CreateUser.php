@@ -62,7 +62,8 @@ class CreateUser extends Command
 
     /**
      * @Inject
-     * @var \UserFrosting\Event\EventDispatcher $eventDispatcher
+     *
+     * @var \UserFrosting\Event\EventDispatcher
      */
     protected EventDispatcherInterface $eventDispatcher;
 
@@ -95,6 +96,7 @@ class CreateUser extends Command
 
     /**
      * {@inheritdoc}
+     *
      * @phpstan-ignore-next-line
      */
     protected function configure()
