@@ -12,7 +12,7 @@ namespace UserFrosting\Sprinkle\Account\Bakery;
 
 use Symfony\Component\Console\Command\Command;
 use UserFrosting\Config\Config;
-use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryWarning;
+use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryNote;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 
 /**
@@ -21,6 +21,12 @@ use UserFrosting\Sprinkle\Account\Database\Models\User;
  */
 class CreateAdminUser extends CreateUser
 {
+    /** @var string The command name */
+    protected string $commandName = 'create:admin-user';
+
+    /** @var string The command name */
+    protected string $commandTitle = 'Creating new admin (root) user';
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +38,7 @@ class CreateAdminUser extends CreateUser
         // We setup the root account here so it can be done independent of the version check
         // TODO : We should get the id from config.
         if (User::count() > 0) {
-            throw new BakeryWarning("Table 'users' is not empty. Skipping root account setup. To set up the root account again, please truncate or drop the table and try again.");
+            throw new BakeryNote("Table 'users' is not empty. Skipping root account setup.");
         }
     }
 }

@@ -8,17 +8,13 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Bakery;
+namespace UserFrosting\Sprinkle\Account\Bakery\Exception;
 
-use UserFrosting\Sprinkle\Core\Bakery\Event\BakeCommandEvent;
+use Exception;
 
 /**
- * Adding Account provided `create-admin` to the bake command.
+ * Alias exception for Bakery note.
  */
-class BakeCommandListener
+final class BakeryNote extends Exception
 {
-    public function __invoke(BakeCommandEvent $event): void
-    {
-        $event->addCommand('create:admin-user');
-    }
 }

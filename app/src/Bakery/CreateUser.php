@@ -25,6 +25,7 @@ use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
 use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\I18n\Translator;
 use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryError;
+use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryNote;
 use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryWarning;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\RolesTable;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\RoleUsersTable;
@@ -86,13 +87,19 @@ class CreateUser extends Command
         RoleUsersTable::class,
     ];
 
+    /** @var string The command name */
+    protected string $commandName = 'create:user';
+
+    /** @var string The command name */
+    protected string $commandTitle = 'Creating new user account';
+
     /**
      * {@inheritdoc}
      * @phpstan-ignore-next-line
      */
     protected function configure()
     {
-        $this->setName('create-user')
+        $this->setName($this->commandName)
              ->setDescription('Create a new user account.')
              ->addOption('username', null, InputOption::VALUE_OPTIONAL, 'The user username')
              ->addOption('email', null, InputOption::VALUE_OPTIONAL, 'The user email')
@@ -107,7 +114,7 @@ class CreateUser extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // Display header,
-        $this->io->title('Creating new user');
+        $this->io->title($this->commandTitle);
 
         // Validate requirements before running command.
         try {
@@ -118,6 +125,10 @@ class CreateUser extends Command
             return self::FAILURE;
         } catch (BakeryWarning $e) {
             $this->io->warning($e->getMessage());
+
+            return self::SUCCESS;
+        } catch (BakeryNote $e) {
+            $this->io->note($e->getMessage());
 
             return self::SUCCESS;
         }

@@ -24,6 +24,6 @@ class BakeCommandListenerTest extends AccountTestCase
         $event = new BakeCommandEvent([]);
         $event = $eventDispatcher->dispatch($event);
 
-        $this->assertSame(['create-admin'], $event->getCommands());
+        $this->assertSame(['create:admin-user'], $event->getCommands());
     }
 }
