@@ -162,7 +162,6 @@ class CreateAdminUserTest extends AccountTestCase
         $command = $this->ci->get(CreateAdminUser::class);
         $result = BakeryTester::runCommand($command);
         $this->assertSame(1, $result->getStatusCode());
-        $this->assertStringContainsString('Make sure all migrations are up to date', $result->getDisplay());
     }
 
     public function testForExistingUser(): void
