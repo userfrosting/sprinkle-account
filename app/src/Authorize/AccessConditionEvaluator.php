@@ -37,6 +37,16 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
     protected bool $debug = false;
 
     /**
+     * @var StandardPrettyPrinter
+     */
+    protected StandardPrettyPrinter $prettyPrinter;
+
+    /**
+     * @var NodeTraverser
+     */
+    protected NodeTraverser $traverser;
+
+    /**
      * Create a new ParserNodeFunctionEvaluator object.
      *
      * @param AccessConditions      $accessConditions The parameters to be used when evaluating the methods in the condition expression, as an array.
@@ -51,11 +61,13 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
         protected AuthLogger $logger,
         Config $config,
         protected array $params = [],
-        protected StandardPrettyPrinter $prettyPrinter = new StandardPrettyPrinter(),
-        protected NodeTraverser $traverser = new NodeTraverser(),
+        ?StandardPrettyPrinter $prettyPrinter = null,
+        ?NodeTraverser $traverser = null,
     ) {
         $this->debug = $config->getBool('debug.auth');
         $this->parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $this->prettyPrinter = $prettyPrinter ?? new StandardPrettyPrinter();
+        $this->traverser = $traverser ?? new NodeTraverser();
         $this->traverser->addVisitor($this);
     }
 

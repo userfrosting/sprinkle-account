@@ -71,6 +71,12 @@ class AccessConditionsTest extends AccountTestCase
         $this->assertTrue($callbacks->always());
     }
 
+    public function testNever(): void
+    {
+        $callbacks = new AccessConditions($this->config);
+        $this->assertFalse($callbacks->never());
+    }
+
     public function testEquals(): void
     {
         $callbacks = new AccessConditions($this->config);
