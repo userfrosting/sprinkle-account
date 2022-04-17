@@ -8,13 +8,9 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Authorize;
+namespace UserFrosting\Sprinkle\Account\Tests\Integration\Authorize;
 
-use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
-
-/**
- * Exception for AccessConditionExpression.
- */
-class AuthorizationException extends AccountException
+class ParserNodeFunctionEvaluatorTest
 {
+    // TODO
 }

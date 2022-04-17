@@ -10,11 +10,13 @@
 
 namespace UserFrosting\Sprinkle\Account\Authorize;
 
-use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
+use ArrayAccess;
 
 /**
- * Exception for AccessConditionExpression.
+ * Default access condition callbacks.
+ *
+ * @extends ArrayAccess<string, callable>
  */
-class AuthorizationException extends AccountException
+interface AccessConditionsInterface extends ArrayAccess
 {
 }

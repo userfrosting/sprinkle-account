@@ -8,13 +8,13 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Authorize;
+namespace UserFrosting\Sprinkle\Account\Log;
 
-use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
+use Monolog\Logger;
 
 /**
- * Exception for AccessConditionExpression.
+ * Monolog alias for dependency injection.
  */
-class AuthorizationException extends AccountException
+class AuthLogger extends Logger
 {
 }

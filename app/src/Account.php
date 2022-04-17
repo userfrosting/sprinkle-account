@@ -43,11 +43,12 @@ use UserFrosting\Sprinkle\Account\Listener\UpgradePassword;
 use UserFrosting\Sprinkle\Account\Listener\UserLogoutActivity;
 use UserFrosting\Sprinkle\Account\Listener\UserSignInActivity;
 use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
+use UserFrosting\Sprinkle\Account\ServicesProvider\AuthorizationService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ErrorHandlerService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\I18nService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\LoggersService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ModelsService;
-use UserFrosting\Sprinkle\Account\ServicesProvider\UserActivityLoggerService;
 use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
 use UserFrosting\Sprinkle\Core\Bakery\Event\BakeCommandEvent;
 use UserFrosting\Sprinkle\Core\Core;
@@ -76,6 +77,7 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getBakeryCommands(): array
     {
@@ -115,11 +117,12 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
     public function getServices(): array
     {
         return [
+            AuthorizationService::class,
             AuthService::class,
             ErrorHandlerService::class,
             ModelsService::class,
             I18nService::class,
-            UserActivityLoggerService::class,
+            LoggersService::class,
         ];
     }
 
@@ -162,6 +165,7 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
 
     /**
      * {@inheritDoc}
+     * @codeCoverageIgnore
      */
     public function getSeeds(): array
     {
