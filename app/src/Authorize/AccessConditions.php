@@ -64,6 +64,7 @@ class AccessConditions implements AccessConditionsInterface
 
     /**
      * Check if the specified values are numeric, and if so, if they are equal to each other.
+     *
      * @param mixed $val1 the first value to compare.
      * @param mixed $val2 the second value to compare.
      *
@@ -167,6 +168,7 @@ class AccessConditions implements AccessConditionsInterface
      * Check if all keys of the array $needle are present in the values of $haystack.
      *
      * This function is useful for whitelisting an array of key-value parameters.
+     *
      * @param mixed[] $needle   the array whose keys we should look for in $haystack
      * @param mixed[] $haystack the array of values to search.
      *

@@ -77,6 +77,7 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
 
     /**
      * {@inheritdoc}
+     *
      * @codeCoverageIgnore
      */
     public function getBakeryCommands(): array
@@ -165,6 +166,7 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
 
     /**
      * {@inheritDoc}
+     *
      * @codeCoverageIgnore
      */
     public function getSeeds(): array

@@ -24,8 +24,8 @@ class AuthorizationManager implements AuthorizationManagerInterface
     /**
      * Create a new AuthorizationManager object.
      *
-     * @param Config                      $config
-     * @param AuthLogger                  $logger
+     * @param Config                   $config
+     * @param AuthLogger               $logger
      * @param AccessConditionEvaluator $ace
      */
     public function __construct(
