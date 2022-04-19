@@ -16,11 +16,11 @@ use PHPUnit\Framework\TestCase;
 use Slim\Views\Twig;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
+use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
 
 /**
- * TwigAlertsExtensionTest class.
  * Tests Alerts twig extensions
  */
 class AccountExtensionTest extends TestCase
@@ -40,8 +40,11 @@ class AccountExtensionTest extends TestCase
                 ->shouldReceive('user')->once()->andReturn($user)
                 ->getMock();
 
+        /** @var AuthorizationManager */
+        $authorizer = Mockery::mock(AuthorizationManager::class);
+
         // Create and add to extensions.
-        $extensions = new AccountExtension($authenticator);
+        $extensions = new AccountExtension($authorizer, $authenticator);
 
         // Create dumb Twig and test adding extension
         $view = Twig::create('');
@@ -55,14 +58,43 @@ class AccountExtensionTest extends TestCase
         $this->assertSame('blah', $result);
     }
 
+    public function testCheckAccess(): void
+    {
+        /** @var UserInterface */
+        $user = Mockery::mock(UserInterface::class);
+
+        /** @var Authenticator */
+        $authenticator = Mockery::mock(Authenticator::class)
+                ->shouldReceive('user')->times(2)->andReturn($user)
+                ->getMock();
+
+        /** @var AuthorizationManager */
+        $authorizer = Mockery::mock(AuthorizationManager::class)
+                ->shouldReceive('checkAccess')->with($user, 'foo', ['foo' => 'bar'])->once()->andReturn(true)
+                ->getMock();
+
+        // Create and add to extensions.
+        $extensions = new AccountExtension($authorizer, $authenticator);
+
+        // Create dumb Twig and test adding extension
+        $view = Twig::create('');
+        $view->addExtension($extensions);
+
+        $result = $view->fetchFromString("{% if checkAccess('foo', {foo: 'bar'}) %}TRUE{% else %}FALSE{% endif %}");
+        $this->assertSame('TRUE', $result);
+    }
+
     public function testCurrentUser(): void
     {
         // Define mock AlertStream and register with Container
         /** @var Authenticator */
         $authenticator = Mockery::mock(Authenticator::class);
 
+        /** @var AuthorizationManager */
+        $authorizer = Mockery::mock(AuthorizationManager::class);
+
         // Create and add to extensions.
-        $extensions = new AccountExtension($authenticator);
+        $extensions = new AccountExtension($authorizer, $authenticator);
 
         // Create dumb Twig and test adding extension
         $view = Twig::create('');
