@@ -77,7 +77,6 @@ class User extends Model implements UserInterface
      */
     protected $hidden = [
         'password',
-        'group_id',
     ];
 
     /**
