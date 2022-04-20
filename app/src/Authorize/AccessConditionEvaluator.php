@@ -276,7 +276,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
             }
 
             return $result;
-        } catch (PhpParserException | AuthorizationException $e) {
+        } catch (PhpParserException|AuthorizationException $e) {
             if ($this->debug) {
                 $this->logger->debug("Error parsing access condition '$condition': " . $e->getMessage());
             }
