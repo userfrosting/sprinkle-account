@@ -25,4 +25,4 @@ jobs:
       run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: Run PHPStan
-      run: vendor/bin/phpstan analyse app/src/{Authenticate,Bakery,Controller,Database,Event,Exceptions,Helpers,Log,Mail,Routes,Twig,Validators} app/tests/Integration/{Authenticate,Bakery,Controller,Database,Event,Helpers,Listener,Log,Repository,Twig,Validators}
+      run: vendor/bin/phpstan analyse app/src/ app/tests/Integration/
