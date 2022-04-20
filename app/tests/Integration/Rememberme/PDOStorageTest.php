@@ -8,94 +8,96 @@
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\Account\Tests\Integration;
+namespace UserFrosting\Sprinkle\Account\Tests\Integration\Rememberme;
 
 use Birke\Rememberme\Storage\StorageInterface;
 use Carbon\Carbon;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Persistence;
+use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Rememberme\PDOStorage;
-use UserFrosting\Sprinkle\Account\Testing\withTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
-/**
- * @author Louis Charette
- */
 class PDOStorageTest extends AccountTestCase
 {
     use RefreshDatabase;
-    // use withTestUser;
 
     /**
      * @var PDOStorage
      */
-    protected $storage;
+    protected PDOStorage $storage;
 
     /**
-     * @var \UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface
+     * @var UserInterface
      */
-    protected $testUser;
+    protected UserInterface $testUser;
 
-    protected $validToken = '78b1e6d775cec5260001af137a79dbd5';
-    protected $validPersistentToken = '0e0530c1430da76495955eb06eb99d95';
-    protected $invalidToken = '7ae7c7caa0c7b880cb247bb281d527de';
+    // Test tokens
+    protected string $validToken = '78b1e6d775cec5260001af137a79dbd5';
+    protected string $validPersistentToken = '0e0530c1430da76495955eb06eb99d95';
+    protected string $invalidToken = '7ae7c7caa0c7b880cb247bb281d527de';
 
     // SHA1 hashes of the tokens
-    protected $validDBToken = 'e0e6d29addce0fbdd0f845799be7d0395ed087c3';
-    protected $validDBPersistentToken = 'd27d330764ef61e99adf5d16f90b95a2a63c209a';
-    protected $invalidDBToken = 'ec15fbc40cdff6a2050a1bcbbc1b2196222f13f4';
+    protected string $validDBToken = 'e0e6d29addce0fbdd0f845799be7d0395ed087c3';
+    protected string $validDBPersistentToken = 'd27d330764ef61e99adf5d16f90b95a2a63c209a';
+    protected string $invalidDBToken = 'ec15fbc40cdff6a2050a1bcbbc1b2196222f13f4';
 
-    protected $expire = '2022-12-21 21:21:00';
+    protected string $expire = '2022-12-21 21:21:00';
 
     protected function setUp(): void
     {
         parent::setUp();
 
         // Setup test database
-        // $this->setupTestDatabase();
         $this->refreshDatabase();
 
         // Create a test user
-        $this->testUser = $this->createTestUser();
+        /** @var UserInterface */
+        $user = User::factory()->create();
+        $this->testUser = $user;
 
-        $this->storage = new PDOStorage($this->ci->db);
+        /** @var Capsule */
+        $capsule = $this->ci->get(Capsule::class);
+        $this->storage = new PDOStorage($capsule);
     }
 
-    /*public function testFindTripletReturnsFoundIfDataMatches()
+    public function testFindTripletReturnsFoundIfDataMatches(): void
     {
         $this->insertTestData();
         $result = $this->storage->findTriplet($this->testUser->id, $this->validToken, $this->validPersistentToken);
         $this->assertEquals(StorageInterface::TRIPLET_FOUND, $result);
     }
 
-    public function testFindTripletReturnsNotFoundIfNoDataMatches()
+    public function testFindTripletReturnsNotFoundIfNoDataMatches(): void
     {
         $result = $this->storage->findTriplet($this->testUser->id, $this->validToken, $this->validPersistentToken);
         $this->assertEquals(StorageInterface::TRIPLET_NOT_FOUND, $result);
     }
 
-    public function testFindTripletReturnsInvalidTokenIfTokenIsInvalid()
+    public function testFindTripletReturnsInvalidTokenIfTokenIsInvalid(): void
     {
         $this->insertTestData();
         $result = $this->storage->findTriplet($this->testUser->id, $this->invalidToken, $this->validPersistentToken);
         $this->assertEquals(StorageInterface::TRIPLET_INVALID, $result);
     }
 
-    public function testStoreTripletSavesValuesIntoDatabase()
+    public function testStoreTripletSavesValuesIntoDatabase(): void
     {
-        $this->storage->storeTriplet($this->testUser->id, $this->validToken, $this->validPersistentToken, strtotime($this->expire));
-        $row = Persistence::select(['user_id', 'token', 'persistent_token', 'expires_at'])->first()->toArray();
+        $this->storage->storeTriplet($this->testUser->id, $this->validToken, $this->validPersistentToken, strtotime($this->expire)); // @phpstan-ignore-line
+        $row = Persistence::select(['user_id', 'token', 'persistent_token', 'expires_at'])->first()?->toArray(); // @phpstan-ignore-line
         $this->assertEquals([$this->testUser->id, $this->validDBToken, $this->validDBPersistentToken, $this->expire], array_values($row));
     }
 
-    public function testCleanTripletRemovesEntryFromDatabase()
+    public function testCleanTripletRemovesEntryFromDatabase(): void
     {
         $this->insertTestData();
         $this->storage->cleanTriplet($this->testUser->id, $this->validPersistentToken);
         $this->assertEquals(0, Persistence::count());
     }
 
-    public function testCleanAllTripletsRemovesAllEntriesWithMatchingCredentialsFromDatabase()
+    public function testCleanAllTripletsRemovesAllEntriesWithMatchingCredentialsFromDatabase(): void
     {
         $this->insertTestData();
         $persistence = new Persistence([
@@ -109,35 +111,35 @@ class PDOStorageTest extends AccountTestCase
         $this->assertEquals(0, Persistence::count());
     }
 
-    public function testReplaceTripletRemovesAndSavesEntryFromDatabase()
+    public function testReplaceTripletRemovesAndSavesEntryFromDatabase(): void
     {
         $this->insertTestData();
-        $this->storage->replaceTriplet($this->testUser->id, $this->invalidToken, $this->validPersistentToken, strtotime($this->expire));
+        $this->storage->replaceTriplet($this->testUser->id, $this->invalidToken, $this->validPersistentToken, strtotime($this->expire)); // @phpstan-ignore-line
         $this->assertEquals(1, Persistence::count());
-        $row = Persistence::select(['user_id', 'token', 'persistent_token', 'expires_at'])->first()->toArray();
+        $row = Persistence::select(['user_id', 'token', 'persistent_token', 'expires_at'])->first()->toArray(); // @phpstan-ignore-line
         $this->assertEquals([$this->testUser->id, $this->invalidDBToken, $this->validDBPersistentToken, $this->expire], array_values($row));
     }
 
-    public function testCleanExpiredTokens()
+    public function testCleanExpiredTokens(): void
     {
         $this->insertTestData();
         $persistence = new Persistence([
             'user_id'          => $this->testUser->id,
             'token'            => 'dummy',
             'persistent_token' => 'dummy',
-            'expires_at'       => Carbon::now()->subHour(1),
+            'expires_at'       => Carbon::now()->subHour(),
         ]);
         $persistence->save();
         $this->assertEquals(2, Persistence::count());
-        $this->storage->cleanExpiredTokens(Carbon::now()->timestamp);
+        $this->storage->cleanExpiredTokens((int) Carbon::now()->timestamp);
         $this->assertEquals(1, Persistence::count());
-    }*/
+    }
 
     /**
      * Insert test dataset
      * @return Persistence
      */
-    protected function insertTestData()
+    protected function insertTestData(): Persistence
     {
         $persistence = new Persistence([
             'user_id'          => $this->testUser->id,

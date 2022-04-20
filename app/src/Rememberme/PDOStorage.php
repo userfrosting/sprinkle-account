@@ -16,37 +16,28 @@ use UserFrosting\Sprinkle\Account\Database\Models\Persistence;
 
 /**
  * Store login tokens in database with PDO class.
- *
- * @author Louis Charette
  */
 class PDOStorage implements StorageInterface
 {
-    /** @var Capsule */
-    protected $db;
-
     /**
-     * @param Capsule $db [description]
+     * @param Capsule $db
      */
-    public function __construct(Capsule $db)
+    public function __construct(protected Capsule $db)
     {
-        $this->db = $db;
     }
 
     /**
-     * @param mixed  $credential
-     * @param string $token
-     * @param string $persistentToken
-     *
-     * @return int
+     * {@inheritdoc}
      */
-    public function findTriplet($credential, $token, $persistentToken)
+    public function findTriplet($credential, $token, $persistentToken): int
     {
+        /** @var Persistence|null */
         $result = Persistence::notExpired()->where([
             'user_id'          => $credential,
             'persistent_token' => sha1($persistentToken),
         ])->first();
 
-        if (!$result) {
+        if ($result === null) {
             return self::TRIPLET_NOT_FOUND;
         } elseif ($result->token === sha1($token)) {
             return self::TRIPLET_FOUND;
@@ -56,12 +47,9 @@ class PDOStorage implements StorageInterface
     }
 
     /**
-     * @param mixed  $credential
-     * @param string $token
-     * @param string $persistentToken
-     * @param int    $expire
+     * {@inheritdoc}
      */
-    public function storeTriplet($credential, $token, $persistentToken, $expire = 0)
+    public function storeTriplet($credential, $token, $persistentToken, $expire = 0): void
     {
         $persistence = new Persistence([
             'user_id'          => $credential,
@@ -73,10 +61,9 @@ class PDOStorage implements StorageInterface
     }
 
     /**
-     * @param mixed  $credential
-     * @param string $persistentToken
+     * {@inheritdoc}
      */
-    public function cleanTriplet($credential, $persistentToken)
+    public function cleanTriplet($credential, $persistentToken): void
     {
         Persistence::where([
             'user_id'          => $credential,
@@ -85,39 +72,29 @@ class PDOStorage implements StorageInterface
     }
 
     /**
-     * Replace current token after successful authentication.
-     *
-     * @param mixed  $credential
-     * @param string $token
-     * @param string $persistentToken
-     * @param int    $expire
+     * {@inheritdoc}
      */
-    public function replaceTriplet($credential, $token, $persistentToken, $expire = 0)
+    public function replaceTriplet($credential, $token, $persistentToken, $expire = 0): void
     {
-        try {
-            Capsule::transaction(function () use ($credential, $token, $persistentToken, $expire) {
-                $this->cleanTriplet($credential, $persistentToken);
-                $this->storeTriplet($credential, $token, $persistentToken, $expire);
-            });
-        } catch (\PDOException $e) {
-            throw $e;
-        }
+        // @phpstan-ignore-next-line Transaction is handled using __callStatic in Capsule
+        Capsule::transaction(function () use ($credential, $token, $persistentToken, $expire) {
+            $this->cleanTriplet($credential, $persistentToken);
+            $this->storeTriplet($credential, $token, $persistentToken, $expire);
+        });
     }
 
     /**
-     * @param mixed $credential
+     * {@inheritdoc}
      */
-    public function cleanAllTriplets($credential)
+    public function cleanAllTriplets($credential): void
     {
         Persistence::where('user_id', $credential)->delete();
     }
 
     /**
-     * Remove all expired triplets of all users.
-     *
-     * @param int $expiryTime Timestamp, all tokens before this time will be deleted
+     * {@inheritdoc}
      */
-    public function cleanExpiredTokens($expiryTime)
+    public function cleanExpiredTokens($expiryTime): void
     {
         Persistence::where('expires_at', '<', date('Y-m-d H:i:s', $expiryTime))->delete();
     }
