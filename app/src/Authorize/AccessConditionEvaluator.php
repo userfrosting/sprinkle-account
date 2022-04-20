@@ -11,7 +11,9 @@
 namespace UserFrosting\Sprinkle\Account\Authorize;
 
 use Monolog\Logger;
+use PhpParser\Error as PhpParserException;
 use PhpParser\Node;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Parser;
@@ -78,14 +80,16 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
     {
         // Look for function calls
         if (!$node instanceof \PhpParser\Node\Expr\FuncCall) {
+            // @phpstan-ignore-next-line Style guide doesn't allow to return null;
             return;
         }
 
-        $eval = new \PhpParser\Node\Scalar\LNumber(0);
-
         // Get the method name
+        // @phpstan-ignore-next-line False positive. The name is always a \PhpParser\Node\Name.
         $callbackName = $node->name->toString();
+
         // Get the method arguments
+        /** @var \PhpParser\Node\Arg[] */
         $argNodes = $node->args;
 
         $args = [];
@@ -98,13 +102,13 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
                 'expression' => $argString,
             ];
             // Resolve parameter placeholders ('variable' names (either single-word or array-dot identifiers))
-            if (($arg->value instanceof \PhpParser\Node\Expr\BinaryOp\Concat) || ($arg->value instanceof \PhpParser\Node\Expr\ConstFetch)) {
+            if ($arg->value instanceof \PhpParser\Node\Expr\BinaryOp\Concat || $arg->value instanceof \PhpParser\Node\Expr\ConstFetch) {
                 $value = $this->resolveParamPath($argString);
                 $currentArgInfo['type'] = 'parameter';
                 $currentArgInfo['resolved_value'] = $value;
             // Resolve arrays
             } elseif ($arg->value instanceof \PhpParser\Node\Expr\Array_) {
-                $value = $this->resolveArray($arg);
+                $value = $this->resolveArray($arg->value);
                 $currentArgInfo['type'] = 'array';
                 $currentArgInfo['resolved_value'] = print_r($value, true);
             // Resolve strings
@@ -133,7 +137,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
         }
 
         if ($this->debug) {
-            if (count($args)) {
+            if (count($args) !== 0) {
                 $this->logger->debug("Evaluating callback '$callbackName' on: ", $argsInfo);
             } else {
                 $this->logger->debug("Evaluating callback '$callbackName'...");
@@ -141,6 +145,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
         }
 
         // Call the specified access condition callback with the specified arguments.
+        // @phpstan-ignore-next-line Phpstan doesn't understand array is callable.
         if (isset($this->accessConditions[$callbackName]) && is_callable($this->accessConditions[$callbackName])) {
             $result = call_user_func_array($this->accessConditions[$callbackName], $args);
         } else {
@@ -148,18 +153,18 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
         }
 
         if ($this->debug) {
-            $this->logger->debug('Result: ' . ($result ? '1' : '0'));
+            $this->logger->debug('Result: ' . ($result == true ? '1' : '0'));
         }
 
-        return new \PhpParser\Node\Scalar\LNumber($result ? '1' : '0');
+        return new \PhpParser\Node\Scalar\LNumber($result == true ? 1 : 0);
     }
 
     /**
      * Set params.
      *
-     * @param array $params
+     * @param mixed[] $params
      */
-    public function setParams($params)
+    public function setParams(array $params): void
     {
         $this->params = $params;
     }
@@ -167,18 +172,21 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
     /**
      * Resolve an array expression in a condition expression into an actual array.
      *
-     * @param string $arg the array, represented as a string.
+     * @param Array_ $value the array, represented as a string.
      *
-     * @return array[mixed] the array, as a plain ol' PHP array.
+     * @return mixed[] the array, as a plain ol' PHP array.
      */
-    private function resolveArray($arg)
+    private function resolveArray(Array_ $value)
     {
         $arr = [];
-        $items = (array) $arg->value->items;
-        foreach ($items as $item) {
-            if ($item->key) {
-                $arr[$item->key] = $item->value->value;
+
+        /** @var \PhpParser\Node\Expr\ArrayItem $item */
+        foreach ($value->items as $item) {
+            if ($item->key == true) {
+                // @phpstan-ignore-next-line : $item define key/value as abstract method Expr, actual object usually has value property.
+                $arr[$item->key->value] = $item->value->value;
             } else {
+                // @phpstan-ignore-next-line : $item define value as abstract method Expr, actual object usually has value property.
                 $arr[] = $item->value->value;
             }
         }
@@ -191,7 +199,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
      *
      * @param string $path the name of the parameter to resolve, based on the parameters set in this object.
      *
-     * @throws \Exception the path could not be resolved.  Path is malformed or key does not exist.
+     * @throws AuthorizationException the path could not be resolved.  Path is malformed or key does not exist.
      *
      * @return mixed the value of the specified parameter.
      */
@@ -204,11 +212,13 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
             if (is_array($value) && isset($value[$token])) {
                 $value = $value[$token];
                 continue;
+            // @phpstan-ignore-next-line Allow variable property for this use
             } elseif (is_object($value) && isset($value->$token)) {
+                // @phpstan-ignore-next-line Allow variable property for this use
                 $value = $value->$token;
                 continue;
             } else {
-                throw new AuthorizationException("Cannot resolve the path \"$path\".  Error at token \"$token\".");
+                throw new AuthorizationException("Cannot resolve the path \"$path\". Error at token \"$token\".");
             }
         }
 
@@ -221,18 +231,20 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
      * The special parameter `self` is an array of the current user's data.
      * This get included automatically, and so does not need to be passed in.
      *
-     * @param string        $condition a boolean expression composed of calls to AccessCondition functions.
-     * @param mixed[]       $params    the parameters to be used when evaluating the expression.
-     * @param UserInterface $user      the user to be used when evaluating the expression.
+     * @param string             $condition a boolean expression composed of calls to AccessCondition functions.
+     * @param mixed[]            $params    the parameters to be used when evaluating the expression.
+     * @param UserInterface|null $user      the user to be used when evaluating the expression.
      *
      * @return bool true if the condition is passed for the given parameters, otherwise returns false.
      */
-    public function evaluate(string $condition, array $params, UserInterface $user): bool
+    public function evaluate(string $condition, array $params = [], ?UserInterface $user = null): bool
     {
         // Set the reserved `self` parameters.
         // This replaces any values of `self` specified in the arguments, thus preventing them from being overridden in malicious user input.
         // (For example, from an unfiltered request body).
-        $params['self'] = $user->toArray();
+        if ($user !== null) {
+            $params['self'] = $user->toArray();
+        }
 
         $this->setParams($params);
 
@@ -246,12 +258,15 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
         // Replace the function node with the return value of the callback.
         try {
             // parse
+            /** @var \PhpParser\Node\Stmt[] */
             $stmts = $this->parser->parse($code);
 
             // traverse
             $stmts = $this->traverser->traverse($stmts);
 
-            // Evaluate boolean statement.  It is safe to use eval() here, because our expression has been reduced entirely to a boolean expression.
+            // Evaluate boolean statement. It is safe to use eval() here, because
+            // our expression has been reduced entirely to a boolean expression.
+            // @phpstan-ignore-next-line $stmts[0] is always a \PhpParser\Node\Stmt\Expression
             $expr = $this->prettyPrinter->prettyPrintExpr($stmts[0]->expr);
             $expr_eval = 'return ' . $expr . ";\n";
             $result = eval($expr_eval);
@@ -261,15 +276,9 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
             }
 
             return $result;
-        } catch (PhpParserException $e) {
+        } catch (PhpParserException | AuthorizationException $e) {
             if ($this->debug) {
-                $this->logger->debug("Error parsing access condition '$condition':" . $e->getMessage());
-            }
-
-            return false;   // Access fails if the access condition can't be parsed.
-        } catch (AuthorizationException $e) {
-            if ($this->debug) {
-                $this->logger->debug("Error parsing access condition '$condition':" . $e->getMessage());
+                $this->logger->debug("Error parsing access condition '$condition': " . $e->getMessage());
             }
 
             return false;

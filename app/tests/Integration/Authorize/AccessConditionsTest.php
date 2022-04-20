@@ -182,7 +182,7 @@ class AccessConditionsTest extends AccountTestCase
     public function testSubset(): void
     {
         $callbacks = new AccessConditions($this->config);
-        $this->assertTrue($callbacks->subset([1, 2, 3], [1, 2, 3]));
+        $this->assertTrue($callbacks->subset([1, 2, 3], [1, 2, 3, 4]));
         $this->assertFalse($callbacks->subset([1, 2, 3], [1, 2]));
     }
 
