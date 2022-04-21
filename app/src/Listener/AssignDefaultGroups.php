@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Listener;
 
-use Exception;
 use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
+use UserFrosting\Sprinkle\Account\Exceptions\DefaultGroupException;
 
 class AssignDefaultGroups
 {
@@ -28,17 +28,25 @@ class AssignDefaultGroups
     public function __invoke(UserCreatedEvent $event): void
     {
         // TODO : Default group should be defined in the DB instead of config.
-        // TODO : We need to accommodate "no group" too.
         $defaultGroupSlug = $this->config->get('site.registration.user_defaults.group');
-        $defaultGroup = $this->groupModel->where('slug', $defaultGroupSlug)->first();
 
-        if ($defaultGroupSlug == true && $defaultGroup === null) {
-            $e = new Exception("Account registration is not working because the default group '{$defaultGroupSlug}' does not exist.");
-            // $e->addUserMessage('ACCOUNT.REGISTRATION_BROKEN');
+        // Stop if default group is null
+        if ($defaultGroupSlug == false) {
+            return;
+        }
+
+        // Get default group
+        /** @var GroupInterface|null */
+        $defaultGroup = $this->groupModel->where('slug', $defaultGroupSlug)->first();
+        if ($defaultGroup === null) {
+            $e = new DefaultGroupException();
+            $e->setSlug(strval($defaultGroupSlug));
 
             throw $e;
         }
 
+        // @phpstan-ignore-next-line False positive. GroupInterface mixin \Illuminate\Database\Eloquent\Model
         $event->user->group()->associate($defaultGroup);
+        $event->user->save();
     }
 }

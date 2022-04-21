@@ -100,6 +100,7 @@ class User extends Model implements UserInterface
     protected $casts = [
         'flag_verified' => 'boolean',
         'flag_enabled'  => 'boolean',
+        'group_id'      => 'integer',
     ];
 
     /**

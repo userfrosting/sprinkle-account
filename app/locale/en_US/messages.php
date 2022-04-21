@@ -29,6 +29,10 @@ return [
                 'TITLE'       => 'Account Disabled',
                 'DESCRIPTION' => 'This account has been disabled. Please contact us for more information.',
             ],
+            'DEFAULT_GROUP' => [
+                'TITLE'       => 'Default Group Not Found',
+                'DESCRIPTION' => 'Account registration is not working because the default group {{slug}} does not exist.',
+            ],
             'INVALID' => [
                 'TITLE'       => 'Account Invalid',
                 'DESCRIPTION' => 'This account is not configured properly. Please contact us for more information.',

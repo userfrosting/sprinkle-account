@@ -167,7 +167,6 @@ class RegisterActionTest extends AccountTestCase
             'updated_at',
             'created_at',
             'id',
-            'group_id',
             'full_name',
             'avatar',
         ], $response);
@@ -262,7 +261,6 @@ class RegisterActionTest extends AccountTestCase
             'updated_at',
             'created_at',
             'id',
-            'group_id',
             'full_name',
             'avatar',
         ], $response);
