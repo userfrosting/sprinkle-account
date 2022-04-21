@@ -26,7 +26,7 @@ class AssignDefaultRoles
 
     public function __invoke(UserCreatedEvent $event): void
     {
-        // TODO : Default group should be defined in the DB instead of config.
+        // TODO : Default role should be defined in the DB instead of config.
         $defaultRolesSlug = $this->config->get('site.registration.user_defaults.roles');
         $defaultRolesSlug = array_map('trim', array_keys($defaultRolesSlug, true, true)); // @phpstan-ignore-line False positive on array_map
 
