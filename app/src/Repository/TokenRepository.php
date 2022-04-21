@@ -14,11 +14,15 @@ namespace UserFrosting\Sprinkle\Account\Repository;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 
 /**
  * An abstract class for interacting with a repository of time-sensitive user tokens.
  * User tokens are used, for example, to perform password resets and new account email verifications.
+ *
+ * @template TModel of PasswordResetInterface|VerificationInterface
  */
 abstract class TokenRepository
 {
@@ -40,6 +44,7 @@ abstract class TokenRepository
         $hash = hash($this->algorithm, $token);
 
         // Find an incomplete reset request for the specified hash
+        /** @var TModel|null */
         $model = $this->getModelIdentifier()
             ->where('hash', $hash)
             ->where('completed', false)
@@ -68,6 +73,7 @@ abstract class TokenRepository
         $hash = hash($this->algorithm, $token);
 
         // Find an unexpired, incomplete token for the specified hash
+        /** @var TModel|null */
         $model = $this->getModelIdentifier()
             ->where('hash', $hash)
             ->where('completed', false)
@@ -113,6 +119,7 @@ abstract class TokenRepository
         // Compute expiration time
         $expiresAt = Carbon::now()->addSeconds($timeout);
 
+        /** @var TModel */
         $model = $this->getModelIdentifier();
 
         // Generate a random token
@@ -145,6 +152,7 @@ abstract class TokenRepository
      */
     public function exists(UserInterface $user, ?string $token = null): bool
     {
+        /** @var TModel */
         $model = $this->getModelIdentifier()
             ->where('user_id', $user->id)
             ->where('completed', false)
@@ -156,7 +164,7 @@ abstract class TokenRepository
             $model->where('hash', $hash);
         }
 
-        return $model->first() ? true : false;
+        return $model->exists() ? true : false;
     }
 
     /**
@@ -172,6 +180,7 @@ abstract class TokenRepository
         $hash = hash($this->algorithm, $token);
 
         // Find an unexpired, incomplete token for the specified hash
+        /** @var TModel|null */
         $model = $this->getModelIdentifier()
             ->where('hash', $hash)
             ->where('completed', false)
@@ -204,6 +213,7 @@ abstract class TokenRepository
      */
     public function removeExpired(): int
     {
+        // @phpstan-ignore-next-line False positive. Delete is called from Illuminate\Database\Query\Builder, which return int.
         return $this->getModelIdentifier()
             ->where('completed', false)
             ->where('expires_at', '<', Carbon::now())
@@ -265,7 +275,7 @@ abstract class TokenRepository
     /**
      * Return the model to use for this repository.
      *
-     * @return TokenAccessor
+     * @return TModel
      */
-    abstract protected function getModelIdentifier(): TokenAccessor;
+    abstract protected function getModelIdentifier();
 }

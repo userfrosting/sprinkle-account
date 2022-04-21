@@ -24,14 +24,14 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * @mixin \Illuminate\Database\Eloquent\Model
  * @mixin \UserFrosting\Sprinkle\Core\Database\Models\Model
  *
- * @property int           $id
- * @property int           $user_id
- * @property hash          $token
- * @property string        $hash
- * @property bool          $completed
- * @property DateTime|null $expires_at
- * @property DateTime|null $completed_at
- * @property UserInterface $user
+ * @property int                $id
+ * @property int                $user_id
+ * @property hash               $token
+ * @property string             $hash
+ * @property bool               $completed
+ * @property DateTime|null      $expires_at
+ * @property DateTime|null      $completed_at
+ * @property UserInterface|null $user
  */
 interface VerificationInterface extends TokenAccessor
 {

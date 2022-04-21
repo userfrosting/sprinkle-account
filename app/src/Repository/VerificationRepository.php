@@ -18,6 +18,8 @@ use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 
 /**
  * Token repository class for new account verifications.
+ *
+ * @extends TokenRepository<VerificationInterface>
  */
 class VerificationRepository extends TokenRepository
 {
@@ -38,7 +40,7 @@ class VerificationRepository extends TokenRepository
     /**
      * {@inheritdoc}
      */
-    protected function getModelIdentifier(): TokenAccessor
+    protected function getModelIdentifier(): VerificationInterface
     {
         return $this->modelIdentifier;
     }

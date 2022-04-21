@@ -18,7 +18,6 @@ use UserFrosting\Support\Message\UserMessage;
 final class DefaultGroupException extends AccountException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.DEFAULT_GROUP.TITLE';
-    protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.DEFAULT_GROUP.DESCRIPTION';
     protected string $slug = '';
 
     /**
@@ -26,7 +25,7 @@ final class DefaultGroupException extends AccountException
      */
     public function getDescription(): string|UserMessage
     {
-        return new UserMessage($this->description, ['slug' => $this->slug]);
+        return new UserMessage('ACCOUNT.EXCEPTION.DEFAULT_GROUP.DESCRIPTION', ['slug' => $this->slug]);
     }
 
     /**
