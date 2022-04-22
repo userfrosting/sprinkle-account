@@ -28,9 +28,6 @@ class ErrorHandlerService implements ServicesProviderInterface
             ExceptionHandlerMiddleware::class => \DI\decorate(function (ExceptionHandlerMiddleware $middleware) {
                 $middleware->registerHandler(AccountException::class, AccountExceptionHandler::class, true);
 
-                // Register the AuthExpiredExceptionHandler
-                // $middlewares->registerHandler('\UserFrosting\Sprinkle\Account\Exceptions\AuthExpiredException', '\UserFrosting\Sprinkle\Account\Error\Handler\AuthExpiredExceptionHandler');
-
                 return $middleware;
             }),
         ];
