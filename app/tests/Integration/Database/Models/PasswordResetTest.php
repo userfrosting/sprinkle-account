@@ -65,7 +65,7 @@ class PasswordResetTest extends AccountTestCase
         $this->assertNull($fetched->completed_at);
 
         // Assert User relations
-        $this->assertSame($user->id, $fetched->user->id);
+        $this->assertSame($user->id, $fetched->user?->id);
 
         // Delete
         $fetched->delete();
