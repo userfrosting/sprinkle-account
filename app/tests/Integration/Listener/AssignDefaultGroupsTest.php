@@ -106,6 +106,7 @@ class AssignDefaultGroupsTest extends AccountTestCase
         /** @var AssignDefaultGroups */
         $listener = $this->ci->get(AssignDefaultGroups::class);
 
+        // Assert exception is thrown
         try {
             $listener($event);
         } catch (Exception $e) {

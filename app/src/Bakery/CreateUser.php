@@ -127,10 +127,6 @@ class CreateUser extends Command
             $this->io->error($e->getMessage());
 
             return self::FAILURE;
-        } catch (BakeryWarning $e) {
-            $this->io->warning($e->getMessage());
-
-            return self::SUCCESS;
         } catch (BakeryNote $e) {
             $this->io->note($e->getMessage());
 

@@ -10,6 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Integration\Validators;
 
+use Exception;
 use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Exceptions\EmailNotUniqueException;
@@ -62,8 +63,13 @@ class UserVerificationTest extends AccountTestCase
         /** @var UserValidation */
         $validator = $this->ci->get(UserValidation::class);
 
-        $this->expectException(MissingRequiredParamException::class);
-        $validator->validate($user);
+        // Assert exception is thrown
+        try {
+            $validator->validate($user);
+        } catch (Exception $e) {
+            $this->assertInstanceOf(MissingRequiredParamException::class, $e);
+            $this->assertSame(['param' => 'first_name'], $e->getDescription()->parameters); // @phpstan-ignore-line
+        }
     }
 
     public function testValidationWithDuplicateUsername(): void
