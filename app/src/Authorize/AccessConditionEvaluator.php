@@ -277,7 +277,8 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
                 $this->logger->debug("Expression '$expr' evaluates to " . ($result == true ? 'true' : 'false'));
             }
 
-            return $result;
+            // Return loose bool, as strict bool.
+            return ($result == true) ? true : false;
         } catch (PhpParserException|AuthorizationException $e) {
             if ($this->debug) {
                 $this->logger->debug("Error parsing access condition '$condition': " . $e->getMessage());
