@@ -41,6 +41,13 @@ class CreateAdminUserTest extends AccountTestCase
         $this->refreshDatabase();
     }
 
+    /**
+     * WARNING : This test doesn't work on Windows.
+     * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
+     * "On Windows systems Symfony uses a special binary to implement hidden 
+     * questions. This means that those questions don't use the default Input 
+     * console object and therefore you can't test them on Windows."
+     */
     public function testCommandWithUserInput(): void
     {
         // Asset initial user count.
@@ -96,6 +103,13 @@ class CreateAdminUserTest extends AccountTestCase
         $this->assertSame(1, User::count());
     }
 
+    /**
+     * WARNING : This test doesn't work on Windows.
+     * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
+     * "On Windows systems Symfony uses a special binary to implement hidden 
+     * questions. This means that those questions don't use the default Input 
+     * console object and therefore you can't test them on Windows."
+     */
     public function testCommandWithUserInputRepeatedForEmpty(): void
     {
         // Asset initial user count.
@@ -176,6 +190,13 @@ class CreateAdminUserTest extends AccountTestCase
         $this->assertStringContainsString("Table 'users' is not empty.", $result->getDisplay());
     }
 
+    /**
+     * WARNING : This test doesn't work on Windows.
+     * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
+     * "On Windows systems Symfony uses a special binary to implement hidden 
+     * questions. This means that those questions don't use the default Input 
+     * console object and therefore you can't test them on Windows."
+     */
     public function testForFailedValidation(): void
     {
         /** @var CreateAdminUser */
@@ -192,6 +213,13 @@ class CreateAdminUserTest extends AccountTestCase
         $this->assertStringContainsString('Invalid email address.', $result->getDisplay());
     }
 
+    /**
+     * WARNING : This test doesn't work on Windows.
+     * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
+     * "On Windows systems Symfony uses a special binary to implement hidden 
+     * questions. This means that those questions don't use the default Input 
+     * console object and therefore you can't test them on Windows."
+     */
     public function testForFailedUserValidation(): void
     {
         // Mock UserValidation
