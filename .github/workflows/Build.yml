@@ -246,3 +246,49 @@ jobs:
         with:
           file: ./_meta/coverage.xml
           fail_ci_if_error: true
+
+  PHPUnit-Windows:
+
+    strategy:
+      fail-fast: false
+      matrix:
+          php_versions: ['8.0', '8.1']
+
+    runs-on: windows-latest
+    name: PHPUnit - PHP ${{ matrix.php_versions }} - Windows
+
+    env:
+      DB_TEST_CONNECTION: sqlite
+      DB_NAME: database.sqlite
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup PHP, with composer and extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php_versions }}
+        extensions: mbstring, dom, fileinfo, gd, pdo, sqlite, pdo_sqlite
+        coverage: xdebug
+        tools: pecl, composer
+
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 14
+    
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-progress
+    
+    - name: Create SQLite Database
+      run: touch database.sqlite
+
+    - name: Execute tests
+      run: | 
+        echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+        vendor/bin/phpunit --exclude-group windows-skip
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        file: ./_meta/coverage.xml
+        fail_ci_if_error: true
