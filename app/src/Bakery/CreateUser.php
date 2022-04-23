@@ -28,7 +28,6 @@ use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\I18n\Translator;
 use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryError;
 use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryNote;
-use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryWarning;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\RolesTable;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\RoleUsersTable;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v400\UsersTable;
