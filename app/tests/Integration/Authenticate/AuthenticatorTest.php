@@ -16,6 +16,7 @@ use Birke\Rememberme\Authenticator as RememberMe;
 use Birke\Rememberme\Cookie\PHPCookie;
 use Birke\Rememberme\LoginResult;
 use Birke\Rememberme\Storage\StorageInterface;
+use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDOException;
@@ -270,6 +271,65 @@ class AuthenticatorTest extends AccountTestCase
         $session->destroy();
     }
 
+    public function testLoginWithRememberMeForNullCachedUser(): void
+    {
+        /** @var User */
+        $testUser = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Config */
+        $config = $this->ci->get(Config::class);
+        $config->set('remember_me.domain', 'foo.bar');
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+        $key = strval($config->get('session.keys.current_user_id'));
+
+        // Start session
+        $session->start();
+
+        // Test session to avoid false positive
+        $this->assertNull($session[$key]);
+
+        // Perform login
+        $authenticator->login($testUser, true);
+
+        // Test session to test that user was logged in
+        $this->assertNotNull($session[$key]);
+        $this->assertSame($testUser->id, $session[$key]);
+
+        // We'll manually delete the session,
+        $session->set($key, null);
+        $this->assertNull($session[$key]);
+        $this->assertNotSame($testUser->id, $session[$key]);
+
+        // We also remove cached user AND delete the user
+        /** @var Cache */
+        $cache = $this->ci->get(Cache::class);
+        $key = $config->get('cache.user.key') . $testUser->id;
+        $cache->delete($key);
+        $testUser->delete();
+
+        // Now go through the loginRememberedUser process
+        // First, we'll simulate a page refresh by creating a new authenticator
+        // (So `$this->user` will be null)
+        /** @var Authenticator */
+        $authenticator = $this->ci->make(Authenticator::class);
+
+        // Get user
+        $user = $authenticator->user();
+
+        // If loginRememberedUser doesn't work, `user` will be null.
+        $this->assertNull($user);
+        $this->assertNull($session[$key]);
+        $this->assertTrue($authenticator->viaRemember());
+
+        // Must logout to avoid test issue
+        $session->destroy();
+    }
+
     public function testLoginWithRememberMeForAuthCompromisedException(): void
     {
         // Mock RememberMe so we can force AuthCompromisedException
@@ -356,6 +416,41 @@ class AuthenticatorTest extends AccountTestCase
         // Must logout to avoid test issue
         $authenticator->logout();
         $session->destroy();
+    }
+
+    public function testLoginSessionUserForSessionNotStarted(): void
+    {
+        /** @var User */
+        $testUser = User::factory()->create();
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+
+        // Start session
+        $session->start();
+
+        // Perform login
+        $authenticator->login($testUser);
+
+        // Now go through the `loginSessionUser` process
+        // First, we'll simulate a page refresh by creating a new authenticator
+        // (So `$this->user` will be null)
+        /** @var Authenticator */
+        $authenticator = $this->ci->make(Authenticator::class);
+
+        // We now destroy session
+        $session->destroy();
+
+        // Get user
+        $user = $authenticator->user();
+
+        // loginSessionUser won't work since there's no session, `user` will be null.
+        // We also make sure no exception is thrown.
+        $this->assertNull($user);
+        $this->assertFalse($authenticator->viaRemember());
     }
 
     public function testLoginSessionUserWithAuthExpired(): void
