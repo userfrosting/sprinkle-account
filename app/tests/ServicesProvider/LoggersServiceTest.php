@@ -44,7 +44,7 @@ class LoggersServiceTest extends TestCase
 
         // Set mock Config
         $locator = Mockery::mock(Config::class)
-            ->shouldReceive('get')->with('logs.path')->once()->andReturn('logs://database.log')
+            ->shouldReceive('getString')->with('logs.path')->once()->andReturn('logs://database.log')
             ->getMock();
         $this->ci->set(Config::class, $locator);
     }
@@ -52,7 +52,7 @@ class LoggersServiceTest extends TestCase
     public function testAuthLogger(): void
     {
         $this->assertInstanceOf(Logger::class, $this->ci->get(AuthLogger::class));
-        $this->assertInstanceOf(LoggerInterface::class, $this->ci->get(AuthLogger::class));
+        $this->assertInstanceOf(LoggerInterface::class, $this->ci->get(AuthLogger::class)); // @phpstan-ignore-line
         $this->assertInstanceOf(AuthLogger::class, $this->ci->get(AuthLogger::class));
     }
 }
