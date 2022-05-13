@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Database\Factories;
 
+use DateTime;
 use UserFrosting\Sprinkle\Account\Database\Models\Activity;
 use UserFrosting\Sprinkle\Core\Database\Factories\Factory;
 
@@ -32,7 +33,7 @@ class ActivityFactory extends Factory
         return [
             'ip_address'  => $this->faker->ipv4(),
             'type'        => $this->faker->word(),
-            'occurred_at' => $this->faker->unixTime(),
+            'occurred_at' => new DateTime('now'),
             'description' => $this->faker->sentence(),
         ];
     }
