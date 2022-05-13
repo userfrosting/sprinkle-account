@@ -30,7 +30,10 @@ class ActivityFactory extends Factory
     public function definition()
     {
         return [
-            'type' => $this->faker->word(),
+            'ip_address'  => $this->faker->ipv4(),
+            'type'        => $this->faker->word(),
+            'occurred_at' => $this->faker->unixTime(),
+            'description' => $this->faker->sentence(),
         ];
     }
 }

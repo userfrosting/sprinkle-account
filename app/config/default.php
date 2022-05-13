@@ -100,7 +100,6 @@ return [
     * guest users
     */
     'reserved_user_ids' => [
-        'guest'  => -1,
         'master' => 1,
     ],
 
