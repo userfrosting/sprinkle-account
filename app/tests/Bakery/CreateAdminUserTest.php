@@ -44,10 +44,10 @@ class CreateAdminUserTest extends AccountTestCase
     /**
      * WARNING : This test doesn't work on Windows.
      * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
-     * "On Windows systems Symfony uses a special binary to implement hidden 
-     * questions. This means that those questions don't use the default Input 
+     * "On Windows systems Symfony uses a special binary to implement hidden
+     * questions. This means that those questions don't use the default Input
      * console object and therefore you can't test them on Windows."
-     * 
+     *
      * @group windows-skip
      */
     public function testCommandWithUserInput(): void
@@ -108,10 +108,10 @@ class CreateAdminUserTest extends AccountTestCase
     /**
      * WARNING : This test doesn't work on Windows.
      * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
-     * "On Windows systems Symfony uses a special binary to implement hidden 
-     * questions. This means that those questions don't use the default Input 
+     * "On Windows systems Symfony uses a special binary to implement hidden
+     * questions. This means that those questions don't use the default Input
      * console object and therefore you can't test them on Windows."
-     * 
+     *
      * @group windows-skip
      */
     public function testCommandWithUserInputRepeatedForEmpty(): void
@@ -197,10 +197,10 @@ class CreateAdminUserTest extends AccountTestCase
     /**
      * WARNING : This test doesn't work on Windows.
      * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
-     * "On Windows systems Symfony uses a special binary to implement hidden 
-     * questions. This means that those questions don't use the default Input 
+     * "On Windows systems Symfony uses a special binary to implement hidden
+     * questions. This means that those questions don't use the default Input
      * console object and therefore you can't test them on Windows."
-     * 
+     *
      * @group windows-skip
      */
     public function testForFailedValidation(): void
@@ -222,10 +222,10 @@ class CreateAdminUserTest extends AccountTestCase
     /**
      * WARNING : This test doesn't work on Windows.
      * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#testing-a-command-that-expects-input
-     * "On Windows systems Symfony uses a special binary to implement hidden 
-     * questions. This means that those questions don't use the default Input 
+     * "On Windows systems Symfony uses a special binary to implement hidden
+     * questions. This means that those questions don't use the default Input
      * console object and therefore you can't test them on Windows."
-     * 
+     *
      * @group windows-skip
      */
     public function testForFailedUserValidation(): void

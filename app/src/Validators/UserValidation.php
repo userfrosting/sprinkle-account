@@ -97,11 +97,11 @@ class UserValidation
     /**
      * Check Unique Username. Make sure the username is not already in use.
      *
-     * @param string|null $username
+     * @param string $username
      *
      * @return bool Return true if username is unique
      */
-    public function usernameIsUnique(?string $username): bool
+    public function usernameIsUnique(string $username): bool
     {
         return $this->userModel::findUnique($username, 'user_name') === null;
     }
@@ -109,11 +109,11 @@ class UserValidation
     /**
      * Check Unique Email. Make sure the email is not already in use.
      *
-     * @param string|null $email
+     * @param string $email
      *
      * @return bool Return true if email is unique
      */
-    public function emailIsUnique(?string $email): bool
+    public function emailIsUnique(string $email): bool
     {
         return $this->userModel::findUnique($email, 'email') === null;
     }
