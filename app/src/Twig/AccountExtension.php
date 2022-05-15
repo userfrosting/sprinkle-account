@@ -17,7 +17,6 @@ use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFunction;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
-use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 
 /**
  * Extends Twig functionality for the Account sprinkle.
@@ -25,11 +24,9 @@ use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 class AccountExtension extends AbstractExtension implements GlobalsInterface
 {
     /**
-     * @param AuthorizationManager $authorizer
-     * @param Authenticator        $authenticator
+     * @param Authenticator $authenticator
      */
     public function __construct(
-        protected AuthorizationManager $authorizer,
         protected Authenticator $authenticator,
     ) {
     }
@@ -44,7 +41,7 @@ class AccountExtension extends AbstractExtension implements GlobalsInterface
         return [
             // Add Twig function for checking permissions during dynamic menu rendering
             new TwigFunction('checkAccess', function (string $slug, array $params = []) {
-                return $this->authorizer->checkAccess($this->authenticator->user(), $slug, $params);
+                return $this->authenticator->checkAccess($slug, $params);
             }),
             new TwigFunction('checkAuthenticated', function () {
                 return $this->authenticator->check();

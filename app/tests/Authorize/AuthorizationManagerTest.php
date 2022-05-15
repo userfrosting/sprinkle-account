@@ -85,7 +85,7 @@ class AuthorizationManagerTest extends AccountTestCase
         /** @var User */
         $user = User::factory([
             'id' => 11,
-        ])->make();
+        ])->create();
 
         // Setup authLogger expectations
         $this->logger->shouldReceive('debug')->once()->with('No matching permissions found. Access denied.');

@@ -40,11 +40,8 @@ class AccountExtensionTest extends TestCase
                 ->shouldReceive('user')->once()->andReturn($user)
                 ->getMock();
 
-        /** @var AuthorizationManager */
-        $authorizer = Mockery::mock(AuthorizationManager::class);
-
         // Create and add to extensions.
-        $extensions = new AccountExtension($authorizer, $authenticator);
+        $extensions = new AccountExtension($authenticator);
 
         // Create dumb Twig and test adding extension
         $view = Twig::create('');
@@ -65,16 +62,12 @@ class AccountExtensionTest extends TestCase
 
         /** @var Authenticator */
         $authenticator = Mockery::mock(Authenticator::class)
-                ->shouldReceive('user')->times(2)->andReturn($user)
-                ->getMock();
-
-        /** @var AuthorizationManager */
-        $authorizer = Mockery::mock(AuthorizationManager::class)
-                ->shouldReceive('checkAccess')->with($user, 'foo', ['foo' => 'bar'])->once()->andReturn(true)
+                ->shouldReceive('checkAccess')->with('foo', ['foo' => 'bar'])->once()->andReturn(true)
+                ->shouldReceive('user')->once()->andReturn($user)
                 ->getMock();
 
         // Create and add to extensions.
-        $extensions = new AccountExtension($authorizer, $authenticator);
+        $extensions = new AccountExtension($authenticator);
 
         // Create dumb Twig and test adding extension
         $view = Twig::create('');
@@ -90,11 +83,8 @@ class AccountExtensionTest extends TestCase
         /** @var Authenticator */
         $authenticator = Mockery::mock(Authenticator::class);
 
-        /** @var AuthorizationManager */
-        $authorizer = Mockery::mock(AuthorizationManager::class);
-
         // Create and add to extensions.
-        $extensions = new AccountExtension($authorizer, $authenticator);
+        $extensions = new AccountExtension($authenticator);
 
         // Create dumb Twig and test adding extension
         $view = Twig::create('');
