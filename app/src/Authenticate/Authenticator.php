@@ -19,6 +19,7 @@ use Illuminate\Cache\Repository as Cache;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use UserFrosting\Config\Config;
 use UserFrosting\Session\Session;
+use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Event\UserAuthenticatedEvent;
@@ -55,22 +56,23 @@ class Authenticator
     /**
      * Create a new Authenticator object.
      *
-     * @param Session                             $session
-     * @param Config                              $config
      * @param Cache                               $cache
-     * @param StorageInterface                    $rememberMeStorage
-     * @param RememberMe                          $rememberMe
-     * @param UserInterface                       $userModel
+     * @param Config                              $config
      * @param \UserFrosting\Event\EventDispatcher $eventDispatcher
+     * @param RememberMe                          $rememberMe
+     * @param Session                             $session
+     * @param StorageInterface                    $rememberMeStorage
+     * @param UserInterface                       $userModel
      */
     public function __construct(
-        protected Session $session,
-        protected Config $config,
+        protected AuthorizationManager $authorizationManager,
         protected Cache $cache,
-        protected StorageInterface $rememberMeStorage,
-        protected RememberMe $rememberMe,
-        protected UserInterface $userModel,
+        protected Config $config,
         protected EventDispatcherInterface $eventDispatcher,
+        protected RememberMe $rememberMe,
+        protected Session $session,
+        protected StorageInterface $rememberMeStorage,
+        protected UserInterface $userModel,
     ) {
         $this->setupCookie();
     }
@@ -298,6 +300,21 @@ class Authenticator
     public function flushSessionCache(string $id): bool
     {
         return $this->cache->tags('_s' . $id)->flush();
+    }
+
+    /**
+     * Checks user has access on a particular permission slug.
+     *
+     * Alias for authorizationManager->checkAccess using the current user.
+     *
+     * @param string  $slug   The permission slug to check for access.
+     * @param mixed[] $params An array of field names => values.
+     *
+     * @return bool True if the user has access, false otherwise.
+     */
+    public function checkAccess(string $slug, array $params = []): bool
+    {
+        return $this->authorizationManager->checkAccess($this->user, $slug, $params);
     }
 
     /**

@@ -13,6 +13,8 @@ namespace UserFrosting\Sprinkle\Account\Tests\Authorize;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Config\Config;
+use UserFrosting\Session\Session;
+use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManagerInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Permission;
@@ -76,6 +78,35 @@ class AuthorizationManagerTest extends AccountTestCase
         /** @var AuthorizationManager */
         $manager = $this->ci->get(AuthorizationManagerInterface::class);
         $this->assertFalse($manager->checkAccess($user, 'blah'));
+    }
+
+    public function testAuthenticatorAlias(): void
+    {
+        /** @var User */
+        $user = User::factory([
+            'id' => 11,
+        ])->make();
+
+        // Setup authLogger expectations
+        $this->logger->shouldReceive('debug')->once()->with('No matching permissions found. Access denied.');
+        $this->logger->shouldReceive('debug')->times(2);
+
+        /** @var Authenticator */
+        $authenticator = $this->ci->get(Authenticator::class);
+
+        /** @var Session */
+        $session = $this->ci->get(Session::class);
+
+        // Start session
+        $session->start();
+
+        // Login the test user
+        $authenticator->login($user, false);
+
+        $this->assertFalse($authenticator->checkAccess('blah'));
+
+        // Must logout to avoid test issue
+        $authenticator->logout(true);
     }
 
     public function testCheckAccessWithMasterUser(): void
