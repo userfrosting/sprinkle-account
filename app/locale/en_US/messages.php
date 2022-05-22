@@ -72,6 +72,10 @@ return [
         ],
 
         'EMAIL_UPDATED' => 'Account email updated',
+        'ERROR' => [
+            '@TRANSLATION'  => 'Error validating account',
+            'MISSING_PARAM' => "Account can't be registered as '{{param}}' is required.",
+        ],
 
         'MASTER_NOT_EXISTS' => 'You cannot register an account until the master account has been created!',
         'MY'                => 'My Account',
@@ -103,11 +107,6 @@ return [
     ],
 
     'EMAIL_OR_USERNAME' => 'Username or email address',
-
-    'ERROR' => [
-        '@TRANSLATION'  => 'Error validating account',
-        'MISSING_PARAM' => "Account can't be registered as '{{param}}' is required.",
-    ],
 
     'FIRST_NAME' => 'First name',
 
