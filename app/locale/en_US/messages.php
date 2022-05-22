@@ -72,7 +72,7 @@ return [
         ],
 
         'EMAIL_UPDATED' => 'Account email updated',
-        'ERROR' => [
+        'ERROR'         => [
             '@TRANSLATION'  => 'Error validating account',
             'MISSING_PARAM' => "Account can't be registered as '{{param}}' is required.",
         ],
