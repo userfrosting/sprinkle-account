@@ -10,7 +10,9 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Controller;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Connection;
+use Illuminate\Database\DatabaseManager;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDOException;
@@ -143,7 +145,16 @@ class CreateAdminUserTest extends AccountTestCase
             ->shouldReceive('getPdo')->once()->andThrow(new PDOException())
             ->shouldReceive('getName')->once()->andReturn('test')
             ->getMock();
-        $this->ci->set(Connection::class, $connection);
+
+        $manager = Mockery::mock(DatabaseManager::class)
+            ->shouldReceive('getDefaultConnection')->once()->andReturn('test')
+            ->getMock();
+
+        $db = Mockery::mock(Capsule::class)
+            ->shouldReceive('getDatabaseManager')->once()->andReturn($manager)
+            ->shouldReceive('getConnection')->once()->andReturn($connection)
+            ->getMock();
+        $this->ci->set(Capsule::class, $db);
 
         /** @var CreateAdminUser */
         $command = $this->ci->get(CreateAdminUser::class);
