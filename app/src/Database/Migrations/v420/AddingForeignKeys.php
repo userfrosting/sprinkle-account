@@ -14,6 +14,14 @@ namespace UserFrosting\Sprinkle\Account\Database\Migrations\v420;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\SQLiteConnection;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\ActivitiesTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\GroupsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PasswordResetsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PermissionsTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\PersistencesTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\RoleUsersTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\UsersTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v400\VerificationsTable;
 use UserFrosting\Sprinkle\Core\Database\Migration;
 
 /**
@@ -23,6 +31,20 @@ use UserFrosting\Sprinkle\Core\Database\Migration;
  */
 class AddingForeignKeys extends Migration
 {
+    /**
+     * {@inheritdoc}
+     */
+    public static $dependencies = [
+        GroupsTable::class,
+        UsersTable::class,
+        VerificationsTable::class,
+        ActivitiesTable::class,
+        PasswordResetsTable::class,
+        PermissionsTable::class, // which itself requires RolesTable and PermissionsRolesTable
+        PersistencesTable::class,
+        RoleUsersTable::class,
+    ];
+    
     /**
      * @var string[][][] List of operation to do
      */
