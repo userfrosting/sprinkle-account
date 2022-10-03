@@ -105,13 +105,13 @@ class ActivityTest extends AccountTestCase
         $this->assertSame($activities[0]->type, $user->lastActivity()->type);
 
         // Assert property/attribute alias
-        $this->assertSame($user->lastActivity?->type, $user->lastActivity()->type);
+        $this->assertSame($user->lastActivity?->type, $user->lastActivity()?->type);
 
         // Assert lastActivity with type. Let's use 2nd one for test
         $this->assertSame($activities[1]->id, $user->lastActivity($activities[1]->type)?->id);
 
         // Assert Last activity time
-        $this->assertEquals($activities[0]->occurred_at, $user->lastActivity()->occurred_at);
+        $this->assertEquals($activities[0]->occurred_at, $user->lastActivity()?->occurred_at);
         $this->assertEquals($activities[0]->occurred_at, $user->lastActivityTime());
 
         // Assert getSecondsSinceLastActivity
