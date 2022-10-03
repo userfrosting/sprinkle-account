@@ -44,7 +44,7 @@ class AddingForeignKeys extends Migration
         PersistencesTable::class,
         RoleUsersTable::class,
     ];
-    
+
     /**
      * @var string[][][] List of operation to do
      */
