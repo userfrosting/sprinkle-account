@@ -24,8 +24,8 @@
         "php": "^8.0",
         "birke/rememberme" : "^2.0",
         "nikic/php-parser" : "^4.2.2",
-        "userfrosting/framework": "^5.0.0@alpha",
-        "userfrosting/sprinkle-core": "^5.0.0@alpha"
+        "userfrosting/framework": "^5.0",
+        "userfrosting/sprinkle-core": "^5.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
