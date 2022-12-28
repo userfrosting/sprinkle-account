@@ -44,7 +44,7 @@ class PDOStorageTest extends AccountTestCase
     protected string $validDBPersistentToken = 'd27d330764ef61e99adf5d16f90b95a2a63c209a';
     protected string $invalidDBToken = 'ec15fbc40cdff6a2050a1bcbbc1b2196222f13f4';
 
-    protected string $expire = '2022-12-21 21:21:00';
+    protected string $expire = '2122-12-21 21:21:00';
 
     protected function setUp(): void
     {
@@ -66,35 +66,36 @@ class PDOStorageTest extends AccountTestCase
     public function testFindTripletReturnsFoundIfDataMatches(): void
     {
         $this->insertTestData();
+        $this->assertSame(1, Persistence::count());
         $result = $this->storage->findTriplet($this->testUser->id, $this->validToken, $this->validPersistentToken);
-        $this->assertEquals(StorageInterface::TRIPLET_FOUND, $result);
+        $this->assertSame(StorageInterface::TRIPLET_FOUND, $result);
     }
 
     public function testFindTripletReturnsNotFoundIfNoDataMatches(): void
     {
         $result = $this->storage->findTriplet($this->testUser->id, $this->validToken, $this->validPersistentToken);
-        $this->assertEquals(StorageInterface::TRIPLET_NOT_FOUND, $result);
+        $this->assertSame(StorageInterface::TRIPLET_NOT_FOUND, $result);
     }
 
     public function testFindTripletReturnsInvalidTokenIfTokenIsInvalid(): void
     {
         $this->insertTestData();
         $result = $this->storage->findTriplet($this->testUser->id, $this->invalidToken, $this->validPersistentToken);
-        $this->assertEquals(StorageInterface::TRIPLET_INVALID, $result);
+        $this->assertSame(StorageInterface::TRIPLET_INVALID, $result);
     }
 
     public function testStoreTripletSavesValuesIntoDatabase(): void
     {
         $this->storage->storeTriplet($this->testUser->id, $this->validToken, $this->validPersistentToken, strtotime($this->expire)); // @phpstan-ignore-line
         $row = Persistence::select(['user_id', 'token', 'persistent_token', 'expires_at'])->first()?->toArray(); // @phpstan-ignore-line
-        $this->assertEquals([$this->testUser->id, $this->validDBToken, $this->validDBPersistentToken, $this->expire], array_values($row));
+        $this->assertSame([$this->testUser->id, $this->validDBToken, $this->validDBPersistentToken, $this->expire], array_values($row));
     }
 
     public function testCleanTripletRemovesEntryFromDatabase(): void
     {
         $this->insertTestData();
         $this->storage->cleanTriplet($this->testUser->id, $this->validPersistentToken);
-        $this->assertEquals(0, Persistence::count());
+        $this->assertSame(0, Persistence::count());
     }
 
     public function testCleanAllTripletsRemovesAllEntriesWithMatchingCredentialsFromDatabase(): void
@@ -108,16 +109,16 @@ class PDOStorageTest extends AccountTestCase
         ]);
         $persistence->save();
         $this->storage->cleanAllTriplets($this->testUser->id);
-        $this->assertEquals(0, Persistence::count());
+        $this->assertSame(0, Persistence::count());
     }
 
     public function testReplaceTripletRemovesAndSavesEntryFromDatabase(): void
     {
         $this->insertTestData();
         $this->storage->replaceTriplet($this->testUser->id, $this->invalidToken, $this->validPersistentToken, strtotime($this->expire)); // @phpstan-ignore-line
-        $this->assertEquals(1, Persistence::count());
+        $this->assertSame(1, Persistence::count());
         $row = Persistence::select(['user_id', 'token', 'persistent_token', 'expires_at'])->first()->toArray(); // @phpstan-ignore-line
-        $this->assertEquals([$this->testUser->id, $this->invalidDBToken, $this->validDBPersistentToken, $this->expire], array_values($row));
+        $this->assertSame([$this->testUser->id, $this->invalidDBToken, $this->validDBPersistentToken, $this->expire], array_values($row));
     }
 
     public function testCleanExpiredTokens(): void
@@ -130,9 +131,9 @@ class PDOStorageTest extends AccountTestCase
             'expires_at'       => Carbon::now()->subHour(),
         ]);
         $persistence->save();
-        $this->assertEquals(2, Persistence::count());
+        $this->assertSame(2, Persistence::count());
         $this->storage->cleanExpiredTokens((int) Carbon::now()->timestamp);
-        $this->assertEquals(1, Persistence::count());
+        $this->assertSame(1, Persistence::count());
     }
 
     /**
