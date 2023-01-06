@@ -34,7 +34,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * @property timestamp     $updated_at
  * @property UserInterface $user
  *
- * @method        $this notExpired()
+ * @method $this  notExpired()
  * @method static $this notExpired()
  */
 interface PersistenceInterface
