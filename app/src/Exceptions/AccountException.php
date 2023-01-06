@@ -13,76 +13,17 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Exceptions;
 
 use Exception;
-use Throwable;
-use UserFrosting\Sprinkle\Core\Exceptions\Contracts\TwigRenderedException;
-use UserFrosting\Sprinkle\Core\Exceptions\Contracts\UserMessageException;
+use UserFrosting\Sprinkle\Core\Exceptions\UserFacingException;
 use UserFrosting\Support\Message\UserMessage;
 
 /**
  * Base exception for Auth related Exception.
+ *
+ * This exception is used as umbrella exception for all Account related
+ * exception to make it easier to catch them.
  */
-class AccountException extends Exception implements TwigRenderedException, UserMessageException
+class AccountException extends UserFacingException
 {
     protected string $title = 'ACCOUNT.EXCEPTION.TITLE';
     protected string|UserMessage $description = 'ACCOUNT.EXCEPTION.DESCRIPTION';
-    protected string $twigTemplate = 'pages/error/auth.html.twig';
-    protected int $httpCode = 400; // Force all AuthException to 400 code.
-
-    /**
-     * {@inheritDoc}
-     */
-    public function __construct(string $message = '', int $code = 0, ?Throwable $previous = null)
-    {
-        $code = ($code === 0) ? $this->httpCode : $code;
-
-        parent::__construct($message, $code, $previous);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTemplate(): string
-    {
-        return $this->twigTemplate;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTitle(): string|UserMessage
-    {
-        return $this->title;
-    }
-
-    /**
-     * Set the value of title.
-     *
-     * @return static
-     */
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDescription(): string|UserMessage
-    {
-        return $this->description;
-    }
-
-    /**
-     * Set the value of description.
-     *
-     * @return static
-     */
-    public function setDescription(string|UserMessage $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
 }

@@ -26,7 +26,6 @@ use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 
 /**
  * Integration tests for the AuthGuard.
- * Also serves as AccountExceptionHandler test.
  */
 class GuestGuardTest extends AccountTestCase
 {
