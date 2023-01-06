@@ -93,7 +93,6 @@ class Authenticator
         string|int $identityValue,
         string $password,
     ): UserInterface {
-
         // Try to load the user, using the specified conditions
         /** @var UserInterface|null */
         $user = $this->userModel::where($identityColumn, $identityValue)->first();

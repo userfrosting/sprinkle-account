@@ -55,7 +55,7 @@ class MigrationsTest extends AccountTestCase
     public function tablesProvider(): array
     {
         return [
-            'activities' => [
+            'activities'       => [
                 'description',
                 'id',
                 'ip_address',
@@ -63,7 +63,7 @@ class MigrationsTest extends AccountTestCase
                 'type',
                 'user_id',
             ],
-            'groups' => [
+            'groups'           => [
                 'id',
                 'slug',
                 'name',
@@ -72,7 +72,7 @@ class MigrationsTest extends AccountTestCase
                 'created_at',
                 'updated_at',
             ],
-            'password_resets' => [
+            'password_resets'  => [
                 'id',
                 'user_id',
                 'hash',
@@ -88,7 +88,7 @@ class MigrationsTest extends AccountTestCase
                 'created_at',
                 'updated_at',
             ],
-            'permissions' => [
+            'permissions'      => [
                 'id',
                 'slug',
                 'name',
@@ -97,7 +97,7 @@ class MigrationsTest extends AccountTestCase
                 'created_at',
                 'updated_at',
             ],
-            'persistences' => [
+            'persistences'     => [
                 'id',
                 'user_id',
                 'token',
@@ -106,7 +106,7 @@ class MigrationsTest extends AccountTestCase
                 'created_at',
                 'updated_at',
             ],
-            'roles' => [
+            'roles'            => [
                 'id',
                 'slug',
                 'name',
@@ -114,13 +114,13 @@ class MigrationsTest extends AccountTestCase
                 'created_at',
                 'updated_at',
             ],
-            'role_users' => [
+            'role_users'       => [
                 'user_id',
                 'role_id',
                 'created_at',
                 'updated_at',
             ],
-            'users' => [
+            'users'            => [
                 'id',
                 'user_name',
                 'email',
@@ -135,7 +135,7 @@ class MigrationsTest extends AccountTestCase
                 'created_at',
                 'updated_at',
             ],
-            'verifications' => [
+            'verifications'    => [
                 'id',
                 'user_id',
                 'hash',

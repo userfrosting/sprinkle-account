@@ -176,17 +176,17 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
     public function getEventListeners(): array
     {
         return [
-            BakeCommandEvent::class => [
+            BakeCommandEvent::class       => [
                 BakeCommandListener::class,
             ],
-            UserCreatedEvent::class => [
+            UserCreatedEvent::class       => [
                 AssignDefaultRoles::class,
                 AssignDefaultGroups::class,
             ],
-            UserLoggedInEvent::class => [
+            UserLoggedInEvent::class      => [
                 UserSignInActivity::class,
             ],
-            UserLoggedOutEvent::class => [
+            UserLoggedOutEvent::class     => [
                 UserLogoutActivity::class,
             ],
             UserAuthenticatedEvent::class => [

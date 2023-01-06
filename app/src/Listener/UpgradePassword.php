@@ -33,7 +33,6 @@ class UpgradePassword
         $passwordType = $this->hasher->getHashType($event->user->password);
 
         if ($passwordType !== 'modern') {
-
             // Hash the user's password and update
             $event->user->password = $event->getPassword(); // Password hashing will be done in User Model
             $event->user->save(); // Save changes

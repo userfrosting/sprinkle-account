@@ -113,7 +113,6 @@ class ForgetPasswordAction
         // All checks passed!  log events/activities, update user, and send email
         // Begin transaction - DB will be rolled back if an exception occurs
         $this->db->transaction(function () use ($data) {
-
             // Log throttle-able event
             $this->throttler->logEvent($this->throttlerSlug, [
                 'email' => $data['email'],

@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use Slim\Views\Twig;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
-use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
 

@@ -153,7 +153,6 @@ class RegisterAction
         // Ready to save
         /** @var UserInterface */
         $user = $this->db->transaction(function () use ($user) {
-
             // Log throttle-able event
             $this->throttler->logEvent('registration_attempt');
 

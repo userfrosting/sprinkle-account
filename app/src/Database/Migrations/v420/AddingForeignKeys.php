@@ -49,28 +49,28 @@ class AddingForeignKeys extends Migration
      * @var string[][][] List of operation to do
      */
     protected $tables = [
-        'activities' => [
+        'activities'       => [
             'user_id' => ['id', 'users'],
         ],
-        'password_resets' => [
+        'password_resets'  => [
             'user_id' => ['id', 'users'],
         ],
         'permission_roles' => [
             'permission_id' => ['id', 'permissions'],
             'role_id'       => ['id', 'roles'],
         ],
-        'persistences' => [
+        'persistences'     => [
             'user_id' => ['id', 'users'],
         ],
-        'role_users' => [
+        'role_users'       => [
             'user_id' => ['id', 'users'],
             'role_id' => ['id', 'roles'],
         ],
-        'users' => [
+        'users'            => [
             'group_id'         => ['id', 'groups'],
             'last_activity_id' => ['id', 'activities'],
         ],
-        'verifications' => [
+        'verifications'    => [
             'user_id' => ['id', 'users'],
         ],
     ];

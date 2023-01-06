@@ -107,7 +107,6 @@ class ResendVerificationAction
         // All checks passed!  log events/activities, create user, and send verification email (if required)
         // Begin transaction - DB will be rolled back if an exception occurs
         $this->db->transaction(function () use ($data) {
-
             // Log throttle-able event
             $this->throttler->logEvent($this->throttlerSlug, [
                 'email' => $data['email'],

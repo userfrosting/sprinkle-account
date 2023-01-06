@@ -41,7 +41,7 @@ final class LoggersService implements ServicesProviderInterface
              *
              * @return \Monolog\Logger
              */
-            AuthLogger::class => function (StreamHandler $handler, LineFormatter $formatter) {
+            AuthLogger::class         => function (StreamHandler $handler, LineFormatter $formatter) {
                 $formatter->setJsonPrettyPrint(true);
                 $handler->setFormatter($formatter);
 
