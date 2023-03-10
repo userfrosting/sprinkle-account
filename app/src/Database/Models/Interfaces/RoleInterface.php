@@ -30,7 +30,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * @property Collection<UserInterface>       $users
  * @property Collection<PermissionInterface> $permissions
  *
- * @method $this  forUser(int|UserInterface $user)
+ * @method        $this forUser(int|UserInterface $user)
  * @method static $this forUser(int|UserInterface $user)
  */
 interface RoleInterface
