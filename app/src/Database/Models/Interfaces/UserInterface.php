@@ -56,9 +56,9 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property ActivityInterface|null             $last_activity
  * @property ActivityInterface|null             $lastActivity
  *
- * @method        $this joinLastActivity()
+ * @method $this  joinLastActivity()
  * @method static $this joinLastActivity()
- * @method        $this forRole(int|RoleInterface $role)
+ * @method $this  forRole(int|RoleInterface $role)
  * @method static $this forRole(int|RoleInterface $role)
  */
 interface UserInterface
