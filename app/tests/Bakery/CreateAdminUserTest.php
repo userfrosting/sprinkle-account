@@ -63,7 +63,7 @@ class CreateAdminUserTest extends AccountTestCase
                 return $arg1;
             })
             ->getMock();
-        $this->ci->set(EventDispatcher::class, $eventDispatcher);
+        $this->ci->set(EventDispatcherInterface::class, $eventDispatcher);
 
         // Mock userActivityLogger to assert it's being called properly.
         $userActivityLogger = Mockery::mock(UserActivityLogger::class)

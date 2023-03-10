@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Bakery;
 
+use DI\Attribute\Inject;
 use Exception;
 use Illuminate\Database\Connection;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -52,32 +53,31 @@ class CreateUser extends Command
     // Request schema to use to validate data.
     protected string $schema = 'schema://requests/register.yaml';
 
-    /** @Inject */
+    #[Inject]
     protected MigrationRepositoryInterface $repository;
 
-    /** @Inject */
+    #[Inject]
     protected UserValidation $userValidation;
 
-    /** @Inject */
+    #[Inject]
     protected UserInterface $userModel;
 
     /**
-     * @Inject
-     *
      * @var \UserFrosting\Event\EventDispatcher
      */
+    #[Inject]
     protected EventDispatcherInterface $eventDispatcher;
 
-    /** @Inject */
+    #[Inject]
     protected UserActivityLogger $userActivityLogger;
 
-    /** @Inject */
+    #[Inject]
     protected Connection $db;
 
-    /** @Inject */
+    #[Inject]
     protected Config $config;
 
-    /** @Inject */
+    #[Inject]
     protected Translator $translator;
 
     /**
