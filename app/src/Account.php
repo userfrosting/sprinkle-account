@@ -49,6 +49,7 @@ use UserFrosting\Sprinkle\Account\ServicesProvider\I18nService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\LoggersService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\ModelsService;
 use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
+use UserFrosting\Sprinkle\BakeryRecipe;
 use UserFrosting\Sprinkle\Core\Bakery\Event\BakeCommandEvent;
 use UserFrosting\Sprinkle\Core\Core;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
@@ -56,7 +57,13 @@ use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\SeedRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\TwigExtensionRecipe;
 use UserFrosting\Sprinkle\SprinkleRecipe;
 
-class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListenerRecipe, TwigExtensionRecipe
+class Account implements
+    SprinkleRecipe,
+    MigrationRecipe,
+    SeedRecipe,
+    EventListenerRecipe,
+    TwigExtensionRecipe,
+    BakeryRecipe
 {
     /**
      * {@inheritdoc}
@@ -119,14 +126,6 @@ class Account implements SprinkleRecipe, MigrationRecipe, SeedRecipe, EventListe
             I18nService::class,
             LoggersService::class,
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getMiddlewares(): array
-    {
-        return [];
     }
 
     /**
