@@ -34,9 +34,9 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property Collection<UserInterface> $users
  * @property Collection<RoleInterface> $roles
  *
- * @method $this  forRole(int|RoleInterface $role)
+ * @method        $this forRole(int|RoleInterface $role)
  * @method static $this forRole(int|RoleInterface $role)
- * @method $this  notForRole(int|RoleInterface $role)
+ * @method        $this notForRole(int|RoleInterface $role)
  * @method static $this notForRole(int|RoleInterface $role)
  */
 interface PermissionInterface
