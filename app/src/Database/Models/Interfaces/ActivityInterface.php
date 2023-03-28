@@ -33,7 +33,7 @@ use UserFrosting\Sprinkle\Core\Database\Models\Model;
  * @property string        $description
  * @property UserInterface $user
  *
- * @method $this  joinUser()
+ * @method        $this joinUser()
  * @method static $this joinUser()
  */
 interface ActivityInterface
