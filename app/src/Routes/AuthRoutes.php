@@ -30,7 +30,7 @@ use UserFrosting\Sprinkle\Account\Controller\SetPasswordAction;
 use UserFrosting\Sprinkle\Account\Controller\SettingsAction;
 use UserFrosting\Sprinkle\Account\Controller\SuggestUsernameAction;
 use UserFrosting\Sprinkle\Account\Controller\VerifyAction;
-use UserFrosting\Sprinkle\Core\Util\NoCache;
+use UserFrosting\Sprinkle\Core\Middlewares\NoCache;
 
 class AuthRoutes implements RouteDefinitionInterface
 {
@@ -45,20 +45,20 @@ class AuthRoutes implements RouteDefinitionInterface
             $group->post('/forgot-password', ForgetPasswordAction::class)->setName('account.forgotPassword');
             $group->get('/set-password/deny', DenyResetPasswordAction::class)->setName('account.setPassword.deny');
             $group->post('/set-password', SetPasswordAction::class)->setName('account.setPassword');
-        })->add(GuestGuard::class); //->add(new NoCache()); TODO
+        })->add(GuestGuard::class)->add(NoCache::class);
 
         // Auth Guard
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->get('/logout', LogoutAction::class)->setName('account.logout');
             $group->post('/settings', SettingsAction::class)->setName('settings');
             $group->post('/settings/profile', ProfileAction::class)->setName('settings.profile');
-        })->add(AuthGuard::class); //->add(new NoCache()); TODO
+        })->add(AuthGuard::class)->add(NoCache::class);
 
         // No guard
         $app->group('/account', function (RouteCollectorProxy $group) {
             $group->get('/captcha', CaptchaAction::class)->setName('account.captcha');
             $group->get('/check-username', CheckUsernameAction::class)->setName('account.checkUsername');
             $group->get('/suggest-username', SuggestUsernameAction::class)->setName('account.suggestUsername');
-        }); //->add(new NoCache()); TODO
+        })->add(NoCache::class);
     }
 }
