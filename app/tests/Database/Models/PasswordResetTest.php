@@ -114,7 +114,7 @@ class PasswordResetTest extends AccountTestCase
         PasswordReset::factory()->count(3)->for($user)->create();
 
         $this->assertSame(3, $user->passwordResets()->count());
-        $this->assertContainsOnlyInstancesOf(PasswordResetInterface::class, $user->passwordResets);
+        $this->assertContainsOnlyInstancesOf(PasswordResetInterface::class, $user->passwordResets); // @phpstan-ignore-line
 
         // Test force deletion and cascade deletion
         $user->forceDelete();

@@ -82,7 +82,7 @@ class PersistenceTest extends AccountTestCase
         Persistence::factory()->count(3)->for($user)->create();
 
         $this->assertSame(3, $user->persistences()->count());
-        $this->assertContainsOnlyInstancesOf(PersistenceInterface::class, $user->persistences);
+        $this->assertContainsOnlyInstancesOf(PersistenceInterface::class, $user->persistences); // @phpstan-ignore-line
 
         // Test force deletion and cascade deletion
         $user->forceDelete();

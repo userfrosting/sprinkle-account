@@ -114,7 +114,7 @@ class VerificationTest extends AccountTestCase
         Verification::factory()->count(3)->for($user)->create();
 
         $this->assertSame(3, $user->verifications()->count());
-        $this->assertContainsOnlyInstancesOf(VerificationInterface::class, $user->verifications);
+        $this->assertContainsOnlyInstancesOf(VerificationInterface::class, $user->verifications); // @phpstan-ignore-line
 
         // Test force deletion and cascade deletion
         $user->forceDelete();
