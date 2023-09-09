@@ -26,9 +26,9 @@ trait WithTestUser
     /**
      * Set user for tests.
      *
-     * @param UserInterface   $user
-     * @param bool            $isMaster If true, will set user as master user (permission for everything).
-     * @param RoleInterface[] $roles
+     * @param UserInterface                  $user
+     * @param bool                           $isMaster    If true, will set user as master user (permission for everything).
+     * @param RoleInterface[]                $roles
      * @param (PermissionInterface|string)[] $permissions Permission will be added through a new empty role.
      */
     protected function actAsUser(
