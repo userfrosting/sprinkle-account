@@ -164,7 +164,7 @@ class CreateUser extends Command
         }
 
         // Ok, now we've got the info and we can create the new user.
-        $this->io->write("\n<info>Saving the root user details...</info>");
+        $this->io->write("\n<info>Saving the user data...</info>");
 
         $user = $this->db->transaction(function () use ($user) {
             $user->save();
