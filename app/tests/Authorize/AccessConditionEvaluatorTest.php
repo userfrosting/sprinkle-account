@@ -13,10 +13,20 @@ namespace UserFrosting\Sprinkle\Account\Tests\Authorize;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Config\Config;
+use UserFrosting\ServicesProvider\ServicesProviderInterface;
+use UserFrosting\Sprinkle\Account\Account;
 use UserFrosting\Sprinkle\Account\Authorize\AccessConditionEvaluator;
+use UserFrosting\Sprinkle\Account\Authorize\AccessConditions;
+use UserFrosting\Sprinkle\Account\Authorize\AccessConditionsInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Group;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Log\AuthLogger;
+use UserFrosting\Sprinkle\Account\ServicesProvider\AccessConditionsService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\AuthorizationService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\I18nService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\LoggersService;
+use UserFrosting\Sprinkle\Account\ServicesProvider\ModelsService;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
@@ -27,6 +37,8 @@ class AccessConditionEvaluatorTest extends AccountTestCase
 
     /** @var AuthLogger|\Mockery\MockInterface */
     protected AuthLogger $logger;
+
+    protected string $mainSprinkle = CustomAccount::class;
 
     /**
      * Setup the test database.
@@ -202,4 +214,78 @@ class AccessConditionEvaluatorTest extends AccountTestCase
         $result = $ace->evaluate('equals_num(self.group.id,user.group.id)', ['user' => $user], $user);
         $this->assertTrue($result);
     }
+
+    public function testCustomCondition(): void
+    {
+        /** @var AccessConditionEvaluator */
+        $ace = $this->ci->get(AccessConditionEvaluator::class);
+
+        // Set logger expectations.
+        $this->logger->shouldReceive('debug')->times(8);
+
+        $this->assertFalse($ace->evaluate("equals_foo('bar')"));
+        $this->assertTrue($ace->evaluate("equals_foo('foo')"));
+    }
+
+    /*public function testMoreCustomCondition(): void
+    {
+        /** @var AccessConditionEvaluator * /
+        $ace = $this->ci->get(AccessConditionEvaluator::class);
+
+        // Set logger expectations.
+        $this->logger->shouldReceive('debug')->times(8);
+
+        $this->assertFalse($ace->evaluate("equals_bar('foo')"));
+        $this->assertTrue($ace->evaluate("equals_bar('bar')"));
+    }*/
 }
+
+class CustomAccount extends Account
+{
+    public function getServices(): array
+    {
+        return [
+            AccessConditionsService::class,
+            CustomAccessConditionsService::class,
+            // MoreCustomAccessConditionsService::class,
+            AuthorizationService::class,
+            AuthService::class,
+            ModelsService::class,
+            I18nService::class,
+            LoggersService::class,
+        
+        ];
+    }
+}
+
+class CustomAccessConditions extends AccessConditions
+{
+    public function equals_foo(string $string): bool
+    {
+        return $string === 'foo';
+    }
+}
+
+class CustomAccessConditionsService implements ServicesProviderInterface
+{
+    public function register(): array
+    {
+        return [
+            AccessConditionsInterface::class => \DI\autowire(CustomAccessConditions::class),
+        ];
+    }
+}
+
+/*class MoreCustomAccessConditionsService implements ServicesProviderInterface
+{
+    public function register(): array
+    {
+        return [
+            AccessConditionsInterface::class => \DI\decorate(function (AccessConditionsInterface $ac) {
+                $ac['equals_bar'] = function (string $string): bool {
+                    return $string === 'bar';
+                };
+            }),
+        ];
+    }
+}*/

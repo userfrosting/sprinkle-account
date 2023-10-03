@@ -43,6 +43,7 @@ use UserFrosting\Sprinkle\Account\Listener\UpgradePassword;
 use UserFrosting\Sprinkle\Account\Listener\UserLogoutActivity;
 use UserFrosting\Sprinkle\Account\Listener\UserSignInActivity;
 use UserFrosting\Sprinkle\Account\Routes\AuthRoutes;
+use UserFrosting\Sprinkle\Account\ServicesProvider\AccessConditionsService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthorizationService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\I18nService;
@@ -120,6 +121,7 @@ class Account implements
     public function getServices(): array
     {
         return [
+            AccessConditionsService::class,
             AuthorizationService::class,
             AuthService::class,
             ModelsService::class,

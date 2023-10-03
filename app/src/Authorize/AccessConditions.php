@@ -192,6 +192,9 @@ class AccessConditions implements AccessConditionsInterface
      *
      * @throws Exception Since this is not implemented.
      */
+    // TODO : This should be enabled, as it would be easier to decorate the
+    //        service than replacing it. See commented test in
+    //        `AccessConditionEvaluatorTest`
     public function offsetSet($condition, $callback): void
     {
         throw new Exception("Can't set new condition on this object.");

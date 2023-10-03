@@ -53,15 +53,15 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
     /**
      * Create a new ParserNodeFunctionEvaluator object.
      *
-     * @param AccessConditions      $accessConditions The parameters to be used when evaluating the methods in the condition expression, as an array.
-     * @param AuthLogger            $logger           A Monolog logger, used to dump debugging info for authorization evaluations.
-     * @param Config                $config           Set to true if you want debugging information printed to the auth log.
-     * @param mixed[]               $params
-     * @param StandardPrettyPrinter $prettyPrinter
-     * @param NodeTraverser         $traverser
+     * @param AccessConditionsInterface $accessConditions The parameters to be used when evaluating the methods in the condition expression, as an array.
+     * @param AuthLogger                $logger           A Monolog logger, used to dump debugging info for authorization evaluations.
+     * @param Config                    $config           Set to true if you want debugging information printed to the auth log.
+     * @param mixed[]                   $params
+     * @param StandardPrettyPrinter     $prettyPrinter
+     * @param NodeTraverser             $traverser
      */
     public function __construct(
-        protected AccessConditions $accessConditions,
+        protected AccessConditionsInterface $accessConditions,
         protected AuthLogger $logger,
         Config $config,
         protected array $params = [],
