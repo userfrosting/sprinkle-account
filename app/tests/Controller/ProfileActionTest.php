@@ -12,19 +12,17 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Tests\Controller;
 
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
-use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
+use UserFrosting\Sprinkle\Account\Testing\WithTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
 class ProfileActionTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use MockeryPHPUnitIntegration;
+    use WithTestUser;
 
     /**
      * Setup test database for controller tests
@@ -39,13 +37,7 @@ class ProfileActionTest extends AccountTestCase
     {
         /** @var User */
         $user = User::factory()->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
+        $this->actAsUser($user, true);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings/profile', [
@@ -73,24 +65,32 @@ class ProfileActionTest extends AccountTestCase
         $this->assertSame('success', array_reverse($messages)[0]['type']);
     }
 
-    /*public function testProfileWithNoPermissions()
+    public function testProfileWithNoPermissions(): void
     {
-        $result = $controller->profile($this->getRequest(), $this->getResponse(), []);
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
-        $this->assertSame($result->getStatusCode(), 403);
-        $this->assertJson((string) $result->getBody());
-        $this->assertSame('[]', (string) $result->getBody());
+        /** @var User */
+        $user = User::factory()->create();
+        $this->actAsUser($user); // No permissions !
+
+        // Create request with method and url and fetch response
+        $request = $this->createJsonRequest('POST', '/account/settings/profile');
+        $response = $this->handleRequest($request);
+
+        // Assert response status & body
+        $this->assertJsonResponse('Access Denied', $response, 'title');
+        $this->assertResponseStatus(403, $response);
 
         // Test message
-        $ms = $this->ci->alerts;
+        /** @var AlertStream */
+        $ms = $this->ci->get(AlertStream::class);
         $messages = $ms->getAndClearMessages();
         $this->assertSame('danger', array_reverse($messages)[0]['type']);
-    }*/
+    }
 
     public function testProfileWithOneLocale(): void
     {
         /** @var User */
         $user = User::factory(['locale' => 'fr_FR'])->create();
+        $this->actAsUser($user, permissions: ['update_account_settings']); // Assert specific permission while at it
 
         // Force locale config
         /** @var Config */
@@ -100,13 +100,6 @@ class ProfileActionTest extends AccountTestCase
             'fr_FR' => true,
         ]);
         $this->ci->set(Config::class, $config);
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings/profile', [
@@ -128,13 +121,7 @@ class ProfileActionTest extends AccountTestCase
     {
         /** @var User */
         $user = User::factory(['password' => 'potato'])->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
+        $this->actAsUser($user, true);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings/profile');
@@ -149,13 +136,7 @@ class ProfileActionTest extends AccountTestCase
     {
         /** @var User */
         $user = User::factory()->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
+        $this->actAsUser($user, true);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings/profile', [

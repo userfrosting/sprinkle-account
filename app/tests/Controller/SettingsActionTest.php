@@ -12,18 +12,16 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Tests\Controller;
 
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use UserFrosting\Alert\AlertStream;
-use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
+use UserFrosting\Sprinkle\Account\Testing\WithTestUser;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
 class SettingsActionTest extends AccountTestCase
 {
     use RefreshDatabase;
-    use MockeryPHPUnitIntegration;
+    use WithTestUser;
 
     /**
      * Setup test database for controller tests
@@ -38,13 +36,7 @@ class SettingsActionTest extends AccountTestCase
     {
         /** @var User */
         $user = User::factory(['password' => 'potato'])->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
+        $this->actAsUser($user, true);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings', [
@@ -72,17 +64,32 @@ class SettingsActionTest extends AccountTestCase
         $this->assertTrue($freshUser->comparePassword('testrSetPassword'));
     }
 
+    public function testSettingsWithNoPermissions(): void
+    {
+        /** @var User */
+        $user = User::factory()->create();
+        $this->actAsUser($user); // No permissions !
+
+        // Create request with method and url and fetch response
+        $request = $this->createJsonRequest('POST', '/account/settings');
+        $response = $this->handleRequest($request);
+
+        // Assert response status & body
+        $this->assertJsonResponse('Access Denied', $response, 'title');
+        $this->assertResponseStatus(403, $response);
+
+        // Test message
+        /** @var AlertStream */
+        $ms = $this->ci->get(AlertStream::class);
+        $messages = $ms->getAndClearMessages();
+        $this->assertSame('danger', array_reverse($messages)[0]['type']);
+    }
+
     public function testSettingsOnlyEmailNoLocale(): void
     {
         /** @var User */
         $user = User::factory(['password' => 'potato'])->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
+        $this->actAsUser($user, permissions: ['update_account_settings']); // Assert specific permission while at it
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings', [
@@ -104,50 +111,11 @@ class SettingsActionTest extends AccountTestCase
         $this->assertSame('success', array_reverse($messages)[0]['type']);
     }
 
-    // TODO
-    /*public function testSettingsWithNoPermissions(): void
-    {
-        /** @var User * /
-        $user = User::factory(['password' => 'potato'])->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
-
-        // Create request with method and url and fetch response
-        $request = $this->createJsonRequest('POST', '/account/settings', [
-            'passwordcheck' => 'potato',
-            'email'         => 'testSettings@test.com',
-            'password'      => '',
-            'passwordc'     => '',
-        ]);
-        $response = $this->handleRequest($request);
-
-        // Assert response status & body
-        $this->assertResponse('', $response);
-        $this->assertResponseStatus(403, $response);
-
-        // Test message
-        /** @var AlertStream * /
-        $ms = $this->ci->get(AlertStream::class);
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('danger', array_reverse($messages)[0]['type']);
-    }*/
-
     public function testSettingsWithFailedValidation(): void
     {
         /** @var User */
         $user = User::factory(['password' => 'potato'])->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
+        $this->actAsUser($user, true);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings');
@@ -162,13 +130,7 @@ class SettingsActionTest extends AccountTestCase
     {
         /** @var User */
         $user = User::factory(['password' => 'potato'])->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
+        $this->actAsUser($user, true);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings', [
@@ -189,16 +151,10 @@ class SettingsActionTest extends AccountTestCase
     {
         /** @var User */
         $user = User::factory(['password' => 'potato'])->create();
+        $this->actAsUser($user, true);
 
         /** @var User */
         $firstUser = User::factory()->create();
-
-        // "Log in" user
-        $authenticator = Mockery::mock(Authenticator::class)
-            ->makePartial()
-            ->shouldReceive('user')->andReturn($user)
-            ->getMock();
-        $this->ci->set(Authenticator::class, $authenticator);
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/settings', [

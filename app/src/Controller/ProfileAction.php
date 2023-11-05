@@ -22,6 +22,7 @@ use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\I18n\Translator;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Exceptions\ForbiddenException;
 use UserFrosting\Sprinkle\Account\Exceptions\LocaleNotFoundException;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
@@ -80,12 +81,9 @@ class ProfileAction
     {
         // Access control for entire resource - check that the current user has permission to modify themselves
         // See recipe "per-field access control" for dynamic fine-grained control over which properties a user can modify.
-        // TODO
-        // if (!$authorizer->checkAccess($currentUser, 'update_account_settings')) {
-        //     $ms->addMessageTranslated('danger', 'ACCOUNT.ACCESS_DENIED');
-
-        //     return $response->withJson([], 403);
-        // }
+        if (!$this->authenticator->checkAccess('update_account_settings')) {
+            throw new ForbiddenException();
+        }
 
         // Get POST parameters
         $params = (array) $request->getParsedBody();
