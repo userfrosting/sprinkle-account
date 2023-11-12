@@ -2,7 +2,7 @@
     "name": "userfrosting/sprinkle-account",
     "type": "userfrosting-sprinkle",
     "description": "Authentication and account management module for UserFrosting.",
-    "keywords": ["php user management", "usercake", "bootstrap"],
+    "keywords": ["php user management", "userfrosting", "sprinkle", "account", "user account", "login"],
     "homepage": "https://github.com/userfrosting/UserFrosting",
     "license" : "MIT",
     "authors" : [

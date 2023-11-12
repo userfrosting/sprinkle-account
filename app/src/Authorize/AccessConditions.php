@@ -25,11 +25,9 @@ use UserFrosting\Sprinkle\Account\Database\Models\User;
  */
 class AccessConditions implements AccessConditionsInterface
 {
-    protected UserInterface $user;
-
     public function __construct(
         protected Config $config,
-        ?UserInterface $user = null,
+        protected ?UserInterface $user = null,
     ) {
         $this->user = $user ?? new User();
     }

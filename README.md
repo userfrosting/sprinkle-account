@@ -8,11 +8,50 @@
 [![StyleCI](https://github.styleci.io/repos/448371817/shield?branch=5.0&style=flat)](https://github.styleci.io/repos/448371817)
 [![PHPStan](https://img.shields.io/github/actions/workflow/status/userfrosting/sprinkle-account/PHPStan.yml?branch=5.0&label=PHPStan)](https://github.com/userfrosting/sprinkle-account/actions/workflows/PHPStan.yml)
 [![Join the chat](https://img.shields.io/badge/Chat-UserFrosting-brightgreen?logo=Rocket.Chat)](https://chat.userfrosting.com)
-[![Donate](https://img.shields.io/badge/Open%20Collective-Donate-blue.svg)](https://opencollective.com/userfrosting#backer)
+[![Donate](https://img.shields.io/badge/Open_Collective-Donate-blue?logo=Open%20Collective
+)](https://opencollective.com/userfrosting#backer)
+[![Donate](https://img.shields.io/badge/Ko--fi-Donate-blue?logo=ko-fi&logoColor=white
+)](https://ko-fi.com/lcharette)
 
-<!-- [![Latest Version](https://img.shields.io/github/release/userfrosting/sprinkle-account.svg)](https://github.com/userfrosting/sprinkle-account/releases) -->
+## By [Alex Weissman](https://alexanderweissman.com) and [Louis Charette](https://bbqsoftwares.com)
 
-<!-- ![PHP](https://img.shields.io/packagist/php-v/userfrosting/sprinkle-account/dev-develop-5.0?color=brightgreen) -->
+Copyright (c) 2019-2023, free to use in personal and commercial software as per the [license](LICENSE.md).
 
-## _This is a work in progress_
-Documentation coming soon.
+UserFrosting is a secure, modern user management system written in PHP and built on top of the [Slim Microframework](http://www.slimframework.com/), [Twig](http://twig.sensiolabs.org/) templating engine, and [Eloquent](https://laravel.com/docs/5.8/eloquent#introduction) ORM.
+
+This **Account sprinkle** handles user modeling and authentication, user groups, roles, and access control. It contains the routes, templates, and controllers needed to implement pages for registration, password reset, login, and more.
+
+## Installation
+1. Require in your [UserFrosting](https://github.com/userfrosting/UserFrosting) project : 
+    ``` 
+    composer require userfrosting/sprinkle-account
+    ```
+
+2. Add the Sprinkle to your Sprinkle Recipe : 
+    ```php
+    public function getSprinkles(): array
+    {
+        return [
+            \UserFrosting\Sprinkle\Account\Account::class,
+        ];
+    }
+    ```
+
+3. Bake
+    ```bash
+    php bakery bake
+    ```
+
+## Documentation
+See main [UserFrosting Documentation](https://learn.userfrosting.com) for more information.
+
+- [Changelog](CHANGELOG.md)
+- [Issues](https://github.com/userfrosting/UserFrosting/issues)
+- [License](LICENSE.md)
+- [Style Guide](STYLE-GUIDE.md)
+
+## Contributing
+
+This project exists thanks to all the people who contribute. If you're interested in contributing to the UserFrosting codebase, please see our [contributing guidelines](https://github.com/userfrosting/UserFrosting/blob/5.0/.github/CONTRIBUTING.md) as well as our [style guidelines](.github/STYLE-GUIDE.md).
+
+[![](https://opencollective.com/userfrosting/contributors.svg?width=890&button=true)](https://github.com/userfrosting/sprinkle-core/graphs/contributors)
