@@ -144,16 +144,7 @@ class CreateAdminUserTest extends AccountTestCase
         $connection = Mockery::mock(Connection::class)
             ->shouldReceive('getPdo')->once()->andThrow(new PDOException())
             ->getMock();
-
-        $manager = Mockery::mock(DatabaseManager::class)
-            ->shouldReceive('getDefaultConnection')->once()->andReturn('test')
-            ->getMock();
-
-        $db = Mockery::mock(Capsule::class)
-            ->shouldReceive('getDatabaseManager')->once()->andReturn($manager)
-            ->shouldReceive('getConnection')->once()->andReturn($connection)
-            ->getMock();
-        $this->ci->set(Capsule::class, $db);
+        $this->ci->set(Connection::class, $connection);
 
         /** @var CreateAdminUser */
         $command = $this->ci->get(CreateAdminUser::class);
