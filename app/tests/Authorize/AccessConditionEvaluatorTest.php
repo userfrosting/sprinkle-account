@@ -253,7 +253,7 @@ class CustomAccount extends Account
             ModelsService::class,
             I18nService::class,
             LoggersService::class,
-        
+
         ];
     }
 }

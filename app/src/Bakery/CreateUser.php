@@ -14,7 +14,7 @@ namespace UserFrosting\Sprinkle\Account\Bakery;
 
 use DI\Attribute\Inject;
 use Exception;
-use Illuminate\Database\Connection;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -72,7 +72,7 @@ class CreateUser extends Command
     protected UserActivityLogger $userActivityLogger;
 
     #[Inject]
-    protected Connection $db;
+    protected Capsule $capsule;
 
     #[Inject]
     protected Config $config;
@@ -166,7 +166,7 @@ class CreateUser extends Command
         // Ok, now we've got the info and we can create the new user.
         $this->io->write("\n<info>Saving the user data...</info>");
 
-        $user = $this->db->transaction(function () use ($user) {
+        $user = $this->capsule->getConnection()->transaction(function () use ($user) {
             $user->save();
 
             // Dispatch UserCreatedEvent
