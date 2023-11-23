@@ -10,7 +10,7 @@
 
 namespace UserFrosting\Sprinkle\Account\Tests\Controller;
 
-use Illuminate\Database\Connection;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDOException;
@@ -139,10 +139,10 @@ class CreateAdminUserTest extends AccountTestCase
     public function testForFailedDbConnection(): void
     {
         // Mock Connection
-        $connection = Mockery::mock(Connection::class)
-            ->shouldReceive('getPdo')->once()->andThrow(new PDOException())
+        $connection = Mockery::mock(Capsule::class)
+            ->shouldReceive('getDatabaseManager')->once()->andThrow(new PDOException())
             ->getMock();
-        $this->ci->set(Connection::class, $connection);
+        $this->ci->set(Capsule::class, $connection);
 
         /** @var CreateAdminUser */
         $command = $this->ci->get(CreateAdminUser::class);
