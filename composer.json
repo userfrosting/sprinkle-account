@@ -39,8 +39,6 @@
         "mockery/mockery": "^1.2",
         "fakerphp/faker": "^1.17"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "UserFrosting\\Sprinkle\\Account\\": "app/src/"
