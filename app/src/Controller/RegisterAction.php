@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Controller;
 
 use Illuminate\Database\Connection;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -171,7 +172,14 @@ class RegisterAction
 
             // Send activation email
             if ($this->requireEmailVerification() === true) {
-                $this->verificationEmail->send($user, 'mail/verify-account.html.twig');
+                try {
+                    $this->verificationEmail->send($user, 'mail/verify-account.html.twig');
+                } catch (PHPMailerException $e) {
+                    // Use abstract message for security reasons - We don't want to show email is not working
+                    $this->alert->addMessageTranslated('danger', 'REGISTRATION.UNKNOWN');
+
+                    throw $e;
+                }
             }
 
             return $user;

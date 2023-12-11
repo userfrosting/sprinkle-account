@@ -21,6 +21,7 @@ use UserFrosting\Sprinkle\Core\Mail\Mailer;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 /**
  * Tests RegisterAction
@@ -264,6 +265,49 @@ class RegisterActionTest extends AccountTestCase
             'full_name',
             'avatar',
         ], $response);
+    }
+
+    public function testRegisterWithFailedEmailVerification(): void
+    {
+        /** @var Mailer */
+        $mailer = Mockery::mock(Mailer::class)
+            ->makePartial()
+            ->shouldReceive('send')->once()
+            ->andThrow(PHPMailerException::class)
+            ->getMock();
+        $this->ci->set(Mailer::class, $mailer);
+
+        $this->setMasterUser();
+        $captcha = $this->getCaptcha();
+        $this->forceLocaleConfig();
+        $this->setRequireEmailVerification(true);
+
+        // Set POST data
+        $data = [
+            'spiderbro'     => 'http://',
+            'captcha'       => $captcha->getCaptcha(),
+            'user_name'     => 'RegisteredUser',
+            'first_name'    => 'Testing',
+            'last_name'     => 'Register',
+            'email'         => 'testRegister@test.com',
+            'password'      => 'FooBarFooBar123',
+            'passwordc'     => 'FooBarFooBar123',
+            'locale'        => '',
+        ];
+
+        // Create request with method and url and fetch response
+        $request = $this->createJsonRequest('POST', '/account/register', $data);
+        $response = $this->handleRequest($request);
+
+        // Assert response status & body
+        $this->assertResponseStatus(500, $response);
+        $this->assertJsonResponse('Fatal error attempting mail, contact your server administrator.  If you are the admin, please check the UserFrosting log.', $response, 'title');
+
+        // Assert alert
+        /** @var AlertStream */
+        $ms = $this->ci->get(AlertStream::class);
+        $messages = $ms->getAndClearMessages();
+        $this->assertSame('danger', array_reverse($messages)[0]['type']);
     }
 
     public function testRegisterWithFailedThrottle(): void
