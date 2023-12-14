@@ -15,6 +15,7 @@ namespace UserFrosting\Sprinkle\Account\Log;
 use LogicException;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 
 /**
@@ -51,7 +52,7 @@ class UserActivityDatabaseHandler extends AbstractProcessingHandler
     /**
      * {@inheritdoc}
      */
-    protected function write(array $record): void
+    protected function write(LogRecord $record): void
     {
         if (!isset($record['context']['user_id'])) {
             throw new LogicException('UserActivityLogger requires a `user_id` to be set in the context.');
