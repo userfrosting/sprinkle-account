@@ -136,7 +136,7 @@ class SettingsAction
             'user_id' => $currentUser->id,
         ]);
 
-        $this->alert->addMessageTranslated('success', 'ACCOUNT.SETTINGS.UPDATED');
+        $this->alert->addMessage('success', 'ACCOUNT.SETTINGS.UPDATED');
     }
 
     /**

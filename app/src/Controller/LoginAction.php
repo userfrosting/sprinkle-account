@@ -145,7 +145,7 @@ class LoginAction
         }
 
         // Add success message
-        $this->alert->addMessageTranslated('success', 'WELCOME', $currentUser->toArray());
+        $this->alert->addMessage('success', 'WELCOME', $currentUser->toArray());
     }
 
     /**

@@ -128,7 +128,7 @@ class ProfileAction
             'user_id' => $currentUser->id,
         ]);
 
-        $this->alert->addMessageTranslated('success', 'PROFILE.UPDATED');
+        $this->alert->addMessage('success', 'PROFILE.UPDATED');
     }
 
     /**

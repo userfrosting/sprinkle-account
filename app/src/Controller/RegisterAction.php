@@ -176,7 +176,7 @@ class RegisterAction
                     $this->verificationEmail->send($user, 'mail/verify-account.html.twig');
                 } catch (PHPMailerException $e) {
                     // Use abstract message for security reasons - We don't want to show email is not working
-                    $this->alert->addMessageTranslated('danger', 'REGISTRATION.UNKNOWN');
+                    $this->alert->addMessage('danger', 'REGISTRATION.UNKNOWN');
 
                     throw $e;
                 }
@@ -317,11 +317,11 @@ class RegisterAction
     {
         // Verification required
         if ($this->requireEmailVerification() === true) {
-            $this->alert->addMessageTranslated('success', 'REGISTRATION.COMPLETE_TYPE2', $user->toArray());
+            $this->alert->addMessage('success', 'REGISTRATION.COMPLETE_TYPE2', $user->toArray());
         }
 
         // No verification required
-        $this->alert->addMessageTranslated('success', 'REGISTRATION.COMPLETE_TYPE1');
+        $this->alert->addMessage('success', 'REGISTRATION.COMPLETE_TYPE1');
     }
 
     /**

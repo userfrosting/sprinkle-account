@@ -113,12 +113,12 @@ class VerifyAction
         $verification = $this->repoVerification->complete($data['token']);
 
         if ($verification !== true) {
-            $this->alert->addMessageTranslated('danger', 'ACCOUNT.VERIFICATION.TOKEN_NOT_FOUND');
+            $this->alert->addMessage('danger', 'ACCOUNT.VERIFICATION.TOKEN_NOT_FOUND');
 
             return;
         }
 
-        $this->alert->addMessageTranslated('success', 'ACCOUNT.VERIFICATION.COMPLETE');
+        $this->alert->addMessage('success', 'ACCOUNT.VERIFICATION.COMPLETE');
     }
 
     /**

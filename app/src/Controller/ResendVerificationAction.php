@@ -124,7 +124,7 @@ class ResendVerificationAction
             }
         });
 
-        $this->alert->addMessageTranslated('success', 'ACCOUNT.VERIFICATION.NEW_LINK_SENT', ['email' => $data['email']]);
+        $this->alert->addMessage('success', 'ACCOUNT.VERIFICATION.NEW_LINK_SENT', ['email' => $data['email']]);
     }
 
     /**

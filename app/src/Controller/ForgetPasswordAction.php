@@ -132,7 +132,7 @@ class ForgetPasswordAction
 
         // TODO: create delay to prevent timing-based attacks
 
-        $this->alert->addMessageTranslated('success', 'PASSWORD.FORGET.REQUEST_SENT', ['email' => $data['email']]);
+        $this->alert->addMessage('success', 'PASSWORD.FORGET.REQUEST_SENT', ['email' => $data['email']]);
     }
 
     /**

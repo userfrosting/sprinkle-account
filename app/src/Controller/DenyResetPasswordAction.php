@@ -112,12 +112,12 @@ class DenyResetPasswordAction
         // Cancel repository
         $passwordReset = $this->repoPasswordReset->cancel($data['token']);
         if ($passwordReset === false) {
-            $this->alert->addMessageTranslated('danger', 'ACCOUNT.EXCEPTION.PASSWORD_RESET.TITLE');
+            $this->alert->addMessage('danger', 'ACCOUNT.EXCEPTION.PASSWORD_RESET.TITLE');
 
             return;
         }
 
-        $this->alert->addMessageTranslated('success', 'PASSWORD.FORGET.REQUEST_CANNED');
+        $this->alert->addMessage('success', 'PASSWORD.FORGET.REQUEST_CANNED');
     }
 
     /**

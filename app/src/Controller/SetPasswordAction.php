@@ -101,7 +101,7 @@ class SetPasswordAction
             throw new PasswordResetInvalidException();
         }
 
-        $this->alert->addMessageTranslated('success', 'PASSWORD.UPDATED');
+        $this->alert->addMessage('success', 'PASSWORD.UPDATED');
     }
 
     /**
