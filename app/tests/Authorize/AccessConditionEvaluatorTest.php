@@ -20,7 +20,7 @@ use UserFrosting\Sprinkle\Account\Authorize\AccessConditions;
 use UserFrosting\Sprinkle\Account\Authorize\AccessConditionsInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Group;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Log\AuthLogger;
+use UserFrosting\Sprinkle\Account\Log\AuthLoggerInterface;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AccessConditionsService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthorizationService;
 use UserFrosting\Sprinkle\Account\ServicesProvider\AuthService;
@@ -35,8 +35,8 @@ class AccessConditionEvaluatorTest extends AccountTestCase
     use RefreshDatabase;
     use MockeryPHPUnitIntegration;
 
-    /** @var AuthLogger|\Mockery\MockInterface */
-    protected AuthLogger $logger;
+    /** @var AuthLoggerInterface|\Mockery\MockInterface */
+    protected AuthLoggerInterface $logger;
 
     protected string $mainSprinkle = CustomAccount::class;
 
@@ -53,10 +53,10 @@ class AccessConditionEvaluatorTest extends AccountTestCase
         $config->set('debug.auth', true);
         $config->set('reserved_user_ids.master', 1);
 
-        // We'll test using a mock authLogger, to not get our dirty test into
+        // We'll test using a mock AuthLoggerInterface, to not get our dirty test into
         // the real log.
-        $this->logger = Mockery::mock(AuthLogger::class);
-        $this->ci->set(AuthLogger::class, $this->logger);
+        $this->logger = Mockery::mock(AuthLoggerInterface::class);
+        $this->ci->set(AuthLoggerInterface::class, $this->logger);
     }
 
     public function testEvaluate(): void

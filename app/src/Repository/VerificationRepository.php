@@ -15,6 +15,7 @@ namespace UserFrosting\Sprinkle\Account\Repository;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 
 /**
  * Token repository class for new account verifications.
@@ -26,14 +27,14 @@ class VerificationRepository extends TokenRepository
     /**
      * Inject Dependencies.
      *
-     * @param VerificationInterface $modelIdentifier
-     * @param UserInterface         $userModel
-     * @param UserActivityLogger    $userActivityLogger
+     * @param VerificationInterface       $modelIdentifier
+     * @param UserInterface               $userModel
+     * @param UserActivityLoggerInterface $userActivityLogger
      */
     public function __construct(
         protected VerificationInterface $modelIdentifier,
         protected UserInterface $userModel,
-        protected UserActivityLogger $userActivityLogger,
+        protected UserActivityLoggerInterface $userActivityLogger,
     ) {
     }
 

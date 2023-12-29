@@ -26,7 +26,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Exceptions\EmailNotUniqueException;
 use UserFrosting\Sprinkle\Account\Exceptions\ForbiddenException;
 use UserFrosting\Sprinkle\Account\Exceptions\PasswordInvalidException;
-use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
 
 /**
@@ -56,7 +56,7 @@ class SettingsAction
         protected Authenticator $authenticator,
         protected Config $config,
         protected Translator $translator,
-        protected UserActivityLogger $logger,
+        protected UserActivityLoggerInterface $logger,
         protected UserInterface $userModel,
     ) {
     }

@@ -13,11 +13,10 @@ namespace UserFrosting\Sprinkle\Account\Tests\ServicesProvider;
 use DI\Container;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use UserFrosting\Config\Config;
-use UserFrosting\Sprinkle\Account\Log\AuthLogger;
+use UserFrosting\Sprinkle\Account\Log\AuthLoggerInterface;
 use UserFrosting\Sprinkle\Account\ServicesProvider\LoggersService;
 use UserFrosting\Sprinkle\Core\ServicesProvider\LoggersService as CoreLoggersService;
 use UserFrosting\Testing\ContainerStub;
@@ -49,10 +48,8 @@ class LoggersServiceTest extends TestCase
         $this->ci->set(Config::class, $locator);
     }
 
-    public function testAuthLogger(): void
+    public function testAuthLoggerInterface(): void
     {
-        $this->assertInstanceOf(Logger::class, $this->ci->get(AuthLogger::class));
-        $this->assertInstanceOf(LoggerInterface::class, $this->ci->get(AuthLogger::class)); // @phpstan-ignore-line
-        $this->assertInstanceOf(AuthLogger::class, $this->ci->get(AuthLogger::class));
+        $this->assertInstanceOf(LoggerInterface::class, $this->ci->get(AuthLoggerInterface::class)); // @phpstan-ignore-line
     }
 }

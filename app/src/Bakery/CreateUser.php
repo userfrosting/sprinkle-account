@@ -37,6 +37,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\Bakery\Helper\DatabaseTest;
 use UserFrosting\Sprinkle\Core\Database\Migrator\MigrationRepositoryInterface;
@@ -69,7 +70,7 @@ class CreateUser extends Command
     protected EventDispatcherInterface $eventDispatcher;
 
     #[Inject]
-    protected UserActivityLogger $userActivityLogger;
+    protected UserActivityLoggerInterface $userActivityLogger;
 
     #[Inject]
     protected Capsule $capsule;

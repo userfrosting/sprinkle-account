@@ -30,6 +30,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 use UserFrosting\Sprinkle\Account\Mail\VerificationEmail;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
@@ -78,7 +79,7 @@ class RegisterAction
         protected SiteLocale $locale,
         protected Translator $translator,
         protected Throttler $throttler,
-        protected UserActivityLogger $userActivityLogger,
+        protected UserActivityLoggerInterface $userActivityLogger,
         protected UserInterface $userModel,
         protected UserValidation $userValidation,
         protected VerificationEmail $verificationEmail,

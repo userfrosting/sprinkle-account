@@ -12,6 +12,7 @@ namespace UserFrosting\Sprinkle\Account\Tests\Controller;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
@@ -21,7 +22,6 @@ use UserFrosting\Sprinkle\Core\Mail\Mailer;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Util\Captcha;
-use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 /**
  * Tests RegisterAction

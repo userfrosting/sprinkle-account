@@ -15,6 +15,7 @@ namespace UserFrosting\Sprinkle\Account\Listener;
 use UserFrosting\Sprinkle\Account\Authenticate\Hasher;
 use UserFrosting\Sprinkle\Account\Event\UserAuthenticatedEvent;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 
 /**
  * Save the user activity when the user is logged-in.
@@ -23,7 +24,7 @@ class UpgradePassword
 {
     public function __construct(
         protected Hasher $hasher,
-        protected UserActivityLogger $logger,
+        protected UserActivityLoggerInterface $logger,
     ) {
     }
 

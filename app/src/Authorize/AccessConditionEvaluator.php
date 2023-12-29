@@ -23,7 +23,7 @@ use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard as StandardPrettyPrinter;
 use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Log\AuthLogger;
+use UserFrosting\Sprinkle\Account\Log\AuthLoggerInterface;
 
 /**
  * This class parses access control condition expressions.
@@ -54,7 +54,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
      * Create a new ParserNodeFunctionEvaluator object.
      *
      * @param AccessConditionsInterface $accessConditions The parameters to be used when evaluating the methods in the condition expression, as an array.
-     * @param AuthLogger                $logger           A Monolog logger, used to dump debugging info for authorization evaluations.
+     * @param AuthLoggerInterface       $logger           A Monolog logger, used to dump debugging info for authorization evaluations.
      * @param Config                    $config           Set to true if you want debugging information printed to the auth log.
      * @param mixed[]                   $params
      * @param StandardPrettyPrinter     $prettyPrinter
@@ -62,7 +62,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
      */
     public function __construct(
         protected AccessConditionsInterface $accessConditions,
-        protected AuthLogger $logger,
+        protected AuthLoggerInterface $logger,
         Config $config,
         protected array $params = [],
         ?StandardPrettyPrinter $prettyPrinter = null,
@@ -108,17 +108,17 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
                 $value = $this->resolveParamPath($argString);
                 $currentArgInfo['type'] = 'parameter';
                 $currentArgInfo['resolved_value'] = $value;
-                // Resolve arrays
+            // Resolve arrays
             } elseif ($arg->value instanceof \PhpParser\Node\Expr\Array_) {
                 $value = $this->resolveArray($arg->value);
                 $currentArgInfo['type'] = 'array';
                 $currentArgInfo['resolved_value'] = print_r($value, true);
-                // Resolve strings
+            // Resolve strings
             } elseif ($arg->value instanceof \PhpParser\Node\Scalar\String_) {
                 $value = $arg->value->value;
                 $currentArgInfo['type'] = 'string';
                 $currentArgInfo['resolved_value'] = $value;
-                // Resolve numbers
+            // Resolve numbers
             } elseif ($arg->value instanceof \PhpParser\Node\Scalar\DNumber) {
                 $value = $arg->value->value;
                 $currentArgInfo['type'] = 'float';
@@ -127,7 +127,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
                 $value = $arg->value->value;
                 $currentArgInfo['type'] = 'integer';
                 $currentArgInfo['resolved_value'] = $value;
-                // Anything else is simply interpreted as its literal string value
+            // Anything else is simply interpreted as its literal string value
             } else {
                 $value = $argString;
                 $currentArgInfo['type'] = 'unknown';
@@ -214,7 +214,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
             if (is_array($value) && isset($value[$token])) {
                 $value = $value[$token];
                 continue;
-                // @phpstan-ignore-next-line Allow variable property for this use
+            // @phpstan-ignore-next-line Allow variable property for this use
             } elseif (is_object($value) && isset($value->$token)) {
                 // @phpstan-ignore-next-line Allow variable property for this use
                 $value = $value->$token;

@@ -14,6 +14,7 @@ namespace UserFrosting\Sprinkle\Account\Listener;
 
 use UserFrosting\Sprinkle\Account\Event\UserLoggedInEvent;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 
 /**
  * Save the user activity when the user is logged-in.
@@ -21,7 +22,7 @@ use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 class UserSignInActivity
 {
     public function __construct(
-        protected UserActivityLogger $logger,
+        protected UserActivityLoggerInterface $logger,
     ) {
     }
 

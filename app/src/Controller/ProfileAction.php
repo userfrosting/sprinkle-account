@@ -24,7 +24,7 @@ use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Exceptions\ForbiddenException;
 use UserFrosting\Sprinkle\Account\Exceptions\LocaleNotFoundException;
-use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale;
 
@@ -54,7 +54,7 @@ class ProfileAction
         protected Authenticator $authenticator,
         protected SiteLocale $locale,
         protected Translator $translator,
-        protected UserActivityLogger $logger,
+        protected UserActivityLoggerInterface $logger,
     ) {
     }
 

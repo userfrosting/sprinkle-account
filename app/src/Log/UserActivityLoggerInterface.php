@@ -12,22 +12,11 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Log;
 
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use UserFrosting\Sprinkle\Core\Log\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Monolog alias for dependency injection.
  */
-final class AuthLogger extends Logger implements AuthLoggerInterface
+interface UserActivityLoggerInterface extends LoggerInterface
 {
-    public function __construct(
-        StreamHandler $handler,
-        LineFormatter $formatter,
-    ) {
-        $formatter->setJsonPrettyPrint(true);
-        $handler->setFormatter($formatter);
-
-        parent::__construct($handler, 'auth');
-    }
 }

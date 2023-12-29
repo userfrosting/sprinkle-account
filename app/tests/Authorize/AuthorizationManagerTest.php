@@ -20,7 +20,7 @@ use UserFrosting\Sprinkle\Account\Authorize\AuthorizationManagerInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Permission;
 use UserFrosting\Sprinkle\Account\Database\Models\Role;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
-use UserFrosting\Sprinkle\Account\Log\AuthLogger;
+use UserFrosting\Sprinkle\Account\Log\AuthLoggerInterface;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
@@ -32,8 +32,8 @@ class AuthorizationManagerTest extends AccountTestCase
     use MockeryPHPUnitIntegration;
     use RefreshDatabase;
 
-    /** @var AuthLogger|\Mockery\MockInterface */
-    protected AuthLogger $logger;
+    /** @var AuthLoggerInterface|\Mockery\MockInterface */
+    protected AuthLoggerInterface $logger;
 
     /**
      * Setup the test database.
@@ -45,15 +45,15 @@ class AuthorizationManagerTest extends AccountTestCase
         // Setup test database
         $this->refreshDatabase();
 
-        // We'll test using the `debug.auth` on and a mock authLogger, to not
+        // We'll test using the `debug.auth` on and a mock AuthLoggerInterface, to not
         // get our dirty test into the real log
         /** @var Config */
         $config = $this->ci->get(Config::class);
         $config->set('debug.auth', true);
         $config->set('reserved_user_ids.master', 1);
 
-        $this->logger = Mockery::mock(AuthLogger::class);
-        $this->ci->set(AuthLogger::class, $this->logger);
+        $this->logger = Mockery::mock(AuthLoggerInterface::class);
+        $this->ci->set(AuthLoggerInterface::class, $this->logger);
     }
 
     public function testCheckAccessWithNullUser(): void
@@ -71,7 +71,7 @@ class AuthorizationManagerTest extends AccountTestCase
             'id' => 11,
         ])->make();
 
-        // Setup authLogger expectations
+        // Setup AuthLoggerInterface expectations
         $this->logger->shouldReceive('debug')->once()->with('No matching permissions found. Access denied.');
         $this->logger->shouldReceive('debug')->times(2);
 
@@ -87,7 +87,7 @@ class AuthorizationManagerTest extends AccountTestCase
             'id' => 11,
         ])->create();
 
-        // Setup authLogger expectations
+        // Setup AuthLoggerInterface expectations
         $this->logger->shouldReceive('debug')->once()->with('No matching permissions found. Access denied.');
         $this->logger->shouldReceive('debug')->times(2);
 
@@ -116,7 +116,7 @@ class AuthorizationManagerTest extends AccountTestCase
             'id' => 1,
         ])->make();
 
-        // Setup authLogger expectations
+        // Setup AuthLoggerInterface expectations
         $this->logger->shouldReceive('debug')->once()->with('User is the master (root) user. Access granted.');
         $this->logger->shouldReceive('debug')->times(2);
 
@@ -145,7 +145,7 @@ class AuthorizationManagerTest extends AccountTestCase
         $role->permissions()->attach($permission);
         $user->roles()->attach($role);
 
-        // Setup authLogger expectations
+        // Setup AuthLoggerInterface expectations
         $this->logger->shouldReceive('debug')->once()->with("Evaluating callback 'always'...");
         $this->logger->shouldReceive('debug')->once()->with("User passed conditions 'always()'. Access granted.");
         $this->logger->shouldReceive('debug')->times(6);
@@ -175,7 +175,7 @@ class AuthorizationManagerTest extends AccountTestCase
         $role->permissions()->attach($permission);
         $user->roles()->attach($role);
 
-        // Setup authLogger expectations
+        // Setup AuthLoggerInterface expectations
         $this->logger->shouldReceive('debug')->once()->with('User failed to pass any of the matched permissions. Access denied.');
         $this->logger->shouldReceive('debug')->times(7);
 

@@ -16,6 +16,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Event\UserAuthenticatedEvent;
 use UserFrosting\Sprinkle\Account\Listener\UpgradePassword;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 
 /**
@@ -48,7 +49,7 @@ class UpgradePasswordTest extends AccountTestCase
         $logger = Mockery::mock(UserActivityLogger::class)
             ->shouldReceive('debug')->once()
             ->getMock();
-        $this->ci->set(UserActivityLogger::class, $logger);
+        $this->ci->set(UserActivityLoggerInterface::class, $logger);
 
         /** @var User */
         $user = Mockery::mock(User::class)

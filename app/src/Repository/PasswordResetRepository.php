@@ -16,6 +16,7 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterf
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Facades\Password;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 
 /**
  * Token repository class for password reset requests.
@@ -27,12 +28,12 @@ class PasswordResetRepository extends TokenRepository
     /**
      * Inject Dependencies.
      *
-     * @param PasswordResetInterface $modelIdentifier
-     * @param UserActivityLogger     $userActivityLogger
+     * @param PasswordResetInterface      $modelIdentifier
+     * @param UserActivityLoggerInterface $userActivityLogger
      */
     public function __construct(
         protected PasswordResetInterface $modelIdentifier,
-        protected UserActivityLogger $userActivityLogger,
+        protected UserActivityLoggerInterface $userActivityLogger,
     ) {
     }
 

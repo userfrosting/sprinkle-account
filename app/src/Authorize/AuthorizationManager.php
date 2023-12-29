@@ -15,7 +15,7 @@ namespace UserFrosting\Sprinkle\Account\Authorize;
 use Illuminate\Support\Arr;
 use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
-use UserFrosting\Sprinkle\Account\Log\AuthLogger;
+use UserFrosting\Sprinkle\Account\Log\AuthLoggerInterface;
 
 /**
  * Manages a collection of access condition callbacks, and uses them to perform
@@ -27,12 +27,12 @@ class AuthorizationManager implements AuthorizationManagerInterface
      * Create a new AuthorizationManager object.
      *
      * @param Config                   $config
-     * @param AuthLogger               $logger
+     * @param AuthLoggerInterface      $logger
      * @param AccessConditionEvaluator $ace
      */
     public function __construct(
         protected Config $config,
-        protected AuthLogger $logger,
+        protected AuthLoggerInterface $logger,
         protected AccessConditionEvaluator $ace,
     ) {
     }

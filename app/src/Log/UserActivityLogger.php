@@ -12,17 +12,27 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Log;
 
-use Monolog\Logger;
+use UserFrosting\Sprinkle\Core\Log\Logger;
 
 /**
- * Monolog alias for dependency injection.
+ * User Activity Logger.
+ *
+ * @todo : We could bring back the processor, to add the current user into the context
  */
-class UserActivityLogger extends Logger
+class UserActivityLogger extends Logger implements UserActivityLoggerInterface
 {
+    /**
+     * @todo Replace with Enum
+     */
     public const TYPE_REGISTER = 'sign_up';
     public const TYPE_VERIFIED = 'verified';
     public const TYPE_PASSWORD_RESET = 'password_reset';
     public const TYPE_LOGGED_IN = 'sign_in';
     public const TYPE_LOGGED_OUT = 'sign_out';
     public const TYPE_PASSWORD_UPGRADED = 'password_upgraded';
+
+    public function __construct(UserActivityDatabaseHandler $handler)
+    {
+        parent::__construct($handler, 'userActivity');
+    }
 }

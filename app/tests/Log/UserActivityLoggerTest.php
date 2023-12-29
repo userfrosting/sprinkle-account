@@ -16,6 +16,7 @@ use LogicException;
 use UserFrosting\Sprinkle\Account\Database\Models\Activity;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
+use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
 
@@ -38,7 +39,7 @@ final class UserActivityLoggerTest extends AccountTestCase
         $user = User::factory()->create();
 
         /** @var UserActivityLogger */
-        $logger = $this->ci->get(UserActivityLogger::class);
+        $logger = $this->ci->get(UserActivityLoggerInterface::class);
 
         $logger->info('User did a test', [
             'type'    => 'test',
@@ -60,7 +61,7 @@ final class UserActivityLoggerTest extends AccountTestCase
     public function testLoggerWithNoDefaultData(): void
     {
         /** @var UserActivityLogger */
-        $logger = $this->ci->get(UserActivityLogger::class);
+        $logger = $this->ci->get(UserActivityLoggerInterface::class);
 
         $this->expectException(LogicException::class);
         $logger->info('User did a test');
