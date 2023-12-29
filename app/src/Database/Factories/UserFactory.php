@@ -15,10 +15,15 @@ namespace UserFrosting\Sprinkle\Account\Database\Factories;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Core\Database\Factories\Factory;
 
+/**
+ * @extends Factory<User>
+ */
 class UserFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
      */
     protected $model = User::class;
 

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use UserFrosting\Sprinkle\Account\Database\Factories\VerificationFactory;
@@ -70,9 +71,9 @@ class Verification extends Model implements VerificationInterface
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory<Verification>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return VerificationFactory::new();
     }

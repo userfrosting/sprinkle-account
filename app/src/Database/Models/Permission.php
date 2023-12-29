@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -138,9 +139,9 @@ class Permission extends Model implements PermissionInterface
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory<Permission>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return PermissionFactory::new();
     }

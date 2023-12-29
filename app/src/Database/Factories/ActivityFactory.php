@@ -16,10 +16,15 @@ use DateTime;
 use UserFrosting\Sprinkle\Account\Database\Models\Activity;
 use UserFrosting\Sprinkle\Core\Database\Factories\Factory;
 
+/**
+ * @extends Factory<Activity>
+ */
 class ActivityFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
      */
     protected $model = Activity::class;
 

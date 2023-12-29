@@ -14,6 +14,7 @@ namespace UserFrosting\Sprinkle\Account\Database\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -77,9 +78,9 @@ class Persistence extends Model implements PersistenceInterface
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory<Persistence>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return PersistenceFactory::new();
     }

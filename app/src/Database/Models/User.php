@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -129,10 +130,10 @@ class User extends Model implements UserInterface
         $this->roles()->detach();
 
         // Remove all user info
-        $this->activities()->delete();
-        $this->passwordResets()->delete();
-        $this->verifications()->delete();
-        $this->persistences()->delete();
+        $this->activities()->delete(); // @phpstan-ignore-line Laravel magic method
+        $this->passwordResets()->delete(); // @phpstan-ignore-line Laravel magic method
+        $this->verifications()->delete(); // @phpstan-ignore-line Laravel magic method
+        $this->persistences()->delete(); // @phpstan-ignore-line Laravel magic method
 
         // Delete the user
         return $this->forceDeleteSoftModel();
@@ -508,9 +509,9 @@ class User extends Model implements UserInterface
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory<User>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return UserFactory::new();
     }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Database\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use UserFrosting\Sprinkle\Account\Database\Factories\GroupFactory;
@@ -73,9 +74,9 @@ class Group extends Model implements GroupInterface
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory<Group>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return GroupFactory::new();
     }
