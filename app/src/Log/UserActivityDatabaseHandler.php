@@ -14,15 +14,13 @@ namespace UserFrosting\Sprinkle\Account\Log;
 
 use LogicException;
 use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
+use Monolog\Level;
 use Monolog\LogRecord;
+use Psr\Log\LogLevel;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface;
 
 /**
  * Monolog handler for storing user activities to the database.
- *
- * @phpstan-import-type Level from \Monolog\Logger
- * @phpstan-import-type LevelName from \Monolog\Logger
  */
 class UserActivityDatabaseHandler extends AbstractProcessingHandler
 {
@@ -34,16 +32,16 @@ class UserActivityDatabaseHandler extends AbstractProcessingHandler
     /**
      * Create a new DatabaseHandler object.
      *
-     * @param ActivityInterface $model
-     * @param int|string        $level  The minimum logging level at which this handler will be triggered
-     * @param bool              $bubble Whether the messages that are handled can bubble up the stack or not
+     * @param ActivityInterface            $model
+     * @param int|string|Level|LogLevel::* $level  The minimum logging level at which this handler will be triggered
+     * @param bool                         $bubble Whether the messages that are handled can bubble up the stack or not
      *
-     * @phpstan-param Level|LevelName|\Psr\Log\LogLevel::* $level
+     * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $level
      */
     public function __construct(
         ActivityInterface $model,
-        $level = Logger::DEBUG,
-        $bubble = true
+        int|string|Level $level = Level::Debug,
+        bool $bubble = true
     ) {
         $this->model = $model;
         parent::__construct($level, $bubble);
