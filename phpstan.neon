@@ -4,12 +4,6 @@ parameters:
   ignoreErrors:
     - '#Dynamic call to static method PHPUnit\\Framework\\.*#'
     - '#Call to an undefined method Mockery\\Expectation::.*#'
-    - '#PHPDoc type array<.*> of property UserFrosting\\Sprinkle\\Account\\Database\\Models\\.*::\$.* is not the same as PHPDoc type array of overridden property Illuminate\\Database\\Eloquent\\Model::\$.*.#'
-    - '#Dynamic call to static method Illuminate\\Database\\Query\\Builder::.*#'
-    - '#Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder::.*#'
-    - '#Static call to instance method Illuminate\\Database\\Eloquent\\Builder::.*#'
-    - '/^Parameter #1 \$value of function strval expects bool\|float\|int\|resource\|string\|null, mixed given.$/'
-    - '/^Parameter #1 \$value of function intval expects array\|bool\|float\|int\|resource\|string\|null, mixed given.$/'
   universalObjectCratesClasses:
     - UserFrosting\Sprinkle\Account\Database\Models\Interfaces\ActivityInterface
     - UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface
@@ -20,6 +14,7 @@ parameters:
     - UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface
     - UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface
 includes:
+  - phpstan-baseline.neon
   - vendor/phpstan/phpstan-strict-rules/rules.neon
   - vendor/phpstan/phpstan-deprecation-rules/rules.neon
   - vendor/phpstan/phpstan-mockery/extension.neon
