@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Listener;
 
 use UserFrosting\Sprinkle\Account\Event\UserLoggedOutEvent;
-use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
+use UserFrosting\Sprinkle\Account\Log\UserActivityTypes;
 
 /**
  * Save the user activity when the user is logged-in.
@@ -30,7 +30,7 @@ class UserLogoutActivity
     {
         // Add a sign in activity (time is automatically set by database)
         $this->logger->info("User {$event->user->user_name} signed out.", [
-            'type'    => UserActivityLogger::TYPE_LOGGED_OUT,
+            'type'    => UserActivityTypes::LOGGED_OUT,
             'user_id' => $event->user->id,
         ]);
     }

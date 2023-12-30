@@ -36,8 +36,8 @@ use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\AccountException;
-use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
+use UserFrosting\Sprinkle\Account\Log\UserActivityTypes;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\Bakery\Helper\DatabaseTest;
 use UserFrosting\Sprinkle\Core\Database\Migrator\MigrationRepositoryInterface;
@@ -70,7 +70,7 @@ class CreateUser extends Command
     protected EventDispatcherInterface $eventDispatcher;
 
     #[Inject]
-    protected UserActivityLoggerInterface $userActivityLogger;
+    protected UserActivityLoggerInterface $logger;
 
     #[Inject]
     protected Capsule $capsule;
@@ -175,8 +175,8 @@ class CreateUser extends Command
             $user = $this->eventDispatcher->dispatch($event)->user;
 
             // Create activity record
-            $this->userActivityLogger->info("User {$user->user_name} account was created.", [
-                'type'    => UserActivityLogger::TYPE_REGISTER,
+            $this->logger->info("User {$user->user_name} account was created.", [
+                'type'    => UserActivityTypes::REGISTER,
                 'user_id' => $user->id,
             ]);
 

@@ -15,8 +15,8 @@ namespace UserFrosting\Sprinkle\Account\Repository;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\PasswordResetInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Facades\Password;
-use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
+use UserFrosting\Sprinkle\Account\Log\UserActivityTypes;
 
 /**
  * Token repository class for password reset requests.
@@ -29,11 +29,11 @@ class PasswordResetRepository extends TokenRepository
      * Inject Dependencies.
      *
      * @param PasswordResetInterface      $modelIdentifier
-     * @param UserActivityLoggerInterface $userActivityLogger
+     * @param UserActivityLoggerInterface $logger
      */
     public function __construct(
         protected PasswordResetInterface $modelIdentifier,
-        protected UserActivityLoggerInterface $userActivityLogger,
+        protected UserActivityLoggerInterface $logger,
     ) {
     }
 
@@ -53,8 +53,8 @@ class PasswordResetRepository extends TokenRepository
         $user->setPasswordAttribute(strval($args['password']));
 
         // Create activity record
-        $this->userActivityLogger->info("User {$user->user_name} reset it's password.", [
-            'type'    => UserActivityLogger::TYPE_PASSWORD_RESET,
+        $this->logger->info("User {$user->user_name} reset it's password.", [
+            'type'    => UserActivityTypes::PASSWORD_RESET,
             'user_id' => $user->id,
         ]);
 

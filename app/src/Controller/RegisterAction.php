@@ -29,8 +29,8 @@ use UserFrosting\Sprinkle\Account\Account\Registration;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Event\UserCreatedEvent;
 use UserFrosting\Sprinkle\Account\Exceptions\RegistrationException;
-use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
+use UserFrosting\Sprinkle\Account\Log\UserActivityTypes;
 use UserFrosting\Sprinkle\Account\Mail\VerificationEmail;
 use UserFrosting\Sprinkle\Account\Validators\UserValidation;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
@@ -79,7 +79,7 @@ class RegisterAction
         protected SiteLocale $locale,
         protected Translator $translator,
         protected Throttler $throttler,
-        protected UserActivityLoggerInterface $userActivityLogger,
+        protected UserActivityLoggerInterface $logger,
         protected UserInterface $userModel,
         protected UserValidation $userValidation,
         protected VerificationEmail $verificationEmail,
@@ -166,8 +166,8 @@ class RegisterAction
             $user = $this->eventDispatcher->dispatch($event)->user;
 
             // Create activity record
-            $this->userActivityLogger->info("User {$user->user_name} registered for a new account.", [
-                'type'    => UserActivityLogger::TYPE_REGISTER,
+            $this->logger->info("User {$user->user_name} registered for a new account.", [
+                'type'    => UserActivityTypes::REGISTER,
                 'user_id' => $user->id,
             ]);
 

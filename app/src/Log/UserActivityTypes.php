@@ -12,17 +12,12 @@ declare(strict_types=1);
 
 namespace UserFrosting\Sprinkle\Account\Log;
 
-use UserFrosting\Sprinkle\Core\Log\Logger;
-
-/**
- * User Activity Logger.
- *
- * @todo : We could bring back the processor, to add the current user into the context
- */
-class UserActivityLogger extends Logger implements UserActivityLoggerInterface
+enum UserActivityTypes: string
 {
-    public function __construct(UserActivityDatabaseHandler $handler)
-    {
-        parent::__construct($handler, 'userActivity');
-    }
+    case REGISTER = 'sign_up';
+    case VERIFIED = 'verified';
+    case PASSWORD_RESET = 'password_reset';
+    case LOGGED_IN = 'sign_in';
+    case LOGGED_OUT = 'sign_out';
+    case PASSWORD_UPGRADED = 'password_upgraded';
 }

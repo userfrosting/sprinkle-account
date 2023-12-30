@@ -14,8 +14,8 @@ namespace UserFrosting\Sprinkle\Account\Repository;
 
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\VerificationInterface;
-use UserFrosting\Sprinkle\Account\Log\UserActivityLogger;
 use UserFrosting\Sprinkle\Account\Log\UserActivityLoggerInterface;
+use UserFrosting\Sprinkle\Account\Log\UserActivityTypes;
 
 /**
  * Token repository class for new account verifications.
@@ -29,12 +29,12 @@ class VerificationRepository extends TokenRepository
      *
      * @param VerificationInterface       $modelIdentifier
      * @param UserInterface               $userModel
-     * @param UserActivityLoggerInterface $userActivityLogger
+     * @param UserActivityLoggerInterface $logger
      */
     public function __construct(
         protected VerificationInterface $modelIdentifier,
         protected UserInterface $userModel,
-        protected UserActivityLoggerInterface $userActivityLogger,
+        protected UserActivityLoggerInterface $logger,
     ) {
     }
 
@@ -54,8 +54,8 @@ class VerificationRepository extends TokenRepository
         $user->flag_verified = true;
 
         // Create activity record
-        $this->userActivityLogger->info("User {$user->user_name} verified it's account.", [
-            'type'    => UserActivityLogger::TYPE_VERIFIED,
+        $this->logger->info("User {$user->user_name} verified it's account.", [
+            'type'    => UserActivityTypes::VERIFIED,
             'user_id' => $user->id,
         ]);
 
