@@ -157,8 +157,8 @@ class User extends Model implements UserInterface
      */
     public function getAvatarAttribute(): string
     {
-        $hash = "";
-        if ($this->email !== null){
+        $hash = '';
+        if ($this->email !== null) {
             $hash = md5(strtolower(trim($this->email)));
         }
 
