@@ -51,7 +51,7 @@ class AuthorizationManager implements AuthorizationManagerInterface
      */
     public function checkAccess(?UserInterface $user, string $slug, array $params = []): bool
     {
-        $debug = $this->config->getBool('debug.auth');
+        $debug = $this->config->getBool('debug.auth', false);
 
         if ($user === null) {
             if ($debug) {

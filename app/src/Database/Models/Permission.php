@@ -122,10 +122,10 @@ class Permission extends Model implements PermissionInterface
      */
     public function users(): BelongsToManyThrough
     {
-        /** @var string */
+        /** @var class-string */
         $userRelation = static::$ci?->get(UserInterface::class);
 
-        /** @var string */
+        /** @var class-string */
         $roleRelation = static::$ci?->get(RoleInterface::class);
 
         return $this->belongsToManyThrough(

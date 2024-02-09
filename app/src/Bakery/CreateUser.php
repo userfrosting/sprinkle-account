@@ -22,10 +22,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use UserFrosting\Bakery\WithSymfonyStyle;
 use UserFrosting\Config\Config;
-use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
-use UserFrosting\Fortress\ServerSideValidator;
+use UserFrosting\Fortress\Transformer\RequestDataTransformer;
+use UserFrosting\Fortress\Validator\ServerSideValidator;
 use UserFrosting\I18n\Translator;
 use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryError;
 use UserFrosting\Sprinkle\Account\Bakery\Exception\BakeryNote;
@@ -81,8 +81,14 @@ class CreateUser extends Command
     #[Inject]
     protected Translator $translator;
 
+    #[Inject]
+    protected RequestDataTransformer $transformer;
+
+    #[Inject]
+    protected ServerSideValidator $validator;
+
     /**
-     * @var string[] Migration dependencies for this command to work
+     * @var class-string[] Migration dependencies for this command to work
      */
     protected array $dependencies = [
         UsersTable::class,
@@ -139,11 +145,10 @@ class CreateUser extends Command
 
         // Load the request schema, data transformer and validate data
         $schema = $this->getSchema();
-        $transformer = new RequestDataTransformer($schema);
-        $data = $transformer->transform($data);
-        $validator = new ServerSideValidator($schema, $this->translator);
-        if ($validator->validate($data) === false && is_array($validator->errors())) {
-            foreach ($validator->errors() as $error) {
+        $data = $this->transformer->transform($schema, $data);
+        $errors = $this->validator->validate($schema, $data);
+        if (count($errors) !== 0) {
+            foreach ($errors as $error) {
                 $this->io->error($error);
             }
 
@@ -272,7 +277,7 @@ class CreateUser extends Command
             'email'         => $this->getField($input, 'email', 'Enter a valid email address'),
             'first_name'    => $this->getField($input, 'firstName', 'Enter first name'),
             'last_name'     => $this->getField($input, 'lastName', 'Enter last name'),
-            'locale'        => $this->config->getString('site.registration.user_defaults.locale'),
+            'locale'        => $this->config->getString('site.registration.user_defaults.locale', 'en_US'),
             'flag_verified' => true,
             'flag_enabled'  => true,
         ];

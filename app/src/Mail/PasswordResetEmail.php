@@ -43,7 +43,7 @@ class PasswordResetEmail
     public function send(UserInterface $user, string $template = 'mail/password-reset.html.twig'): void
     {
         // Try to generate a new verification request
-        $timeout = $this->config->getInt('password_reset.timeouts.reset');
+        $timeout = $this->config->getInt('password_reset.timeouts.reset', 10800);
         $passwordReset = $this->repoPasswordReset->create($user, $timeout);
 
         // Create and send verification email

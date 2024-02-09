@@ -17,11 +17,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteParserInterface;
 use UserFrosting\Alert\AlertStream;
-use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
-use UserFrosting\Fortress\ServerSideValidator;
-use UserFrosting\I18n\Translator;
+use UserFrosting\Fortress\Transformer\RequestDataTransformer;
+use UserFrosting\Fortress\Validator\ServerSideValidator;
 use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterVerificationEvent;
 use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
 
@@ -52,8 +51,9 @@ class VerifyAction
         protected AlertStream $alert,
         protected EventDispatcherInterface $eventDispatcher,
         protected RouteParserInterface $routeParser,
-        protected Translator $translator,
         protected VerificationRepository $repoVerification,
+        protected RequestDataTransformer $transformer,
+        protected ServerSideValidator $validator
     ) {
     }
 
@@ -97,14 +97,17 @@ class VerifyAction
         $schema = $this->getSchema();
 
         // Whitelist and set parameter defaults
-        $transformer = new RequestDataTransformer($schema);
-        $data = $transformer->transform($params);
+        $data = $this->transformer->transform($schema, $params);
 
         // Validate, and halt on validation errors.
         // This is a GET request, so we redirect on validation error.
-        $validator = new ServerSideValidator($schema, $this->translator);
-        if ($validator->validate($data) === false && is_array($validator->errors())) {
-            $this->alert->addValidationErrors($validator);
+        $errors = $this->validator->validate($schema, $data);
+        if (count($errors) !== 0) {
+            foreach ($errors as $idx => $field) {
+                foreach ($field as $eidx => $error) {
+                    $this->alert->addMessage('danger', $error);
+                }
+            }
 
             return;
         }

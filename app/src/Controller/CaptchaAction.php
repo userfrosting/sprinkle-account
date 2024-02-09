@@ -62,7 +62,7 @@ class CaptchaAction
      */
     protected function handle(Request $request): string
     {
-        $key = $this->config->getString('session.keys.captcha');
+        $key = $this->config->getString('session.keys.captcha', 'account.captcha');
         $captcha = new Captcha($this->session, $key);
         $captcha->generateRandomCode();
 
