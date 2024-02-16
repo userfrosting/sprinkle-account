@@ -53,7 +53,6 @@ use UserFrosting\Sprinkle\Account\Twig\AccountExtension;
 use UserFrosting\Sprinkle\BakeryRecipe;
 use UserFrosting\Sprinkle\Core\Bakery\Event\BakeCommandEvent;
 use UserFrosting\Sprinkle\Core\Core;
-use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\ComposerRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\MigrationRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\SeedRecipe;
 use UserFrosting\Sprinkle\Core\Sprinkle\Recipe\TwigExtensionRecipe;
@@ -61,7 +60,6 @@ use UserFrosting\Sprinkle\SprinkleRecipe;
 
 class Account implements
     SprinkleRecipe,
-    ComposerRecipe,
     MigrationRecipe,
     SeedRecipe,
     EventListenerRecipe,
@@ -82,14 +80,6 @@ class Account implements
     public function getPath(): string
     {
         return __DIR__ . '/../';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getComposerPackage(): string
-    {
-        return 'userfrosting/sprinkle-account';
     }
 
     /**
