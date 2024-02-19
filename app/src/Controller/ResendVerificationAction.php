@@ -15,7 +15,6 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 use Illuminate\Database\Connection;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Interfaces\RouteParserInterface;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
 use UserFrosting\Fortress\RequestSchema;
@@ -27,6 +26,7 @@ use UserFrosting\Sprinkle\Account\Mail\VerificationEmail;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
 use UserFrosting\Sprinkle\Core\Throttle\Throttler;
 use UserFrosting\Sprinkle\Core\Throttle\ThrottlerDelayException;
+use UserFrosting\Sprinkle\Core\Util\RouteParserInterface;
 
 /**
  * Processes a request to resend the verification email for a new user account.

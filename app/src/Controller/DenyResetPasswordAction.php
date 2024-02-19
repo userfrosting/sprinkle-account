@@ -15,7 +15,6 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Interfaces\RouteParserInterface;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
 use UserFrosting\Fortress\RequestSchema;
@@ -24,6 +23,7 @@ use UserFrosting\Fortress\Transformer\RequestDataTransformer;
 use UserFrosting\Fortress\Validator\ServerSideValidator;
 use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterDenyResetPasswordEvent;
 use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
+use UserFrosting\Sprinkle\Core\Util\RouteParserInterface;
 
 /**
  * Processes a request to cancel a password reset request.

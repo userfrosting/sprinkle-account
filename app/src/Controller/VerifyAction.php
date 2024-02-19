@@ -15,7 +15,6 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Interfaces\RouteParserInterface;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
@@ -23,6 +22,7 @@ use UserFrosting\Fortress\Transformer\RequestDataTransformer;
 use UserFrosting\Fortress\Validator\ServerSideValidator;
 use UserFrosting\Sprinkle\Account\Event\UserRedirectedAfterVerificationEvent;
 use UserFrosting\Sprinkle\Account\Repository\VerificationRepository;
+use UserFrosting\Sprinkle\Core\Util\RouteParserInterface;
 
 /**
  * Processes an new email verification request.

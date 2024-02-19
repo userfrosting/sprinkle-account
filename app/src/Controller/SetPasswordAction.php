@@ -14,7 +14,6 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Interfaces\RouteParserInterface;
 use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
 use UserFrosting\Fortress\RequestSchema;
@@ -24,6 +23,7 @@ use UserFrosting\Fortress\Validator\ServerSideValidator;
 use UserFrosting\Sprinkle\Account\Exceptions\PasswordResetInvalidException;
 use UserFrosting\Sprinkle\Account\Repository\PasswordResetRepository;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
+use UserFrosting\Sprinkle\Core\Util\RouteParserInterface;
 
 /**
  * Processes a request to set the password for a new or current user.
