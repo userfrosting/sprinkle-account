@@ -17,11 +17,17 @@ composer.lock
 
 # Ignore log, cache, sessions and storage directories in sprinkle
 app/cache/*
+app/database/*
+app/logs/*
+app/sessions/*
+app/storage/*
+
+# Unignore log, cache, sessions and storage .gitkeeps
 !app/cache/.gitkeep
-app/database/
-app/logs/
-app/sessions/
-app/storage/
+!app/database/.gitkeep
+!app/logs/.gitkeep
+!app/sessions/.gitkeep
+!app/storage/.gitkeep
 
 # Ignore Composer vendor
 vendor/
