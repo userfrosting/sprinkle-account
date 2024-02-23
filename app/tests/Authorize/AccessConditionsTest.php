@@ -100,18 +100,28 @@ class AccessConditionsTest extends AccountTestCase
         $this->refreshDatabase();
 
         /** @var Role */
-        $role = Role::factory()->create();
+        $role1 = Role::factory()->create();
+
+        /** @var Role */
+        $role2 = Role::factory()->create();
 
         /** @var User */
-        $user = User::factory()->create();
+        $user1 = User::factory()->create();
+
+        /** @var User */
+        $user2 = User::factory()->create();
 
         // Set relationships
-        $user->roles()->attach($role);
+        $user1->roles()->attach($role1);
+        $user2->roles()->attach($role1);
+        $user2->roles()->attach($role2);
 
         $callbacks = new AccessConditions($this->config);
-        $this->assertTrue($callbacks->has_role($user, $role));
-        $this->assertTrue($callbacks->has_role($user->id, $role->id));
-        $this->assertFalse($callbacks->has_role($user->id, $role->id + 1));
+        $this->assertTrue($callbacks->has_role($user1, $role1));
+        $this->assertTrue($callbacks->has_role($user1->id, $role1->id));
+        $this->assertTrue($callbacks->has_role($user2->id, $role1->id));
+        $this->assertTrue($callbacks->has_role($user2->id, $role2->id));
+        $this->assertFalse($callbacks->has_role($user1->id, $role2->id));
     }
 
     public function testHasRoleForUnknownUser(): void
