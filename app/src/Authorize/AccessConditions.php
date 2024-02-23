@@ -18,6 +18,7 @@ use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\RoleInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\RoleUsers;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 
 /**
@@ -94,16 +95,14 @@ class AccessConditions implements AccessConditionsInterface
      */
     public function has_role(int|UserInterface $user, int|RoleInterface $role): bool
     {
-        /** @var User|null */
-        $user = ($user instanceof UserInterface) ? $user : $this->user::find($user);
+        $user_id = ($user instanceof UserInterface) ? $user->id : $user;
         $role_id = ($role instanceof RoleInterface) ? $role->id : $role;
 
-        // No user found, no role.
-        if ($user === null) {
-            return false;
-        }
+        $count = RoleUsers::where('user_id', $user_id)
+                          ->where('role_id', $role_id)
+                          ->count();
 
-        return $user->whereRelation('roles', 'id', $role_id)->count() > 0;
+        return $count > 0;
     }
 
     /**

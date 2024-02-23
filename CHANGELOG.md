@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update to PHPUnit 10
 - Test against MariaDB [#1238](https://github.com/userfrosting/UserFrosting/issues/1238)
 
+## [5.0.2](https://github.com/userfrosting/sprinkle-account/compare/5.0.1...5.0.2)
+- Fix issue with `has_role` access condition
+
 ## [5.0.1](https://github.com/userfrosting/sprinkle-account/compare/5.0.0...5.0.1)
 - Add deliberate warning when Mail exception occurs during registration - Fix [#1229](https://github.com/userfrosting/UserFrosting/issues/1229)
 

@@ -464,7 +464,9 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci?->get(RoleInterface::class);
 
-        return $this->belongsToMany($relation, 'role_users')->withTimestamps();
+        return $this->belongsToMany($relation, 'role_users')
+                    ->using(RoleUsers::class)
+                    ->withTimestamps();
     }
 
     /**
