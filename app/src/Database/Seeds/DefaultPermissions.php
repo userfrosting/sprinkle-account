@@ -56,6 +56,12 @@ class DefaultPermissions implements SeedInterface
                 'conditions'  => 'always()',
                 'description' => 'Create a new group.',
             ]),
+            'create_role' => new Permission([
+                'slug'        => 'create_role',
+                'name'        => 'Create role',
+                'conditions'  => 'always()',
+                'description' => 'Create a new role.',
+            ]),
             'create_user' => new Permission([
                 'slug'        => 'create_user',
                 'name'        => 'Create user',
@@ -80,6 +86,12 @@ class DefaultPermissions implements SeedInterface
                 'conditions'  => "!has_role(user.id,{$defaultRoleIds['site-admin']}) && !is_master(user.id)",
                 'description' => 'Delete users who are not Site Administrators.',
             ]),
+            'delete_role' => new Permission([
+                'slug'        => 'delete_role',
+                'name'        => 'Delete role',
+                'conditions'  => 'always()',
+                'description' => 'Delete a role.',
+            ]),
             'update_account_settings' => new Permission([
                 'slug'        => 'update_account_settings',
                 'name'        => 'Edit user',
@@ -103,6 +115,18 @@ class DefaultPermissions implements SeedInterface
                 'name'        => 'Edit group user',
                 'conditions'  => "equals_num(self.group_id,user.group_id) && !is_master(user.id) && !has_role(user.id,{$defaultRoleIds['site-admin']}) && (!has_role(user.id,{$defaultRoleIds['group-admin']}) || equals_num(self.id,user.id)) && subset(fields,['name','email','locale','flag_enabled','flag_verified','password'])",
                 'description' => 'Edit users in your own group who are not Site or Group Administrators, except yourself.',
+            ]),
+            'update_user_field_role' => new Permission([
+                'slug'        => 'update_user_field',
+                'name'        => "Edit user's role",
+                'conditions'  => "subset(fields,['roles'])",
+                'description' => "Edit user's roles.",
+            ]),
+            'update_role_field' => new Permission([
+                'slug'        => 'update_role_field',
+                'name'        => 'Edit role',
+                'conditions'  => "subset(fields,['name','slug','description','permissions'])",
+                'description' => 'Edit basic properties of any role.',
             ]),
             'uri_account_settings' => new Permission([
                 'slug'        => 'uri_account_settings',
@@ -191,7 +215,7 @@ class DefaultPermissions implements SeedInterface
             'view_role_field' => new Permission([
                 'slug'        => 'view_role_field',
                 'name'        => 'View role',
-                'conditions'  => "in(property,['name','slug','description','permissions'])",
+                'conditions'  => "in(property,['name','slug','description','permissions', 'users'])",
                 'description' => 'View certain properties of any role.',
             ]),
             'view_user_field' => new Permission([
@@ -200,11 +224,29 @@ class DefaultPermissions implements SeedInterface
                 'conditions'  => "in(property,['user_name','name','email','locale','theme','roles','group','activities'])",
                 'description' => 'View certain properties of any user.',
             ]),
+            'view_user_field_permissions' => new Permission([
+                'slug'        => 'view_user_field',
+                'name'        => "View user's permissions",
+                'conditions'  => "in(property,['permissions'])",
+                'description' => 'View permissions of any user.',
+            ]),
             'view_user_field_group' => new Permission([
                 'slug'        => 'view_user_field',
                 'name'        => 'View user',
                 'conditions'  => "equals_num(self.group_id,user.group_id) && !is_master(user.id) && !has_role(user.id,{$defaultRoleIds['site-admin']}) && (!has_role(user.id,{$defaultRoleIds['group-admin']}) || equals_num(self.id,user.id)) && in(property,['user_name','name','email','locale','roles','group','activities'])",
                 'description' => 'View certain properties of any user in your own group, except the master user and Site and Group Administrators (except yourself).',
+            ]),
+            'view_system_info' => new Permission([
+                'slug'        => 'view_system_info',
+                'name'        => 'View system info',
+                'conditions'  => 'always()',
+                'description' => 'View the system information in the administrative dashboard.',
+            ]),
+            'clear_cache' => new Permission([
+                'slug'        => 'clear_cache',
+                'name'        => 'Clear system cache',
+                'conditions'  => 'always()',
+                'description' => 'Clear the system cache from the administrative dashboard.',
             ]),
         ];
     }
@@ -258,17 +300,26 @@ class DefaultPermissions implements SeedInterface
                 $permissions['create_group']->id,
                 $permissions['create_user']->id,
                 $permissions['create_user_field']->id,
+                $permissions['create_role']->id,
                 $permissions['delete_group']->id,
+                $permissions['delete_role']->id,
                 $permissions['delete_user']->id,
-                $permissions['update_user_field']->id,
                 $permissions['update_group_field']->id,
+                $permissions['update_role_field']->id,
+                $permissions['update_user_field']->id,
+                $permissions['update_user_field_role']->id,
                 $permissions['uri_activities']->id,
                 $permissions['uri_group']->id,
                 $permissions['uri_groups']->id,
+                $permissions['uri_permissions']->id,
+                $permissions['uri_roles']->id,
+                $permissions['uri_role']->id,
                 $permissions['uri_user']->id,
                 $permissions['uri_users']->id,
                 $permissions['view_group_field']->id,
+                $permissions['view_role_field']->id,
                 $permissions['view_user_field']->id,
+                $permissions['view_user_field_permissions']->id,
             ]);
         }
 
