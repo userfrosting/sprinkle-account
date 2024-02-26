@@ -158,7 +158,8 @@ class User extends Model implements UserInterface
      */
     public function getAvatarAttribute(): string
     {
-        $hash = md5(strtolower(trim($this->email)));
+        $email = $this->email ?? '';
+        $hash = md5(strtolower(trim($email)));
 
         return 'https://www.gravatar.com/avatar/' . $hash . '?d=mm';
     }

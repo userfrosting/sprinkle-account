@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update to PHPUnit 10
 - Test against MariaDB [#1238](https://github.com/userfrosting/UserFrosting/issues/1238)
 
+## [5.0.3](https://github.com/userfrosting/sprinkle-account/compare/5.0.2...5.0.3)
+- Fix exception thrown when empty user is serialized ([userfrosting/sprinkle-account#15](https://github.com/userfrosting/sprinkle-account/pull/15))
+
 ## [5.0.2](https://github.com/userfrosting/sprinkle-account/compare/5.0.1...5.0.2)
 - Fix issue with `has_role` access condition
 
