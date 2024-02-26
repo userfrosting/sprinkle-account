@@ -118,6 +118,19 @@ class UserTest extends AccountTestCase
     }
 
     /**
+     * @see https://github.com/userfrosting/sprinkle-account/pull/15
+     */
+    public function testUserAvatarForEmptyEmail(): void
+    {
+        /** @var User */
+        $user = new User();
+        $data = $user->toArray();
+
+        $this->assertArrayNotHasKey('email', $data);
+        $this->assertSame('https://www.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e?d=mm', $data['avatar']);
+    }
+
+    /**
      * Test user hard deletion.
      */
     public function testUserForceDelete(): void
