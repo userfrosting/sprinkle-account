@@ -39,7 +39,7 @@ class Activity extends Model implements ActivityInterface
     protected $table = 'activities';
 
     /**
-     * @var string[] The attributes that are mass assignable.
+     * @var array<int, string> The attributes that are mass assignable.
      */
     protected $fillable = [
         'ip_address',

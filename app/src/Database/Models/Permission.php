@@ -41,7 +41,7 @@ class Permission extends Model implements PermissionInterface
     protected $table = 'permissions';
 
     /**
-     * @var string[] The attributes that are mass assignable.
+     * @var array<int, string> The attributes that are mass assignable.
      */
     protected $fillable = [
         'slug',

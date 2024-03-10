@@ -40,7 +40,7 @@ class Persistence extends Model implements PersistenceInterface
     protected $table = 'persistences';
 
     /**
-     * @var string[] The attributes that are mass assignable.
+     * @var array<int, string> The attributes that are mass assignable.
      */
     protected $fillable = [
         'user_id',

@@ -39,7 +39,7 @@ class Verification extends Model implements VerificationInterface
     protected $table = 'verifications';
 
     /**
-     * @var string[] The attributes that are mass assignable.
+     * @var array<int, string> The attributes that are mass assignable.
      */
     protected $fillable = [
         'user_id',

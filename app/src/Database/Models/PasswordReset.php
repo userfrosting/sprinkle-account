@@ -39,7 +39,7 @@ class PasswordReset extends Model implements PasswordResetInterface
     protected $table = 'password_resets';
 
     /**
-     * @var string[] The attributes that are mass assignable.
+     * @var array<int, string> The attributes that are mass assignable.
      */
     protected $fillable = [
         'user_id',
