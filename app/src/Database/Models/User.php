@@ -246,7 +246,7 @@ class User extends Model implements UserInterface
     }
 
     /**
-     * Forge cached version of this user.
+     * Forget cached version of this user.
      *
      * @return static
      */

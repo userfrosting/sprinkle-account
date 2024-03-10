@@ -150,8 +150,10 @@ class Authenticator
      * @param UserInterface $user       The user to log in.
      * @param bool          $rememberMe Set to true to make this a "persistent session", i.e. one that will re-login even after the session expires.
      */
-    public function login(UserInterface $user, bool $rememberMe = false): void
-    {
+    public function login(
+        UserInterface $user,
+        bool $rememberMe = false
+    ): void {
         // Since regenerateId deletes the old session, we'll do the same in cache
         if (($oldId = session_id()) !== false) {
             $this->flushSessionCache($oldId);
@@ -180,17 +182,19 @@ class Authenticator
     }
 
     /**
-     * Processes an account logout request.
+     * Processes an account logout request for the currently active user.
      *
      * Logs the currently authenticated user out, destroying the PHP session and clearing the persistent session.
      * This can optionally remove persistent sessions across all browsers/devices, since there can be a "RememberMe" cookie
      * and corresponding database entries in multiple browsers/devices.  See http://jaspan.com/improved_persistent_login_cookie_best_practice.
      *
-     * @param bool               $complete If set to true, will ensure that the user is logged out from *all* browsers on all devices.
-     * @param UserInterface|null $user     The user information. Used to avoid infinite loop when logout is called from user().
+     * @param bool               $complete If set to true, rememberMe token will be removed from the database.
+     * @param UserInterface|null $user     The user information. Used to avoid infinite loop when logout is called from user(). Should be the current user, can't be used to logout another user.
      */
-    public function logout(bool $complete = false, ?UserInterface $user = null): void
-    {
+    public function logout(
+        bool $complete = false,
+        ?UserInterface $user = null
+    ): void {
         $currentUser = $user ?? $this->user();
 
         // No user, nothing to logout
@@ -209,7 +213,7 @@ class Authenticator
         // User logout actions
         $currentUser->forgetCache();
 
-        // Remove cached user
+        // User is no longer the active one
         $this->user = null;
 
         // Since regenerateId deletes the old session, we'll do the same in cache
@@ -330,7 +334,7 @@ class Authenticator
         if ($loginResult->isSuccess()) {
             // Update in session
             $key = strval($this->config->get('session.keys.current_user_id'));
-            $this->session[$key] = $loginResult->getCredential();
+            $this->session[$key] = intval($loginResult->getCredential());
             // There is a chance that an attacker has stolen the login token,
             // so we store the fact that the user was logged in via RememberMe (instead of login form)
             $this->viaRemember = true;
