@@ -338,7 +338,9 @@ class AuthenticatorTest extends AccountTestCase
             ->shouldReceive('hasPossibleManipulation')->once()->andReturn(true)
             ->getMock();
         $storageInterface = $this->ci->get(StorageInterface::class);
-        $rememberMe = Mockery::mock(RememberMe::class . '[login]', [$storageInterface])
+        /** @var class-string */
+        $class = RememberMe::class . '[login]';
+        $rememberMe = Mockery::mock($class, [$storageInterface])
             ->shouldReceive('login')->once()->andReturn($loginResult)
             ->getMock();
         $this->ci->set(RememberMe::class, $rememberMe);
@@ -461,7 +463,9 @@ class AuthenticatorTest extends AccountTestCase
             ->makePartial()
             ->shouldReceive('getValue')->andReturn('foo')
             ->getMock();
-        $rememberMe = Mockery::mock(RememberMe::class . '[getCookie]', [$storageInterface])
+        /** @var class-string */
+        $class = RememberMe::class . '[getCookie]';
+        $rememberMe = Mockery::mock($class, [$storageInterface])
             ->shouldReceive('getCookie')->andReturn($cookie)
             ->getMock();
         $this->ci->set(RememberMe::class, $rememberMe);
