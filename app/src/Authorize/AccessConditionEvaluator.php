@@ -6,7 +6,7 @@ declare(strict_types=1);
  * UserFrosting Account Sprinkle (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/sprinkle-account
- * @copyright Copyright (c) 2013-2024 Alexander Weissman & Louis Charette
+ * @copyright Copyright (c) 2022 Alexander Weissman & Louis Charette
  * @license   https://github.com/userfrosting/sprinkle-account/blob/master/LICENSE.md (MIT License)
  */
 
@@ -108,17 +108,17 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
                 $value = $this->resolveParamPath($argString);
                 $currentArgInfo['type'] = 'parameter';
                 $currentArgInfo['resolved_value'] = $value;
-                // Resolve arrays
+            // Resolve arrays
             } elseif ($arg->value instanceof \PhpParser\Node\Expr\Array_) {
                 $value = $this->resolveArray($arg->value);
                 $currentArgInfo['type'] = 'array';
                 $currentArgInfo['resolved_value'] = print_r($value, true);
-                // Resolve strings
+            // Resolve strings
             } elseif ($arg->value instanceof \PhpParser\Node\Scalar\String_) {
                 $value = $arg->value->value;
                 $currentArgInfo['type'] = 'string';
                 $currentArgInfo['resolved_value'] = $value;
-                // Resolve numbers
+            // Resolve numbers
             } elseif ($arg->value instanceof \PhpParser\Node\Scalar\DNumber) {
                 $value = $arg->value->value;
                 $currentArgInfo['type'] = 'float';
@@ -127,7 +127,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
                 $value = $arg->value->value;
                 $currentArgInfo['type'] = 'integer';
                 $currentArgInfo['resolved_value'] = $value;
-                // Anything else is simply interpreted as its literal string value
+            // Anything else is simply interpreted as its literal string value
             } else {
                 $value = $argString;
                 $currentArgInfo['type'] = 'unknown';
@@ -214,7 +214,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
             if (is_array($value) && isset($value[$token])) {
                 $value = $value[$token];
                 continue;
-                // @phpstan-ignore-next-line Allow variable property for this use
+            // @phpstan-ignore-next-line Allow variable property for this use
             } elseif (is_object($value) && isset($value->$token)) {
                 // @phpstan-ignore-next-line Allow variable property for this use
                 $value = $value->$token;
