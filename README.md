@@ -15,7 +15,7 @@
 
 Copyright (c) 2013-2024, free to use in personal and commercial software as per the [license](LICENSE.md).
 
-UserFrosting is a secure, modern user management system written in PHP and built on top of the [Slim Microframework](http://www.slimframework.com/), [Twig](http://twig.sensiolabs.org/) templating engine, and [Eloquent](https://laravel.com/docs/5.8/eloquent#introduction) ORM.
+UserFrosting is a secure, modern user management system written in PHP and built on top of the [Slim Microframework](http://www.slimframework.com/), [Twig](http://twig.sensiolabs.org/) templating engine, and [Eloquent](https://laravel.com/docs/10.x/eloquent#introduction) ORM.
 
 This **Account sprinkle** handles user modeling and authentication, user groups, roles, and access control. It contains the routes, templates, and controllers needed to implement pages for registration, password reset, login, and more.
 
