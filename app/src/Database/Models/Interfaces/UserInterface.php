@@ -230,6 +230,13 @@ interface UserInterface
     public function permissions(): BelongsToManyThrough;
 
     /**
+     * Get all verification request for this user.
+     *
+     * @return HasMany
+     */
+    public function verifications(): HasMany;
+
+    /**
      * Get all persistence items for this user.
      *
      * @return HasMany
