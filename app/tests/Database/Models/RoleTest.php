@@ -134,4 +134,18 @@ class RoleTest extends AccountTestCase
         $this->assertSame(1, $users->count());
         $this->assertSame([$userBar->id], $users->pluck('id')->all());
     }
+
+    /**
+     * Test relations setup are working, even if the class is extended
+     * @see https://github.com/userfrosting/UserFrosting/issues/1252
+     */
+    public function testUserExtension(): void
+    {
+        $this->ci->set(UserInterface::class, Member::class);
+        $role = new Role([
+            'name'  => 'Test',
+            'slug'  => 'test',
+        ]);
+        $this->assertCount(0, $role->users()->get());
+    }
 }

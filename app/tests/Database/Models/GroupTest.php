@@ -16,6 +16,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\Attributes\TestWith;
 use UserFrosting\Sprinkle\Account\Database\Models\Group;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
+use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
@@ -102,6 +103,7 @@ class GroupTest extends AccountTestCase
     #[TestWith([ZeGroup::class])]
     public function testRelations(string $model): void
     {
+        $this->ci->set(UserInterface::class, Member::class);
         $object = new $model([
             'slug'  => 'testing',
             'name'  => 'Test Group',

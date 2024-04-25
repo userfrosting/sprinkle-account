@@ -133,6 +133,7 @@ class Permission extends Model implements PermissionInterface
             $roleRelation,
             firstJoiningTable: 'permission_roles',
             secondJoiningTable: 'role_users',
+            secondRelatedKey: 'user_id',
         );
     }
 

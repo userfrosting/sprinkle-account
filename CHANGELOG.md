@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [5.1.2](https://github.com/userfrosting/sprinkle-account/compare/5.1.1...5.1.2)
+- [Fix #1252](https://github.com/userfrosting/UserFrosting/issues/1252) - For Permission & Role
+
 ## [5.1.1](https://github.com/userfrosting/sprinkle-account/compare/5.1.0...5.1.1)
 - [Fix #1252](https://github.com/userfrosting/UserFrosting/issues/1252) - Column not found when extending the User (or Group) model 
 
