@@ -495,7 +495,7 @@ class User extends Model implements UserInterface
         }
 
         return $query->whereHas('roles', function ($q) use ($roleId) {
-            $q->where('id', $roleId);
+            $q->where('roles.id', $roleId);
         });
     }
 

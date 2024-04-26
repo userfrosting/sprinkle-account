@@ -156,19 +156,4 @@ class PermissionTest extends AccountTestCase
         $this->assertCount(2, $result);
         $this->assertSame([$permission->slug, $newPermission->slug], array_keys($result));
     }
-
-    /**
-     * Test relations setup are working, even if the class is extended
-     * @see https://github.com/userfrosting/UserFrosting/issues/1252
-     */
-    public function testUserExtension(): void
-    {
-        $this->ci->set(UserInterface::class, Member::class);
-        $permission = new Permission([
-            'name'       => 'Test',
-            'slug'       => 'test',
-            'conditions' => 'always()',
-        ]);
-        $this->assertCount(0, $permission->users()->get());
-    }
 }

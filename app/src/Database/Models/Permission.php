@@ -97,7 +97,7 @@ class Permission extends Model implements PermissionInterface
         }
 
         return $query->whereHas('roles', function ($q) use ($roleId) {
-            $q->where('id', $roleId);
+            $q->where('roles.id', $roleId);
         });
     }
 
@@ -113,7 +113,7 @@ class Permission extends Model implements PermissionInterface
         }
 
         return $query->whereDoesntHave('roles', function ($q) use ($roleId) {
-            $q->where('id', $roleId);
+            $q->where('roles.id', $roleId);
         });
     }
 

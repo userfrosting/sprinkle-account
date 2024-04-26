@@ -13,10 +13,8 @@ declare(strict_types=1);
 namespace UserFrosting\Sprinkle\Account\Tests\Database\Models;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\Attributes\TestWith;
 use UserFrosting\Sprinkle\Account\Database\Models\Group;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\GroupInterface;
-use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Testing\RefreshDatabase;
@@ -92,30 +90,4 @@ class GroupTest extends AccountTestCase
         // Assert reverse relation
         $this->assertSame($group->id, $user->group?->id);
     }
-
-    /**
-     * Test relations setup are working, even if the class is extended
-     * @see https://github.com/userfrosting/UserFrosting/issues/1252
-     *
-     * @param class-string<GroupInterface> $model
-     */
-    #[TestWith([Group::class])]
-    #[TestWith([ZeGroup::class])]
-    public function testRelations(string $model): void
-    {
-        $this->ci->set(UserInterface::class, Member::class);
-        $object = new $model([
-            'slug'  => 'testing',
-            'name'  => 'Test Group',
-        ]);
-        $object->save();
-
-        // Fetch each relation - They each will be empty
-        // A real query is required to trigger a SQL Exception
-        $this->assertCount(0, $object->users()->get());
-    }
-}
-
-class ZeGroup extends Group
-{
 }

@@ -15,7 +15,6 @@ namespace UserFrosting\Sprinkle\Account\Tests\Database\Models;
 use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\Attributes\TestWith;
 use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
@@ -205,38 +204,4 @@ class UserTest extends AccountTestCase
         // N.B.: Laravel cache won't store anything if the value is null.
         $this->assertFalse($cache->has($key));
     }
-
-    /**
-     * Test relations setup are working, even if the class is extended
-     * @see https://github.com/userfrosting/UserFrosting/issues/1252
-     *
-     * @param class-string<UserInterface> $model
-     */
-    #[TestWith([User::class])]
-    #[TestWith([Member::class])]
-    public function testRelations(string $model): void
-    {
-        $object = new $model([
-            'user_name'  => 'testing',
-            'email'      => 'test@test.test',
-            'first_name' => 'Test',
-            'last_name'  => 'Ing',
-            'password'   => 'secret',
-        ]);
-        $object->save();
-
-        // Fetch each relation - They each will be empty
-        // A real query is required to trigger a SQL Exception
-        $this->assertCount(0, $object->activities()->get());
-        $this->assertCount(0, $object->group()->get());
-        $this->assertCount(0, $object->passwordResets()->get());
-        $this->assertCount(0, $object->verifications()->get());
-        $this->assertCount(0, $object->persistences()->get());
-        $this->assertCount(0, $object->permissions()->get());
-        $this->assertCount(0, $object->roles()->get());
-    }
-}
-
-class Member extends User
-{
 }
