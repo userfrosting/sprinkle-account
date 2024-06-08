@@ -44,7 +44,7 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property string                             $avatar
  * @property timestamp                          $created_at
  * @property timestamp                          $updated_at
- * @property timestamp                          $deleted_at
+ * @property timestamp|null                     $deleted_at
  * @property GroupInterface|null                $group
  * @property Collection<ActivityInterface>      $activities
  * @property Collection<PasswordResetInterface> $passwordResets
