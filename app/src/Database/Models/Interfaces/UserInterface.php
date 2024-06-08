@@ -37,7 +37,6 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property string                             $full_name
  * @property string                             $email
  * @property string                             $locale
- * @property string                             $theme
  * @property int|null                           $group_id
  * @property bool                               $flag_verified
  * @property bool                               $flag_enabled
