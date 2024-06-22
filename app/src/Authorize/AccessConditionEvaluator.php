@@ -103,35 +103,49 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
             $currentArgInfo = [
                 'expression' => $argString,
             ];
-            // Resolve parameter placeholders ('variable' names (either single-word or array-dot identifiers))
-            if ($arg->value instanceof \PhpParser\Node\Expr\BinaryOp\Concat || $arg->value instanceof \PhpParser\Node\Expr\ConstFetch) {
-                $value = $this->resolveParamPath($argString);
-                $currentArgInfo['type'] = 'parameter';
-                $currentArgInfo['resolved_value'] = $value;
-            // Resolve arrays
-            } elseif ($arg->value instanceof \PhpParser\Node\Expr\Array_) {
-                $value = $this->resolveArray($arg->value);
-                $currentArgInfo['type'] = 'array';
-                $currentArgInfo['resolved_value'] = print_r($value, true);
-            // Resolve strings
-            } elseif ($arg->value instanceof \PhpParser\Node\Scalar\String_) {
-                $value = $arg->value->value;
-                $currentArgInfo['type'] = 'string';
-                $currentArgInfo['resolved_value'] = $value;
-            // Resolve numbers
-            } elseif ($arg->value instanceof \PhpParser\Node\Scalar\DNumber) {
-                $value = $arg->value->value;
-                $currentArgInfo['type'] = 'float';
-                $currentArgInfo['resolved_value'] = $value;
-            } elseif ($arg->value instanceof \PhpParser\Node\Scalar\LNumber) {
-                $value = $arg->value->value;
-                $currentArgInfo['type'] = 'integer';
-                $currentArgInfo['resolved_value'] = $value;
-            // Anything else is simply interpreted as its literal string value
-            } else {
-                $value = $argString;
-                $currentArgInfo['type'] = 'unknown';
-                $currentArgInfo['resolved_value'] = $value;
+
+            switch(true) {
+                case $arg->value instanceof \PhpParser\Node\Expr\BinaryOp\Concat:
+                case $arg->value instanceof \PhpParser\Node\Expr\ConstFetch:
+                    // Resolve parameter placeholders ('variable' names (either single-word or array-dot identifiers))
+                    $value = $this->resolveParamPath($argString);
+                    $currentArgInfo['type'] = 'parameter';
+                    $currentArgInfo['resolved_value'] = $value;
+                    break;
+
+                case $arg->value instanceof \PhpParser\Node\Expr\Array_:
+                    // Resolve arrays
+                    $value = $this->resolveArray($arg->value);
+                    $currentArgInfo['type'] = 'array';
+                    $currentArgInfo['resolved_value'] = print_r($value, true);
+                    break;
+
+                case $arg->value instanceof \PhpParser\Node\Scalar\String_:
+                    // Resolve strings
+                    $value = $arg->value->value;
+                    $currentArgInfo['type'] = 'string';
+                    $currentArgInfo['resolved_value'] = $value;
+                    break;
+
+                case $arg->value instanceof \PhpParser\Node\Scalar\DNumber:
+                    // Resolve numbers
+                    $value = $arg->value->value;
+                    $currentArgInfo['type'] = 'float';
+                    $currentArgInfo['resolved_value'] = $value;
+                    break;
+
+                case $arg->value instanceof \PhpParser\Node\Scalar\LNumber:
+                    $value = $arg->value->value;
+                    $currentArgInfo['type'] = 'integer';
+                    $currentArgInfo['resolved_value'] = $value;
+                    break;
+
+                default:
+                    // Anything else is simply interpreted as its literal string value
+                    $value = $argString;
+                    $currentArgInfo['type'] = 'unknown';
+                    $currentArgInfo['resolved_value'] = $value;
+                    break;
             }
 
             $args[] = $value;
@@ -214,7 +228,7 @@ class AccessConditionEvaluator extends NodeVisitorAbstract
             if (is_array($value) && isset($value[$token])) {
                 $value = $value[$token];
                 continue;
-            // @phpstan-ignore-next-line Allow variable property for this use
+                // @phpstan-ignore-next-line Allow variable property for this use
             } elseif (is_object($value) && isset($value->$token)) {
                 // @phpstan-ignore-next-line Allow variable property for this use
                 $value = $value->$token;
