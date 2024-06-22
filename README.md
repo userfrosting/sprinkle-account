@@ -46,7 +46,7 @@ See main [UserFrosting Documentation](https://learn.userfrosting.com) for more i
 - [Changelog](CHANGELOG.md)
 - [Issues](https://github.com/userfrosting/UserFrosting/issues)
 - [License](LICENSE.md)
-- [Style Guide](STYLE-GUIDE.md)
+- [Style Guide](https://github.com/userfrosting/.github/blob/main/.github/STYLE-GUIDE.md)
 
 ## Contributing
 

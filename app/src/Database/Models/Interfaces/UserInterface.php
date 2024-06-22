@@ -37,7 +37,6 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property string                             $full_name
  * @property string                             $email
  * @property string                             $locale
- * @property string                             $theme
  * @property int|null                           $group_id
  * @property bool                               $flag_verified
  * @property bool                               $flag_enabled
@@ -45,7 +44,7 @@ use UserFrosting\Sprinkle\Core\Database\Relations\BelongsToManyThrough;
  * @property string                             $avatar
  * @property timestamp                          $created_at
  * @property timestamp                          $updated_at
- * @property timestamp                          $deleted_at
+ * @property timestamp|null                     $deleted_at
  * @property GroupInterface|null                $group
  * @property Collection<ActivityInterface>      $activities
  * @property Collection<PasswordResetInterface> $passwordResets
@@ -228,6 +227,13 @@ interface UserInterface
      * @return BelongsToManyThrough
      */
     public function permissions(): BelongsToManyThrough;
+
+    /**
+     * Get all verification request for this user.
+     *
+     * @return HasMany
+     */
+    public function verifications(): HasMany;
 
     /**
      * Get all persistence items for this user.

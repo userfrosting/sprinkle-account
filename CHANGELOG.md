@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [5.2.0](https://github.com/userfrosting/sprinkle-account/compare/5.1.0...5.2.0)
 
+## [5.1.3](https://github.com/userfrosting/sprinkle-account/compare/5.1.2...5.1.3)
+- Fix another SQL issue when working with extending the User model with an auxiliary table.
+
+## [5.1.2](https://github.com/userfrosting/sprinkle-account/compare/5.1.1...5.1.2)
+- [Fix #1252](https://github.com/userfrosting/UserFrosting/issues/1252) - For Permission & Role
+
+## [5.1.1](https://github.com/userfrosting/sprinkle-account/compare/5.1.0...5.1.1)
+- [Fix #1252](https://github.com/userfrosting/UserFrosting/issues/1252) - Column not found when extending the User (or Group) model 
+
 ## [5.1.0](https://github.com/userfrosting/sprinkle-account/compare/5.0.1...5.1.0)
 - Drop PHP 8.1 support, add PHP 8.3 support
 - Update to Laravel 10

@@ -105,7 +105,7 @@ class Role extends Model implements RoleInterface
         }
 
         return $query->whereHas('users', function ($q) use ($userId) {
-            $q->where('id', $userId);
+            $q->where('users.id', $userId);
         });
     }
 
@@ -119,7 +119,7 @@ class Role extends Model implements RoleInterface
         /** @var string */
         $relation = static::$ci?->get(UserInterface::class);
 
-        return $this->belongsToMany($relation, 'role_users');
+        return $this->belongsToMany($relation, 'role_users', relatedPivotKey: 'user_id');
     }
 
     /**

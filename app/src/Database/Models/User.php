@@ -317,7 +317,8 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci?->get(ActivityInterface::class);
 
-        return $this->hasMany($relation);
+        // Define foreign key in case User is extended
+        return $this->hasMany($relation, 'user_id');
     }
 
     /**
@@ -392,6 +393,7 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci?->get(GroupInterface::class);
 
+        // Define foreign key in case User is extended
         return $this->belongsTo($relation);
     }
 
@@ -405,7 +407,8 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci?->get(PasswordResetInterface::class);
 
-        return $this->hasMany($relation);
+        // Define foreign key in case User is extended
+        return $this->hasMany($relation, 'user_id');
     }
 
     /**
@@ -418,7 +421,8 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci?->get(VerificationInterface::class);
 
-        return $this->hasMany($relation);
+        // Define foreign key in case User is extended
+        return $this->hasMany($relation, 'user_id');
     }
 
     /**
@@ -431,7 +435,8 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci?->get(PersistenceInterface::class);
 
-        return $this->hasMany($relation);
+        // Define foreign key in case User is extended
+        return $this->hasMany($relation, 'user_id');
     }
 
     /**
@@ -447,10 +452,12 @@ class User extends Model implements UserInterface
         /** @var class-string */
         $roleRelation = static::$ci?->get(RoleInterface::class);
 
+        // Define foreign keys in case User is extended
         return $this->belongsToManyThrough(
             $permissionRelation,
             $roleRelation,
             firstJoiningTable: 'role_users',
+            firstForeignPivotKey: 'user_id',
             secondJoiningTable: 'permission_roles',
         );
     }
@@ -465,7 +472,8 @@ class User extends Model implements UserInterface
         /** @var string */
         $relation = static::$ci?->get(RoleInterface::class);
 
-        return $this->belongsToMany($relation, 'role_users')
+        // Define foreign keys in case User is extended
+        return $this->belongsToMany($relation, 'role_users', 'user_id')
                     ->using(RoleUsers::class)
                     ->withTimestamps();
     }
@@ -487,7 +495,7 @@ class User extends Model implements UserInterface
         }
 
         return $query->whereHas('roles', function ($q) use ($roleId) {
-            $q->where('id', $roleId);
+            $q->where('roles.id', $roleId);
         });
     }
 
