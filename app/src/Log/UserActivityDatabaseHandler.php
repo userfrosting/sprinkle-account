@@ -52,7 +52,7 @@ class UserActivityDatabaseHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord $record): void
     {
-        if (!isset($record['context']['user_id'])) {
+        if (!is_array($record['context']) || !isset($record['context']['user_id'])) {
             throw new LogicException('UserActivityLogger requires a `user_id` to be set in the context.');
         }
 
