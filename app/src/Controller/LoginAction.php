@@ -77,18 +77,31 @@ class LoginAction
     public function __invoke(Request $request, Response $response): Response
     {
         $this->handle($request);
+        $response = $this->writeResponse($response);
 
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Write to the response object.
+     *
+     * @param Response $response
+     *
+     * @return Response
+     */
+    protected function writeResponse(Response $response): Response
+    {
         // Get redirect target and add Header
         $event = $this->eventDispatcher->dispatch(new UserRedirectedAfterLoginEvent());
         if ($event->getRedirect() !== null) {
             $response = $response->withHeader('UF-Redirect', $event->getRedirect());
         }
 
-        // Write empty response
-        $payload = json_encode([], JSON_THROW_ON_ERROR);
+        // Write response with the user info in it
+        $payload = json_encode($this->authenticator->user(), JSON_THROW_ON_ERROR);
         $response->getBody()->write($payload);
 
-        return $response->withHeader('Content-Type', 'application/json');
+        return $response;
     }
 
     /**

@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [6.0.0](https://github.com/userfrosting/sprinkle-account/compare/5.2.0...6.0.0)
+- Login action returns the user data instead of empty array
+- Added `account/auth-check` route
+
 ## [5.2.0](https://github.com/userfrosting/sprinkle-account/compare/5.1.0...5.2.0)
 
 ## [5.1.3](https://github.com/userfrosting/sprinkle-account/compare/5.1.2...5.1.3)

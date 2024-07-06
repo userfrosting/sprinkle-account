@@ -49,6 +49,7 @@ class LoginActionTest extends AccountTestCase
         $user = User::factory([
             'password' => 'test'
         ])->create();
+        $user->refresh();
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/login', [
@@ -58,7 +59,7 @@ class LoginActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertJsonResponse([], $response);
+        $this->assertJsonResponse($user->toArray(), $response);
         $this->assertResponseStatus(200, $response);
 
         // Assert Event Redirect
@@ -82,6 +83,7 @@ class LoginActionTest extends AccountTestCase
         $user = User::factory([
             'password' => 'test'
         ])->create();
+        $user->refresh();
 
         // Create request with method and url and fetch response
         $request = $this->createJsonRequest('POST', '/account/login', [
@@ -91,7 +93,7 @@ class LoginActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertJsonResponse([], $response);
+        $this->assertJsonResponse($user->toArray(), $response);
         $this->assertResponseStatus(200, $response);
 
         // We have to logout the user to avoid problem
@@ -195,6 +197,7 @@ class LoginActionTest extends AccountTestCase
         $user = User::factory([
             'password' => 'test'
         ])->create();
+        $user->refresh();
 
         // Create fake throttler
         /** @var Throttler */
@@ -212,7 +215,7 @@ class LoginActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertJsonResponse([], $response);
+        $this->assertJsonResponse($user->toArray(), $response);
         $this->assertResponseStatus(200, $response);
 
         // We have to logout the user to avoid problem
