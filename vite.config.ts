@@ -11,9 +11,10 @@ export default defineConfig({
     build: {
         outDir: './dist',
         lib: {
-            name: '@userfrosting/sprinkle-account',
             entry: {
+                composables: 'app/assets/composables/index.ts',
                 interfaces: 'app/assets/interfaces/index.ts', 
+                stores: 'app/assets/stores/index.ts'
             }
         },
         rollupOptions: {
