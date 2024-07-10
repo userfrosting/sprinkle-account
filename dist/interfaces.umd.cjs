@@ -1,1 +1,1 @@
-(function(n){typeof define=="function"&&define.amd?define(n):n()})(function(){"use strict"});
+(function(e,n){typeof exports=="object"&&typeof module<"u"?n(exports):typeof define=="function"&&define.amd?define(["exports"],n):(e=typeof globalThis<"u"?globalThis:e||self,n(e["@userfrosting/sprinkle-account"]={}))})(this,function(e){"use strict";var n=(i=>(i.Primary="Primary",i.Success="Success",i.Warning="Warning",i.Danger="Danger",i))(n||{});e.AlertStyle=n,Object.defineProperty(e,Symbol.toStringTag,{value:"Module"})});

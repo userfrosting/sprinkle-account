@@ -23,14 +23,11 @@
     "bugs": {
         "url": "https://github.com/userfrosting/UserFrosting/issues"
     },
-    "main": "./dist/plugin.umd.cjs",
-    "module": "./dist/plugins.js",
-    "types": "./dist/plugins.d.ts",
     "exports": {
         "./interfaces": {
             "import": "./dist/interfaces.js",
-            "require": "./dist/interfaces.cjs",
-            "types": "./dist/interfaces.d.ts"
+            "require": "./dist/interfaces.umd.cjs",
+            "types": "./dist/interfaces/index.d.ts"
         },
         "./*": "./app/assets/*"
     },
