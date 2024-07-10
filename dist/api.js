@@ -1,5 +1,5 @@
 import { ref as _ } from "vue";
-import { AlertStyle as ie } from "./interfaces.js";
+import { AlertStyle as ie } from "./types.js";
 import { u as ae } from "./auth-Bko0F-UD.js";
 function Ce(e, t) {
   return function() {

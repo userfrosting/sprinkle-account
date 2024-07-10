@@ -24,14 +24,14 @@
         "url": "https://github.com/userfrosting/UserFrosting/issues"
     },
     "exports": {
-        "./composables": {
-            "import": "./dist/composables.js",
-            "require": "./dist/composables.cjs",
+        "./api": {
+            "import": "./dist/api.js",
+            "require": "./dist/api.cjs",
             "types": "./dist/composables/index.d.ts"
         },
-        "./interfaces": {
-            "import": "./dist/interfaces.js",
-            "require": "./dist/interfaces.cjs",
+        "./types": {
+            "import": "./dist/types.js",
+            "require": "./dist/types.cjs",
             "types": "./dist/interfaces/index.d.ts"
         },
         "./stores": {
