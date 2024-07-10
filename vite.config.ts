@@ -18,7 +18,7 @@ export default defineConfig({
             }
         },
         rollupOptions: {
-            external: ['vue', 'vue-router'],
+            external: ['vue', 'vue-router', 'pinia'],
             output: {
                 exports: 'named',
                 globals: {
