@@ -14,14 +14,13 @@ export function useCheckApi() {
     const check = () => {
         loading.value = true
         error.value = undefined
+        const auth = useAuthStore()
         axios
             .get('/account/auth-check')
             .then((response) => {
-                const auth = useAuthStore()
                 auth.setUser(response.data.user)
             })
-            .catch((err) => {
-                const auth = useAuthStore()
+            .catch((err) => {                
                 auth.unsetUser()
                 error.value = {
                     ...err.response.data,

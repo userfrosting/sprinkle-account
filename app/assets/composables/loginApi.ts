@@ -18,10 +18,12 @@ export function useLoginApi() {
     const login = (form: LoginForm) => {
         loading.value = true
         error.value = undefined
+
+        const auth = useAuthStore()
+
         axios
             .post('/account/login', form)
             .then((response) => {
-                const auth = useAuthStore()
                 auth.setUser(response.data)
             })
             .catch((err) => {
