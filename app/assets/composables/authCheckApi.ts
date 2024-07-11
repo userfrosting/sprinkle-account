@@ -2,13 +2,12 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { type AlertInterface, AlertStyle } from '../interfaces'
 import { useAuthStore } from '../stores'
-const authStore = useAuthStore()
 
 /**
  * Composable used to communicate with the `/auth/check` api. Calling "check"
  * will fetch the user info from the server and set the frontend object.
  */
-export function useCheckApi(auth: typeof authStore) {
+export function useCheckApi() {
     const loading = ref(false)
     const error = ref<AlertInterface | undefined>()
 
@@ -18,9 +17,11 @@ export function useCheckApi(auth: typeof authStore) {
         axios
             .get('/account/auth-check')
             .then((response) => {
+                const auth = useAuthStore()
                 auth.setUser(response.data.user)
             })
             .catch((err) => {
+                const auth = useAuthStore()
                 auth.unsetUser()
                 error.value = {
                     ...err.response.data,

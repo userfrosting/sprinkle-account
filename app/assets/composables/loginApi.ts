@@ -3,7 +3,6 @@ import axios from 'axios'
 import { type AlertInterface, AlertStyle } from '../interfaces'
 import { useAuthStore } from '../stores'
 import type { LoginForm } from '../interfaces'
-const authStore = useAuthStore()
 
 /**
  * Composable used to communicate with the `/auth/login` api. Calling "login"
@@ -11,7 +10,7 @@ const authStore = useAuthStore()
  * successful, the user will be set on the frontend object. Otherwise, an error
  * will be defined.
  */
-export function useLoginApi(auth: typeof authStore) {
+export function useLoginApi() {
     const loading = ref(false)
     const error = ref<AlertInterface | undefined>()
 
@@ -22,6 +21,7 @@ export function useLoginApi(auth: typeof authStore) {
         axios
             .post('/account/login', form)
             .then((response) => {
+                const auth = useAuthStore()
                 auth.setUser(response.data)
             })
             .catch((err) => {
