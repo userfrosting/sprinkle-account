@@ -12,9 +12,8 @@ export default defineConfig({
         outDir: './dist',
         lib: {
             entry: {
-                api: 'app/assets/composables/index.ts',
                 types: 'app/assets/interfaces/index.ts', 
-                stores: 'app/assets/stores/index.ts'
+                stores: 'app/assets/stores/auth.ts'
             }
         },
         rollupOptions: {

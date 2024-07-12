@@ -24,11 +24,6 @@
         "url": "https://github.com/userfrosting/UserFrosting/issues"
     },
     "exports": {
-        "./api": {
-            "import": "./dist/api.js",
-            "require": "./dist/api.cjs",
-            "types": "./dist/composables/index.d.ts"
-        },
         "./types": {
             "import": "./dist/types.js",
             "require": "./dist/types.cjs",
@@ -37,7 +32,7 @@
         "./stores": {
             "import": "./dist/stores.js",
             "require": "./dist/stores.cjs",
-            "types": "./dist/stores/index.d.ts"
+            "types": "./dist/stores/auth.d.ts"
         },
         "./*": "./app/assets/*"
     },

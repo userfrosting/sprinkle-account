@@ -1,1 +1,0 @@
-"use strict";const t=require("pinia"),s=t.defineStore("auth",{persist:!0,state:()=>({user:null}),getters:{isAuthenticated:e=>e.user!==null},actions:{setUser(e){this.user=e},unsetUser(){this.user=null}}});exports.useAuthStore=s;

@@ -1,11 +1,15 @@
 import { defineStore } from 'pinia'
-import type { UserInterface } from '../interfaces'
+import axios from 'axios'
+import type { UserInterface, LoginForm, AlertInterface } from '../interfaces'
+import { AlertStyle } from '../interfaces'
 
 export const useAuthStore = defineStore('auth', {
     persist: true,
     state: () => {
         return {
-            user: null as UserInterface | null
+            user: null as UserInterface | null,
+            loading: false,
+            error: null as AlertInterface[] | null
         }
     },
     getters: {
@@ -17,6 +21,59 @@ export const useAuthStore = defineStore('auth', {
         },
         unsetUser(): void {
             this.user = null
+        },
+        async login(form: LoginForm) {
+            this.loading = true
+            this.error = null
+            axios
+                .post('/account/login', form)
+                .then((response) => {
+                    this.setUser(response.data)
+                })
+                .catch((err) => {
+                    this.error = {
+                        ...err.response.data,
+                        ...{ style: AlertStyle.Danger, closeBtn: true }
+                    }
+                })
+                .finally(() => {
+                    this.loading = false
+                })
+        },
+        async check() {
+            this.loading = true
+            this.error = null
+            axios
+                .get('/account/auth-check')
+                .then((response) => {
+                    this.setUser(response.data.user)
+                })
+                .catch((err) => {
+                    this.unsetUser()
+                    this.error = {
+                        ...err.response.data,
+                        ...{ style: AlertStyle.Danger, closeBtn: true }
+                    }
+                })
+                .finally(() => {
+                    this.loading = false
+                })
+        },
+        async logout() {
+            this.loading = true
+            this.error = null
+            this.unsetUser()
+            axios
+                .get('/account/logout')
+                .catch((err) => {
+                    this.error = {
+                        ...err.response.data,
+                        ...{ style: AlertStyle.Danger, closeBtn: true }
+                    }
+                })
+                .finally(() => {
+                    this.loading = false
+                })
         }
     }
 })
