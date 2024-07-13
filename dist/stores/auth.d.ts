@@ -3,7 +3,7 @@ import { UserInterface, LoginForm, AlertInterface, AlertStyle } from '../interfa
 export declare const useAuthStore: import('pinia').StoreDefinition<"auth", {
     user: UserInterface | null;
     loading: boolean;
-    error: AlertInterface[] | null;
+    error: AlertInterface | null;
 }, {
     isAuthenticated: (state: {
         user: {
@@ -29,11 +29,11 @@ export declare const useAuthStore: import('pinia').StoreDefinition<"auth", {
             style?: AlertStyle | keyof typeof AlertStyle;
             closeBtn?: boolean;
             hideIcon?: boolean;
-        }[] | null;
+        } | null;
     } & import('pinia').PiniaCustomStateProperties<{
         user: UserInterface | null;
         loading: boolean;
-        error: AlertInterface[] | null;
+        error: AlertInterface | null;
     }>) => boolean;
 }, {
     setUser(user: UserInterface): void;

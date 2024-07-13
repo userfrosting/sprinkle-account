@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', {
         return {
             user: null as UserInterface | null,
             loading: false,
-            error: null as AlertInterface[] | null
+            error: null as AlertInterface | null
         }
     },
     getters: {
