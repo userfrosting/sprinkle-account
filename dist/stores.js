@@ -1649,7 +1649,10 @@ b.getAdapter = We.getAdapter;
 b.HttpStatusCode = oe;
 b.default = b;
 const An = Ge("auth", {
-  persist: !0,
+  persist: {
+    // Only persist user
+    paths: ["user"]
+  },
   state: () => ({
     user: null,
     loading: !1,

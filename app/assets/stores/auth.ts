@@ -4,7 +4,10 @@ import type { UserInterface, LoginForm, AlertInterface } from '../interfaces'
 import { AlertStyle } from '../interfaces'
 
 export const useAuthStore = defineStore('auth', {
-    persist: true,
+    persist: {
+        // Only persist user
+        paths: ['user']
+    },
     state: () => {
         return {
             user: null as UserInterface | null,
