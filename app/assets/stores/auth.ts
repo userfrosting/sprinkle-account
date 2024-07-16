@@ -5,8 +5,7 @@ import { AlertStyle } from '../interfaces'
 
 export const useAuthStore = defineStore('auth', {
     persist: {
-        // Only persist user
-        paths: ['user']
+        paths: ['user'] // Only persist user
     },
     state: () => {
         return {
@@ -34,9 +33,14 @@ export const useAuthStore = defineStore('auth', {
                     this.setUser(response.data)
                 })
                 .catch((err) => {
+                    // TODO : This should be an event
                     this.error = {
                         ...err.response.data,
-                        ...{ style: AlertStyle.Danger, closeBtn: true }
+                        ...{
+                            description: 'An error as occurred',
+                            style: AlertStyle.Danger,
+                            closeBtn: true
+                        }
                     }
                 })
                 .finally(() => {
@@ -53,9 +57,14 @@ export const useAuthStore = defineStore('auth', {
                 })
                 .catch((err) => {
                     this.unsetUser()
+                    // TODO : This should be an event, console.warning, or toast
                     this.error = {
                         ...err.response.data,
-                        ...{ style: AlertStyle.Danger, closeBtn: true }
+                        ...{
+                            description: 'An error as occurred',
+                            style: AlertStyle.Danger,
+                            closeBtn: true
+                        }
                     }
                 })
                 .finally(() => {
@@ -69,9 +78,14 @@ export const useAuthStore = defineStore('auth', {
             axios
                 .get('/account/logout')
                 .catch((err) => {
+                    // TODO : This should be an event, console.warning, or toast
                     this.error = {
                         ...err.response.data,
-                        ...{ style: AlertStyle.Danger, closeBtn: true }
+                        ...{
+                            description: 'An error as occurred',
+                            style: AlertStyle.Danger,
+                            closeBtn: true
+                        }
                     }
                 })
                 .finally(() => {
