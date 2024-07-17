@@ -42,6 +42,7 @@ export const useAuthStore = defineStore('auth', {
                             closeBtn: true
                         }
                     }
+                    console.log('ERROR', err.response.data, this.error)
                 })
                 .finally(() => {
                     this.loading = false
