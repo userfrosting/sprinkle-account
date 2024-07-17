@@ -53,7 +53,8 @@
             "command": "npm run build",
             "problemMatcher": [],
             "group": {
-                "kind": "build"
+                "kind": "build",
+                "isDefault": true
             }
         },
         {

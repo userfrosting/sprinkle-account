@@ -1673,11 +1673,11 @@ const An = Ge("auth", {
         this.setUser(t.data);
       }).catch((t) => {
         this.error = {
-          ...t.response.data,
           description: "An error as occurred",
           style: v.Danger,
-          closeBtn: !0
-        }, console.log("ERROR", t.response.data, this.error);
+          closeBtn: !0,
+          ...t.response.data
+        };
       }).finally(() => {
         this.loading = !1;
       });
@@ -1687,10 +1687,10 @@ const An = Ge("auth", {
         this.setUser(e.data.user);
       }).catch((e) => {
         this.unsetUser(), this.error = {
-          ...e.response.data,
           description: "An error as occurred",
           style: v.Danger,
-          closeBtn: !0
+          closeBtn: !0,
+          ...e.response.data
         };
       }).finally(() => {
         this.loading = !1;
@@ -1699,10 +1699,10 @@ const An = Ge("auth", {
     async logout() {
       this.loading = !0, this.error = null, this.unsetUser(), b.get("/account/logout").catch((e) => {
         this.error = {
-          ...e.response.data,
           description: "An error as occurred",
           style: v.Danger,
-          closeBtn: !0
+          closeBtn: !0,
+          ...e.response.data
         };
       }).finally(() => {
         this.loading = !1;

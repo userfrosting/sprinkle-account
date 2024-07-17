@@ -35,14 +35,13 @@ export const useAuthStore = defineStore('auth', {
                 .catch((err) => {
                     // TODO : This should be an event
                     this.error = {
-                        ...err.response.data,
                         ...{
                             description: 'An error as occurred',
                             style: AlertStyle.Danger,
                             closeBtn: true
-                        }
+                        },
+                        ...err.response.data
                     }
-                    console.log('ERROR', err.response.data, this.error)
                 })
                 .finally(() => {
                     this.loading = false
@@ -60,12 +59,12 @@ export const useAuthStore = defineStore('auth', {
                     this.unsetUser()
                     // TODO : This should be an event, console.warning, or toast
                     this.error = {
-                        ...err.response.data,
                         ...{
                             description: 'An error as occurred',
                             style: AlertStyle.Danger,
                             closeBtn: true
-                        }
+                        },
+                        ...err.response.data
                     }
                 })
                 .finally(() => {
@@ -81,12 +80,12 @@ export const useAuthStore = defineStore('auth', {
                 .catch((err) => {
                     // TODO : This should be an event, console.warning, or toast
                     this.error = {
-                        ...err.response.data,
                         ...{
                             description: 'An error as occurred',
                             style: AlertStyle.Danger,
                             closeBtn: true
-                        }
+                        },
+                        ...err.response.data
                     }
                 })
                 .finally(() => {
