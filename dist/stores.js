@@ -1650,8 +1650,8 @@ b.HttpStatusCode = oe;
 b.default = b;
 const An = Ge("auth", {
   persist: {
-    // Only persist user
     paths: ["user"]
+    // Only persist user
   },
   state: () => ({
     user: null,
@@ -1674,9 +1674,10 @@ const An = Ge("auth", {
       }).catch((t) => {
         this.error = {
           ...t.response.data,
+          description: "An error as occurred",
           style: v.Danger,
           closeBtn: !0
-        };
+        }, console.log("ERROR", t.response.data, this.error);
       }).finally(() => {
         this.loading = !1;
       });
@@ -1687,6 +1688,7 @@ const An = Ge("auth", {
       }).catch((e) => {
         this.unsetUser(), this.error = {
           ...e.response.data,
+          description: "An error as occurred",
           style: v.Danger,
           closeBtn: !0
         };
@@ -1698,6 +1700,7 @@ const An = Ge("auth", {
       this.loading = !0, this.error = null, this.unsetUser(), b.get("/account/logout").catch((e) => {
         this.error = {
           ...e.response.data,
+          description: "An error as occurred",
           style: v.Danger,
           closeBtn: !0
         };
