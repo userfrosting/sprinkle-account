@@ -4,14 +4,10 @@ import type { UserInterface, LoginForm, AlertInterface } from '../interfaces'
 import { AlertStyle } from '../interfaces'
 
 export const useAuthStore = defineStore('auth', {
-    persist: {
-        paths: ['user'] // Only persist user
-    },
+    persist: true,
     state: () => {
         return {
-            user: null as UserInterface | null,
-            loading: false,
-            error: null as AlertInterface | null
+            user: null as UserInterface | null
         }
     },
     getters: {
@@ -25,16 +21,15 @@ export const useAuthStore = defineStore('auth', {
             this.user = null
         },
         async login(form: LoginForm) {
-            this.loading = true
-            this.error = null
             axios
                 .post('/account/login', form)
                 .then((response) => {
                     this.setUser(response.data)
+
+                    return this.user
                 })
                 .catch((err) => {
-                    // TODO : This should be an event
-                    this.error = {
+                    const error: AlertInterface = {
                         ...{
                             description: 'An error as occurred',
                             style: AlertStyle.Danger,
@@ -42,23 +37,22 @@ export const useAuthStore = defineStore('auth', {
                         },
                         ...err.response.data
                     }
-                })
-                .finally(() => {
-                    this.loading = false
+
+                    throw error;
                 })
         },
         async check() {
-            this.loading = true
-            this.error = null
             axios
                 .get('/account/auth-check')
                 .then((response) => {
                     this.setUser(response.data.user)
+
+                    return this.user
                 })
                 .catch((err) => {
                     this.unsetUser()
-                    // TODO : This should be an event, console.warning, or toast
-                    this.error = {
+
+                    const error: AlertInterface = {
                         ...{
                             description: 'An error as occurred',
                             style: AlertStyle.Danger,
@@ -66,20 +60,16 @@ export const useAuthStore = defineStore('auth', {
                         },
                         ...err.response.data
                     }
-                })
-                .finally(() => {
-                    this.loading = false
+
+                    throw error
                 })
         },
         async logout() {
-            this.loading = true
-            this.error = null
             this.unsetUser()
             axios
                 .get('/account/logout')
                 .catch((err) => {
-                    // TODO : This should be an event, console.warning, or toast
-                    this.error = {
+                    const error: AlertInterface = {
                         ...{
                             description: 'An error as occurred',
                             style: AlertStyle.Danger,
@@ -87,9 +77,8 @@ export const useAuthStore = defineStore('auth', {
                         },
                         ...err.response.data
                     }
-                })
-                .finally(() => {
-                    this.loading = false
+
+                    throw error
                 })
         }
     }
