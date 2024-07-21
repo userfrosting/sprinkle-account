@@ -21,8 +21,7 @@ export const useAuthStore = defineStore('auth', {
             this.user = null
         },
         async login(form: LoginForm) {
-            axios
-                .post('/account/login', form)
+            return axios.post('/account/login', form)
                 .then((response) => {
                     this.setUser(response.data)
 
@@ -42,8 +41,7 @@ export const useAuthStore = defineStore('auth', {
                 })
         },
         async check() {
-            axios
-                .get('/account/auth-check')
+            return axios.get('/account/auth-check')
                 .then((response) => {
                     this.setUser(response.data.user)
 
@@ -66,8 +64,7 @@ export const useAuthStore = defineStore('auth', {
         },
         async logout() {
             this.unsetUser()
-            axios
-                .get('/account/logout')
+            return axios.get('/account/logout')
                 .catch((err) => {
                     const error: AlertInterface = {
                         ...{
