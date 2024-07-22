@@ -23,11 +23,13 @@ export const useAuthStore = defineStore('auth', {
         async login(form: LoginForm) {
             return axios.post('/account/login', form)
                 .then((response) => {
+                    console.log('RESPONSE', response)
                     this.setUser(response.data)
 
                     return this.user
                 })
                 .catch((err) => {
+                    console.log('ERROR', err)
                     const error: AlertInterface = {
                         ...{
                             description: 'An error as occurred',
