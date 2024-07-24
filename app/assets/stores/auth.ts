@@ -3,6 +3,11 @@ import axios from 'axios'
 import type { UserInterface, LoginForm, AlertInterface } from '../interfaces'
 import { AlertStyle } from '../interfaces'
 
+interface AuthCheckApi {
+    auth: boolean
+    user: UserInterface
+}
+
 export const useAuthStore = defineStore('auth', {
     persist: true,
     state: () => {
@@ -21,15 +26,14 @@ export const useAuthStore = defineStore('auth', {
             this.user = null
         },
         async login(form: LoginForm) {
-            return axios.post('/account/login', form)
+            return axios
+                .post<UserInterface>('/account/login', form)
                 .then((response) => {
-                    console.log('RESPONSE', response)
                     this.setUser(response.data)
 
                     return this.user
                 })
                 .catch((err) => {
-                    console.log('ERROR', err)
                     const error: AlertInterface = {
                         ...{
                             description: 'An error as occurred',
@@ -39,11 +43,12 @@ export const useAuthStore = defineStore('auth', {
                         ...err.response.data
                     }
 
-                    throw error;
+                    throw error
                 })
         },
         async check() {
-            return axios.get('/account/auth-check')
+            return axios
+                .get<AuthCheckApi>('/account/auth-check')
                 .then((response) => {
                     this.setUser(response.data.user)
 
@@ -66,19 +71,18 @@ export const useAuthStore = defineStore('auth', {
         },
         async logout() {
             this.unsetUser()
-            return axios.get('/account/logout')
-                .catch((err) => {
-                    const error: AlertInterface = {
-                        ...{
-                            description: 'An error as occurred',
-                            style: AlertStyle.Danger,
-                            closeBtn: true
-                        },
-                        ...err.response.data
-                    }
+            return axios.get('/account/logout').catch((err) => {
+                const error: AlertInterface = {
+                    ...{
+                        description: 'An error as occurred',
+                        style: AlertStyle.Danger,
+                        closeBtn: true
+                    },
+                    ...err.response.data
+                }
 
-                    throw error
-                })
+                throw error
+            })
         }
     }
 })
