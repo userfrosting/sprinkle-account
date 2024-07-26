@@ -12,7 +12,9 @@ export default defineConfig({
         outDir: './dist',
         lib: {
             entry: {
-                types: 'app/assets/interfaces/index.ts', 
+                plugin: 'app/assets/plugin.ts',
+                types: 'app/assets/interfaces/index.ts',
+                guards: 'app/assets/guards/authGuard.ts',
                 stores: 'app/assets/stores/auth.ts'
             }
         },

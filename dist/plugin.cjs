@@ -1,0 +1,1 @@
+"use strict";Object.defineProperties(exports,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}});const u=require("./stores.cjs"),r=require("./guards.cjs"),s={install:(o,e)=>{u.useAuthStore().check();const{router:t}=e;r.useAuthGuard(t)}};exports.default=s;
