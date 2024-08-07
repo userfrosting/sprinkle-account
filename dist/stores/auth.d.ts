@@ -1,5 +1,4 @@
 import { UserInterface, LoginForm } from '../interfaces';
-
 export declare const useAuthStore: import('pinia').StoreDefinition<"auth", {
     user: UserInterface | null;
 }, {
