@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { UserInterface, LoginForm, AlertInterface } from '../interfaces'
-import { AlertStyle } from '../interfaces'
+import type { UserInterface, LoginForm } from '../interfaces'
+import { type AlertInterface, AlertStyle } from '@userfrosting/sprinkle-core/types'
 
 interface AuthCheckApi {
     auth: boolean
