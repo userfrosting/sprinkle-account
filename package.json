@@ -37,7 +37,7 @@
         "./composables": {
             "import": "./dist/composables.js",
             "require": "./dist/composables.cjs",
-            "types": "./dist/composables.d.ts"
+            "types": "./dist/composables/index.d.ts"
         },
         "./stores": {
             "import": "./dist/stores.js",

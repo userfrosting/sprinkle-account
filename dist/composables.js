@@ -1713,5 +1713,5 @@ const kn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   doRegister: Un
 }, Symbol.toStringTag, { value: "Module" }));
 export {
-  kn as RegisterModule
+  kn as Register
 };

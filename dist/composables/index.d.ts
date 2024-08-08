@@ -1,2 +1,2 @@
-import * as RegisterModule from './register';
-export { RegisterModule };
+import * as Register from './register';
+export { Register };
