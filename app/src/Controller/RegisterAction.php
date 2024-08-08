@@ -109,7 +109,7 @@ class RegisterAction
      *
      * @param Request $request
      *
-     * @return mixed[]|null
+     * @return mixed[]|null The newly created user
      */
     protected function handle(Request $request): ?array
     {
