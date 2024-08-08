@@ -13,6 +13,7 @@ export default defineConfig({
         lib: {
             entry: {
                 plugin: 'app/assets/plugin.ts',
+                composables: 'app/assets/composables/index.ts',
                 types: 'app/assets/interfaces/index.ts',
                 guards: 'app/assets/guards/authGuard.ts',
                 stores: 'app/assets/stores/auth.ts'

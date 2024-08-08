@@ -34,6 +34,11 @@
             "require": "./dist/types.cjs",
             "types": "./dist/interfaces/index.d.ts"
         },
+        "./composables": {
+            "import": "./dist/composables.js",
+            "require": "./dist/composables.cjs",
+            "types": "./dist/composables.d.ts"
+        },
         "./stores": {
             "import": "./dist/stores.js",
             "require": "./dist/stores.cjs",
