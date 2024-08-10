@@ -4,7 +4,7 @@ import { useConfigStore } from '@userfrosting/sprinkle-core/stores'
 import type { UserInterface } from '../interfaces'
 
 // Interfaces
-export interface RegisterForm {
+interface RegisterForm {
     first_name: string
     last_name: string
     email: string
@@ -17,25 +17,31 @@ export interface RegisterForm {
 }
 
 // Variables
-const config = useConfigStore()
-export const defaultForm: RegisterForm = {
-    first_name: '',
-    last_name: '',
-    email: '',
-    user_name: '',
-    password: '',
-    passwordc: '',
-    // @ts-ignore
-    locale: config.config.site.registration.user_defaults.locale,
-    captcha: '',
-    spiderbro: 'http://'
+function getDefaultForm(): RegisterForm {
+    const config = useConfigStore()
+    return {
+        first_name: '',
+        last_name: '',
+        email: '',
+        user_name: '',
+        password: '',
+        passwordc: '',
+        locale: config.get('site.registration.user_defaults.locale', 'en_US'),
+        captcha: '',
+        spiderbro: 'http://'
+    }
 }
-// @ts-ignore
-export const availableLocales = config.config.locales.available
-export const captchaUrl = '/account/captcha' // TODO : Add captcha path to config
+
+function getAvailableLocales(): string[] {
+    return useConfigStore().get('locales.available')
+}
+
+function getCaptchaUrl(): string {
+    return '/account/captcha' // TODO : Add captcha path to config
+}
 
 // Actions
-export async function doRegister(form: RegisterForm) {
+async function doRegister(form: RegisterForm) {
     return axios
         .post<UserInterface>('/account/register', form)
         .then((response) => {
@@ -54,3 +60,6 @@ export async function doRegister(form: RegisterForm) {
             throw error
         })
 }
+
+export type { RegisterForm }
+export { getDefaultForm, getAvailableLocales, getCaptchaUrl, doRegister }

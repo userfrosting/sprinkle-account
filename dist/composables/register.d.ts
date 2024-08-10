@@ -1,5 +1,5 @@
 import { UserInterface } from '../interfaces';
-export interface RegisterForm {
+interface RegisterForm {
     first_name: string;
     last_name: string;
     email: string;
@@ -10,7 +10,9 @@ export interface RegisterForm {
     captcha: string;
     spiderbro: string;
 }
-export declare const defaultForm: RegisterForm;
-export declare const availableLocales: any;
-export declare const captchaUrl = "/account/captcha";
-export declare function doRegister(form: RegisterForm): Promise<UserInterface>;
+declare function getDefaultForm(): RegisterForm;
+declare function getAvailableLocales(): string[];
+declare function getCaptchaUrl(): string;
+declare function doRegister(form: RegisterForm): Promise<UserInterface>;
+export type { RegisterForm };
+export { getDefaultForm, getAvailableLocales, getCaptchaUrl, doRegister };

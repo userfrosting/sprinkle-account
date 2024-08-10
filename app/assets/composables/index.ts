@@ -1,3 +1,3 @@
-import * as Register from './register';
+import * as Register from './register'
 
-export { Register };
+export { Register }
