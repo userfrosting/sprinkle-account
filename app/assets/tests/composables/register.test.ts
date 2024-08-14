@@ -1,10 +1,7 @@
-import { setActivePinia, createPinia } from 'pinia'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { useAuthStore } from '../../stores/auth'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import axios from 'axios'
-import type { LoginForm, UserInterface } from 'app/assets/interfaces'
+import type { UserInterface } from 'app/assets/interfaces'
 import { AlertStyle } from '@userfrosting/sprinkle-core/types'
-// import * as Config from '@userfrosting/sprinkle-core/stores'
 import { useConfigStore } from '@userfrosting/sprinkle-core/stores'
 import { Register } from '../../composables'
 

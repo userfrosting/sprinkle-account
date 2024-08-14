@@ -32,8 +32,9 @@ export default defineConfig({
     },
     test: {
         coverage: {
+            reportsDirectory: './_meta/_coverage',
             include: ['app/assets/**/*.*'],
-            reportsDirectory: './_meta/_coverage'
+            exclude: ['app/assets/tests/**/*.*', 'app/assets/interfaces/routes.ts']
         },
         environment: 'happy-dom'
     }
