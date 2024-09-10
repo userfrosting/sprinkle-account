@@ -15,12 +15,12 @@ namespace UserFrosting\Sprinkle\Account\Controller;
 use Illuminate\Database\Connection;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use UserFrosting\Alert\AlertStream;
 use UserFrosting\Config\Config;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\RequestSchema\RequestSchemaInterface;
 use UserFrosting\Fortress\Transformer\RequestDataTransformer;
 use UserFrosting\Fortress\Validator\ServerSideValidator;
+use UserFrosting\I18n\Translator;
 use UserFrosting\Sprinkle\Account\Database\Models\Interfaces\UserInterface;
 use UserFrosting\Sprinkle\Account\Mail\PasswordResetEmail;
 use UserFrosting\Sprinkle\Core\Exceptions\ValidationException;
@@ -59,7 +59,7 @@ class ForgetPasswordAction
      * Inject dependencies.
      */
     public function __construct(
-        protected AlertStream $alert,
+        protected Translator $translator,
         protected Config $config,
         protected Connection $db,
         protected RouteParserInterface $routeParser,
@@ -80,8 +80,10 @@ class ForgetPasswordAction
      */
     public function __invoke(Request $request, Response $response): Response
     {
-        $this->handle($request);
-        $payload = json_encode([], JSON_THROW_ON_ERROR);
+        $message = $this->handle($request);
+        $payload = json_encode([
+            'message' => $message,
+        ], JSON_THROW_ON_ERROR);
         $response->getBody()->write($payload);
 
         return $response->withHeader('Content-Type', 'application/json');
@@ -92,7 +94,7 @@ class ForgetPasswordAction
      *
      * @param Request $request
      */
-    protected function handle(Request $request): void
+    protected function handle(Request $request): string
     {
         // Get POST parameters
         $params = (array) $request->getParsedBody();
@@ -131,7 +133,7 @@ class ForgetPasswordAction
 
         // TODO: create delay to prevent timing-based attacks
 
-        $this->alert->addMessage('success', 'PASSWORD.FORGET.REQUEST_SENT', ['email' => $data['email']]);
+        return $this->translator->translate('PASSWORD.FORGET.REQUEST_SENT', ['email' => $data['email']]);
     }
 
     /**

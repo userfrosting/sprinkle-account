@@ -322,6 +322,8 @@ class RegisterAction
 
         // No verification required
         $this->alert->addMessage('success', 'REGISTRATION.COMPLETE_TYPE1');
+
+        // TODO : The alert should be changed to json return
     }
 
     /**
