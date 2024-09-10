@@ -93,6 +93,8 @@ class ForgetPasswordAction
      * Handle the request and return the payload.
      *
      * @param Request $request
+     *
+     * @return string The message to be returned to the client.
      */
     protected function handle(Request $request): string
     {

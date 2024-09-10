@@ -14,7 +14,6 @@ namespace UserFrosting\Sprinkle\Account\Tests\Controller;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use UserFrosting\Alert\AlertStream;
 use UserFrosting\Sprinkle\Account\Database\Models\User;
 use UserFrosting\Sprinkle\Account\Tests\AccountTestCase;
 use UserFrosting\Sprinkle\Core\Mail\Mailer;
@@ -54,14 +53,8 @@ class ResendVerificationActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertResponse('', $response);
+        $this->assertJsonStructure(['message'], $response);
         $this->assertResponseStatus(200, $response);
-
-        // Test message
-        /** @var AlertStream */
-        $ms = $this->ci->get(AlertStream::class);
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', array_reverse($messages)[0]['type']);
     }
 
     public function testResendVerificationWithVerifiedUser(): void
@@ -83,14 +76,8 @@ class ResendVerificationActionTest extends AccountTestCase
         $response = $this->handleRequest($request);
 
         // Assert response status & body
-        $this->assertResponse('', $response);
+        $this->assertJsonStructure(['message'], $response);
         $this->assertResponseStatus(200, $response);
-
-        // Test message
-        /** @var AlertStream */
-        $ms = $this->ci->get(AlertStream::class);
-        $messages = $ms->getAndClearMessages();
-        $this->assertSame('success', array_reverse($messages)[0]['type']);
     }
 
     public function testResendVerificationWithFailedThrottle(): void
