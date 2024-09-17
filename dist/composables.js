@@ -1835,7 +1835,7 @@ const zr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   getDefaultForm: Ur
 }, Symbol.toStringTag, { value: "Module" }));
 async function Hr(e) {
-  return le.post("/account/forgot-password", e).then((t) => ({
+  return le.post("/account/forgot-password", { email: e }).then((t) => ({
     description: t.data.message,
     style: k.Success,
     closeBtn: !0
@@ -1849,7 +1849,7 @@ async function Hr(e) {
   });
 }
 async function Jr(e) {
-  return le.post("/account/resend-verification", e).then((t) => ({
+  return le.post("/account/resend-verification", { email: e }).then((t) => ({
     description: t.data.message,
     style: k.Success,
     closeBtn: !0
