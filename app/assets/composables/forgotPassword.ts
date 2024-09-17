@@ -4,7 +4,7 @@ import { AlertStyle, type AlertInterface } from '@userfrosting/sprinkle-core/typ
 // Actions
 async function forgotPassword(email: String) {
     return axios
-        .post<{ message: string }>('/account/forgot-password', email)
+        .post<{ message: string }>('/account/forgot-password', {'email': email})
         .then((response) => {
             const error: AlertInterface = {
                 description: response.data.message,

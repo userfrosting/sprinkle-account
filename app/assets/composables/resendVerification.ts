@@ -4,7 +4,7 @@ import { AlertStyle, type AlertInterface } from '@userfrosting/sprinkle-core/typ
 // Actions
 async function resendVerification(email: String) {
     return axios
-        .post<{ message: string }>('/account/resend-verification', email)
+        .post<{ message: string }>('/account/resend-verification', {'email': email})
         .then((response) => {
             const error: AlertInterface = {
                 description: response.data.message,

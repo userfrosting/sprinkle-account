@@ -23,7 +23,7 @@ describe('resendVerification.ts', () => {
             style: AlertStyle.Success,
             closeBtn: true
         })
-        expect(axios.post).toHaveBeenCalledWith('/account/resend-verification', email)
+        expect(axios.post).toHaveBeenCalledWith('/account/resend-verification', {'email': email})
     })
 
     test('Should handle errors', async () => {
@@ -37,6 +37,6 @@ describe('resendVerification.ts', () => {
             style: AlertStyle.Danger,
             closeBtn: true
         })
-        expect(axios.post).toHaveBeenCalledWith('/account/resend-verification', email)
+        expect(axios.post).toHaveBeenCalledWith('/account/resend-verification', {'email': email})
     })
 })
