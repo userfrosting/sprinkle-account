@@ -24,9 +24,9 @@ use UserFrosting\Sprinkle\Core\Util\RequestContainer;
 class SiteLocale extends CoreSiteLocale
 {
     /**
-     * @param Config        $config
+     * @param Config           $config
      * @param RequestContainer $request
-     * @param Authenticator $authenticator
+     * @param Authenticator    $authenticator
      */
     public function __construct(
         protected Config $config,
