@@ -16,6 +16,7 @@ use Exception;
 use UserFrosting\Config\Config;
 use UserFrosting\Sprinkle\Account\Authenticate\Authenticator;
 use UserFrosting\Sprinkle\Core\I18n\SiteLocale as CoreSiteLocale;
+use UserFrosting\Sprinkle\Core\Util\RequestContainer;
 
 /**
  * Helper methods for the locale system.
@@ -23,14 +24,16 @@ use UserFrosting\Sprinkle\Core\I18n\SiteLocale as CoreSiteLocale;
 class SiteLocale extends CoreSiteLocale
 {
     /**
-     * @param Config        $config
-     * @param Authenticator $authenticator
+     * @param Config           $config
+     * @param RequestContainer $request
+     * @param Authenticator    $authenticator
      */
     public function __construct(
         protected Config $config,
+        protected RequestContainer $request,
         protected Authenticator $authenticator,
     ) {
-        parent::__construct($config);
+        parent::__construct($config, $request);
     }
 
     /**
