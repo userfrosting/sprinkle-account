@@ -49,6 +49,11 @@
             "require": "./dist/guards.cjs",
             "types": "./dist/guards/authGuard.d.ts"
         },
+        "./routes": {
+            "import": "./dist/routes.js",
+            "require": "./dist/routes.cjs",
+            "types": "./dist/router/routes.d.ts"
+        },
         "./*": "./app/assets/*"
     },
     "files": [

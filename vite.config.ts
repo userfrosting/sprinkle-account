@@ -16,7 +16,8 @@ export default defineConfig({
                 composables: 'app/assets/composables/index.ts',
                 types: 'app/assets/interfaces/index.ts',
                 guards: 'app/assets/guards/authGuard.ts',
-                stores: 'app/assets/stores/auth.ts'
+                stores: 'app/assets/stores/auth.ts',
+                routes: 'app/assets/router/routes.ts'
             }
         },
         rollupOptions: {
