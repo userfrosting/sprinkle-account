@@ -317,7 +317,7 @@ class Authenticator
      */
     public function checkAccess(string $slug, array $params = []): bool
     {
-        return $this->authorizationManager->checkAccess($this->user, $slug, $params);
+        return $this->authorizationManager->checkAccess($this->user(), $slug, $params);
     }
 
     /**

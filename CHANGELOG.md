@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [5.2.0](https://github.com/userfrosting/sprinkle-account/compare/5.1.0...5.2.0)
 
+## [5.1.5](https://github.com/userfrosting/sprinkle-account/compare/5.1.4...5.1.5)
+- `Authenticator::checkAccess` wouldn't use the logged in user if it wasn't loaded before
+
+## [5.1.4](https://github.com/userfrosting/sprinkle-account/compare/5.1.3...5.1.4)
+- Update SiteLocale for sprinkle-core 5.1.3
+- User field `deleted_at` can be null if the user has not been deleted
+
 ## [5.1.3](https://github.com/userfrosting/sprinkle-account/compare/5.1.2...5.1.3)
 - Fix another SQL issue when working with extending the User model with an auxiliary table.
 
