@@ -60,9 +60,7 @@
         "app/assets/",
         "dist/"
     ],
-    "dependencies": {
-        
-    },
+    "dependencies": {},
     "peerDependencies": {
         "vue": "^3.4.21",
         "vue-router": "^4.2.4",
