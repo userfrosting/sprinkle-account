@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import axios from 'axios'
-import { AlertStyle } from '@userfrosting/sprinkle-core/types'
+import { Severity } from '@userfrosting/sprinkle-core/types'
 import { resendVerification } from '../../composables'
 
 const email: String = 'john.doe@example.com'
@@ -20,7 +20,7 @@ describe('resendVerification.ts', () => {
         const result = await resendVerification(email)
         expect(result).toEqual({
             description: 'Mock message',
-            style: AlertStyle.Success,
+            style: Severity.Success,
             closeBtn: true
         })
         expect(axios.post).toHaveBeenCalledWith('/account/resend-verification', { email: email })
@@ -34,7 +34,7 @@ describe('resendVerification.ts', () => {
         // Act & Assert
         await expect(resendVerification(email)).rejects.toEqual({
             description: 'Something failed',
-            style: AlertStyle.Danger,
+            style: Severity.Danger,
             closeBtn: true
         })
         expect(axios.post).toHaveBeenCalledWith('/account/resend-verification', { email: email })

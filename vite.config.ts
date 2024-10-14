@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import { configDefaults } from 'vitest/config'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
@@ -37,6 +38,10 @@ export default defineConfig({
             include: ['app/assets/**/*.*'],
             exclude: ['app/assets/tests/**/*.*', 'app/assets/interfaces/routes.ts']
         },
-        environment: 'happy-dom'
+        environment: 'happy-dom',
+        exclude: [
+            ...configDefaults.exclude,
+            './vendor/**/*.*',
+        ],
     }
 })

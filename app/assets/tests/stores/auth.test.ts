@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { useAuthStore } from '../../stores/auth'
 import axios from 'axios'
 import type { LoginForm, UserInterface } from 'app/assets/interfaces'
-import { AlertStyle } from '@userfrosting/sprinkle-core/types'
+import { Severity } from '@userfrosting/sprinkle-core/types'
 
 const testUser: UserInterface = {
     id: 1,
@@ -81,7 +81,7 @@ describe('authStore', () => {
         // Act & Assert
         await expect(authStore.login(form)).rejects.toEqual({
             description: 'Bad password',
-            style: AlertStyle.Danger,
+            style: Severity.Danger,
             closeBtn: true
         })
         expect(axios.post).toHaveBeenCalledWith('/account/login', form)
@@ -119,7 +119,7 @@ describe('authStore', () => {
         // Act & Assert
         await expect(authStore.check()).rejects.toEqual({
             description: 'An error as occurred',
-            style: AlertStyle.Danger,
+            style: Severity.Danger,
             closeBtn: true
         })
         expect(axios.get).toHaveBeenCalledWith('/account/auth-check')
@@ -156,7 +156,7 @@ describe('authStore', () => {
         // Act & Assert
         await expect(authStore.logout()).rejects.toEqual({
             description: 'An error as occurred',
-            style: AlertStyle.Danger,
+            style: Severity.Danger,
             closeBtn: true
         })
         expect(axios.get).toHaveBeenCalledWith('/account/logout')

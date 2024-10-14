@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { AlertStyle, type AlertInterface } from '@userfrosting/sprinkle-core/types'
+import { Severity, type AlertInterface } from '@userfrosting/sprinkle-core/types'
 
 // Actions
 async function forgotPassword(email: String) {
@@ -8,7 +8,7 @@ async function forgotPassword(email: String) {
         .then((response) => {
             const error: AlertInterface = {
                 description: response.data.message,
-                style: AlertStyle.Success,
+                style: Severity.Success,
                 closeBtn: true
             }
 
@@ -18,7 +18,7 @@ async function forgotPassword(email: String) {
             const error: AlertInterface = {
                 ...{
                     description: 'An error as occurred',
-                    style: AlertStyle.Danger,
+                    style: Severity.Danger,
                     closeBtn: true
                 },
                 ...err.response.data

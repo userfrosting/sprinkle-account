@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { UserInterface, LoginForm } from '../interfaces'
-import { type AlertInterface, AlertStyle } from '@userfrosting/sprinkle-core/types'
+import { type AlertInterface, Severity } from '@userfrosting/sprinkle-core/types'
 
 interface AuthCheckApi {
     auth: boolean
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
                     const error: AlertInterface = {
                         ...{
                             description: 'An error as occurred',
-                            style: AlertStyle.Danger,
+                            style: Severity.Danger,
                             closeBtn: true
                         },
                         ...err.response.data
@@ -60,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
                     const error: AlertInterface = {
                         ...{
                             description: 'An error as occurred',
-                            style: AlertStyle.Danger,
+                            style: Severity.Danger,
                             closeBtn: true
                         },
                         ...err.response.data
@@ -75,7 +75,7 @@ export const useAuthStore = defineStore('auth', {
                 const error: AlertInterface = {
                     ...{
                         description: 'An error as occurred',
-                        style: AlertStyle.Danger,
+                        style: Severity.Danger,
                         closeBtn: true
                     },
                     ...err.response.data

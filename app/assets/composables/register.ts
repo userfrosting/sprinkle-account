@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { AlertStyle, type AlertInterface } from '@userfrosting/sprinkle-core/types'
+import { Severity, type AlertInterface } from '@userfrosting/sprinkle-core/types'
 import { useConfigStore } from '@userfrosting/sprinkle-core/stores'
 import type { UserInterface } from '../interfaces'
 
@@ -51,7 +51,7 @@ async function doRegister(form: RegisterForm) {
             const error: AlertInterface = {
                 ...{
                     description: 'An error as occurred',
-                    style: AlertStyle.Danger,
+                    style: Severity.Danger,
                     closeBtn: true
                 },
                 ...err.response.data

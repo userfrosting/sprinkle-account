@@ -8,6 +8,6 @@ declare const routes: {
             };
         };
     };
-    component: () => Promise<typeof import("../views/RegisterView.vue")>;
+    component: () => Promise<typeof import("../views/LoginView.vue")>;
 }[];
 export default routes;

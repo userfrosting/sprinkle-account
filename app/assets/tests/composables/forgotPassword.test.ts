@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import axios from 'axios'
-import { AlertStyle } from '@userfrosting/sprinkle-core/types'
+import { Severity } from '@userfrosting/sprinkle-core/types'
 import { forgotPassword } from '../../composables'
 
 const email: String = 'john.doe@example.com'
@@ -20,7 +20,7 @@ describe('forgotPassword.ts', () => {
         const result = await forgotPassword(email)
         expect(result).toEqual({
             description: 'Mock message',
-            style: AlertStyle.Success,
+            style: Severity.Success,
             closeBtn: true
         })
         expect(axios.post).toHaveBeenCalledWith('/account/forgot-password', { email: email })
@@ -34,7 +34,7 @@ describe('forgotPassword.ts', () => {
         // Act & Assert
         await expect(forgotPassword(email)).rejects.toEqual({
             description: 'Something failed',
-            style: AlertStyle.Danger,
+            style: Severity.Danger,
             closeBtn: true
         })
         expect(axios.post).toHaveBeenCalledWith('/account/forgot-password', { email: email })

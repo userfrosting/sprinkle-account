@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import axios from 'axios'
 import type { UserInterface } from 'app/assets/interfaces'
-import { AlertStyle } from '@userfrosting/sprinkle-core/types'
+import { Severity } from '@userfrosting/sprinkle-core/types'
 import { useConfigStore } from '@userfrosting/sprinkle-core/stores'
 import { Register } from '../../composables'
 
@@ -115,7 +115,7 @@ describe('register', () => {
         // Act & Assert
         await expect(doRegister(form)).rejects.toEqual({
             description: 'Registration failed',
-            style: AlertStyle.Danger,
+            style: Severity.Danger,
             closeBtn: true
         })
         expect(axios.post).toHaveBeenCalledWith('/account/register', form)

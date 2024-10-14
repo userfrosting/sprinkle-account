@@ -78,7 +78,7 @@ const mt = (e, t, n, { allOwnKeys: r } = {}) => (I(t, (s, o) => {
   e = String(e), (n === void 0 || n > e.length) && (n = e.length), n -= t.length;
   const r = e.indexOf(t, n);
   return r !== -1 && r === n;
-}, gt = (e) => {
+}, St = (e) => {
   if (!e) return null;
   if (U(e)) return e;
   let t = e.length;
@@ -87,7 +87,7 @@ const mt = (e, t, n, { allOwnKeys: r } = {}) => (I(t, (s, o) => {
   for (; t-- > 0; )
     n[t] = e[t];
   return n;
-}, St = /* @__PURE__ */ ((e) => (t) => e && t instanceof e)(typeof Uint8Array < "u" && ce(Uint8Array)), Rt = (e, t) => {
+}, gt = /* @__PURE__ */ ((e) => (t) => e && t instanceof e)(typeof Uint8Array < "u" && ce(Uint8Array)), Rt = (e, t) => {
   const r = (e && e[Symbol.iterator]).call(e);
   let s;
   for (; (s = r.next()) && !s.done; ) {
@@ -195,7 +195,7 @@ const Bt = (e) => {
   isFunction: x,
   isStream: at,
   isURLSearchParams: ut,
-  isTypedArray: St,
+  isTypedArray: gt,
   isFileList: it,
   forEach: I,
   merge: te,
@@ -207,7 +207,7 @@ const Bt = (e) => {
   kindOf: $,
   kindOfTest: C,
   endsWith: Et,
-  toArray: gt,
+  toArray: St,
   forEachEntry: Rt,
   matchAll: Ot,
   isHTMLForm: Tt,
@@ -346,14 +346,14 @@ function G(e, t, n) {
     if (!a.isUndefined(p)) {
       if (d.indexOf(p) !== -1)
         throw Error("Circular reference detected in " + y.join("."));
-      d.push(p), a.forEach(p, function(w, g) {
+      d.push(p), a.forEach(p, function(w, S) {
         (!(a.isUndefined(w) || w === null) && s.call(
           t,
           w,
-          a.isString(g) ? g.trim() : g,
+          a.isString(S) ? S.trim() : S,
           y,
           b
-        )) === !0 && E(w, y ? y.concat(g) : [g]);
+        )) === !0 && E(w, y ? y.concat(S) : [S]);
       }), d.pop();
     }
   }
@@ -524,7 +524,7 @@ function Zt(e, t, n) {
       if (r.name !== "SyntaxError")
         throw r;
     }
-  return (n || JSON.stringify)(e);
+  return (0, JSON.stringify)(e);
 }
 const H = {
   transitional: Me,
@@ -865,14 +865,14 @@ const V = (e, t, n = 3) => {
     };
     e(d);
   }, n);
-}, ge = (e, t) => {
+}, Se = (e, t) => {
   const n = e != null;
   return [(r) => t[0]({
     lengthComputable: n,
     total: e,
     loaded: r
   }), t[1]];
-}, Se = (e) => (...t) => a.asap(() => e(...t)), un = T.hasStandardBrowserEnv ? (
+}, ge = (e) => (...t) => a.asap(() => e(...t)), un = T.hasStandardBrowserEnv ? (
   // Standard browser envs have full support of the APIs needed to test
   // whether the request URL is of the same origin as current location.
   function() {
@@ -1075,9 +1075,9 @@ const $e = (e) => {
     }), a.isUndefined(s.withCredentials) || (h.withCredentials = !!s.withCredentials), c && c !== "json" && (h.responseType = s.responseType), u && ([b, p] = V(u, !0), h.addEventListener("progress", b)), f && h.upload && ([d, E] = V(f), h.upload.addEventListener("progress", d), h.upload.addEventListener("loadend", E)), (s.cancelToken || s.signal) && (l = (R) => {
       h && (r(!R || R.type ? new k(null, e, h) : R), h.abort(), h = null);
     }, s.cancelToken && s.cancelToken.subscribe(l), s.signal && (s.signal.aborted ? l() : s.signal.addEventListener("abort", l)));
-    const g = on(s.url);
-    if (g && T.protocols.indexOf(g) === -1) {
-      r(new m("Unsupported protocol " + g + ":", m.ERR_BAD_REQUEST, e));
+    const S = on(s.url);
+    if (S && T.protocols.indexOf(S) === -1) {
+      r(new m("Unsupported protocol " + S + ":", m.ERR_BAD_REQUEST, e));
       return;
     }
     h.send(o || null);
@@ -1107,7 +1107,7 @@ const $e = (e) => {
   }
 }, yn = function* (e, t) {
   let n = e.byteLength;
-  if (!t || n < t) {
+  if (n < t) {
     yield e;
     return;
   }
@@ -1168,7 +1168,7 @@ const $e = (e) => {
   } catch {
     return !1;
   }
-}, gn = ve && Ke(() => {
+}, Sn = ve && Ke(() => {
   let e = !1;
   const t = new Request(T.origin, {
     body: new ReadableStream(),
@@ -1188,7 +1188,7 @@ X && ((e) => {
     });
   });
 })(new Response());
-const Sn = async (e) => {
+const gn = async (e) => {
   if (e == null)
     return 0;
   if (a.isBlob(e))
@@ -1204,7 +1204,7 @@ const Sn = async (e) => {
     return (await En(e)).byteLength;
 }, Rn = async (e, t) => {
   const n = a.toFiniteNumber(e.getContentLength());
-  return n ?? Sn(t);
+  return n ?? gn(t);
 }, On = X && (async (e) => {
   let {
     url: t,
@@ -1227,16 +1227,16 @@ const Sn = async (e) => {
   });
   let h;
   try {
-    if (f && gn && n !== "get" && n !== "head" && (h = await Rn(l, r)) !== 0) {
+    if (f && Sn && n !== "get" && n !== "head" && (h = await Rn(l, r)) !== 0) {
       let O = new Request(t, {
         method: "POST",
         body: r,
         duplex: "half"
       }), N;
       if (a.isFormData(r) && (N = O.headers.get("content-type")) && l.setContentType(N), O.body) {
-        const [F, M] = ge(
+        const [F, M] = Se(
           h,
-          V(Se(f))
+          V(ge(f))
         );
         r = Oe(O.body, Te, F, M);
       }
@@ -1252,32 +1252,32 @@ const Sn = async (e) => {
       duplex: "half",
       credentials: w ? d : void 0
     });
-    let g = await fetch(p);
+    let S = await fetch(p);
     const R = se && (u === "stream" || u === "response");
     if (se && (c || R && y)) {
       const O = {};
       ["status", "statusText", "headers"].forEach((pe) => {
-        O[pe] = g[pe];
+        O[pe] = S[pe];
       });
-      const N = a.toFiniteNumber(g.headers.get("content-length")), [F, M] = c && ge(
+      const N = a.toFiniteNumber(S.headers.get("content-length")), [F, M] = c && Se(
         N,
-        V(Se(c), !0)
+        V(ge(c), !0)
       ) || [];
-      g = new Response(
-        Oe(g.body, Te, F, () => {
+      S = new Response(
+        Oe(S.body, Te, F, () => {
           M && M(), y && y();
         }),
         O
       );
     }
     u = u || "text";
-    let P = await W[a.findKey(W, u) || "text"](g, e);
+    let P = await W[a.findKey(W, u) || "text"](S, e);
     return !R && y && y(), await new Promise((O, N) => {
       Ve(O, N, {
         data: P,
-        headers: A.from(g.headers),
-        status: g.status,
-        statusText: g.statusText,
+        headers: A.from(S.headers),
+        status: S.status,
+        statusText: S.statusText,
         config: e,
         request: p
       });
@@ -1679,28 +1679,28 @@ function Qe(e) {
     return Qe(D(e, s));
   }, n;
 }
-const S = Qe(H);
-S.Axios = B;
-S.CanceledError = k;
-S.CancelToken = de;
-S.isCancel = Je;
-S.VERSION = Xe;
-S.toFormData = G;
-S.AxiosError = m;
-S.Cancel = S.CanceledError;
-S.all = function(t) {
+const g = Qe(H);
+g.Axios = B;
+g.CanceledError = k;
+g.CancelToken = de;
+g.isCancel = Je;
+g.VERSION = Xe;
+g.toFormData = G;
+g.AxiosError = m;
+g.Cancel = g.CanceledError;
+g.all = function(t) {
   return Promise.all(t);
 };
-S.spread = xn;
-S.isAxiosError = Cn;
-S.mergeConfig = D;
-S.AxiosHeaders = A;
-S.formToJSON = (e) => ze(a.isHTMLForm(e) ? new FormData(e) : e);
-S.getAdapter = Ge.getAdapter;
-S.HttpStatusCode = ae;
-S.default = S;
-var Pn = /* @__PURE__ */ ((e) => (e.Primary = "Primary", e.Success = "Success", e.Warning = "Warning", e.Danger = "Danger", e))(Pn || {});
+g.spread = xn;
+g.isAxiosError = Cn;
+g.mergeConfig = D;
+g.AxiosHeaders = A;
+g.formToJSON = (e) => ze(a.isHTMLForm(e) ? new FormData(e) : e);
+g.getAdapter = Ge.getAdapter;
+g.HttpStatusCode = ae;
+g.default = g;
+var Pn = /* @__PURE__ */ ((e) => (e.Primary = "Primary", e.Secondary = "Secondary", e.Success = "Success", e.Warning = "Warning", e.Danger = "Danger", e.Info = "Info", e.Muted = "Muted", e))(Pn || {});
 export {
-  S as a,
+  g as a,
   Pn as b
 };
