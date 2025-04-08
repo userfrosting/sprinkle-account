@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [5.2.0](https://github.com/userfrosting/sprinkle-account/compare/5.1.0...5.2.0)
+- Replace deprecated `birke/rememberme` 2.0 with `mober/rememberme` 5.0 ([#1285](https://github.com/userfrosting/UserFrosting/issues/1285))
 
 ## [5.1.6](https://github.com/userfrosting/sprinkle-account/compare/5.1.5...5.1.6)
 - Add PHP 8.4 support & tests
