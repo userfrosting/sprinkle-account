@@ -35,6 +35,9 @@ class UpdatePersistenceTable extends Migration
      */
     public function up(): void
     {
+        // Clean table of old tokens, to allow for the new encoding.
+        $this->emptyTable();
+
         $this->schema->table('persistences', function (Blueprint $table) {
             $table->char('token', 64)->change();
             $table->char('persistent_token', 64)->change();
@@ -46,9 +49,17 @@ class UpdatePersistenceTable extends Migration
      */
     public function down(): void
     {
+        // Clean table of tokens, not compatible with the old encoding.
+        $this->emptyTable();
+
         $this->schema->table('persistences', function (Blueprint $table) {
             $table->string('token', 40)->change();
             $table->string('persistent_token', 40)->change();
         });
+    }
+
+    protected function emptyTable(): void
+    {
+        $this->schema->getConnection()->table('persistences')->truncate();
     }
 }
