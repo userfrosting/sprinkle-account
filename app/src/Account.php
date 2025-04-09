@@ -30,6 +30,7 @@ use UserFrosting\Sprinkle\Account\Database\Migrations\v420\AddingForeignKeys;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v430\UpdateGroupsTable;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v430\UpdateUsersTable;
 use UserFrosting\Sprinkle\Account\Database\Migrations\v500\UpdateUsersTable as V500UpdateUsersTable;
+use UserFrosting\Sprinkle\Account\Database\Migrations\v520\UpdatePersistenceTable;
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultGroups;
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultPermissions;
 use UserFrosting\Sprinkle\Account\Database\Seeds\DefaultRoles;
@@ -154,6 +155,8 @@ class Account implements
             UpdateUsersTable::class,
             // v500
             V500UpdateUsersTable::class,
+            // v520
+            UpdatePersistenceTable::class,
         ];
     }
 
