@@ -155,7 +155,7 @@ class Authenticator
         bool $rememberMe = false
     ): void {
         // Since regenerateId deletes the old session, we'll do the same in cache
-        if (($oldId = session_id()) !== false) {
+        if (($oldId = $this->session->getId()) !== false) {
             $this->flushSessionCache($oldId);
         }
 
@@ -171,7 +171,7 @@ class Authenticator
 
         // Assume identity
         $key = strval($this->config->get('session.keys.current_user_id'));
-        $this->session[$key] = $user->id;
+        $this->session->set($key, $user->id);
         $this->user = $user;
 
         // Set auth mode
@@ -217,13 +217,15 @@ class Authenticator
         $this->user = null;
 
         // Since regenerateId deletes the old session, we'll do the same in cache
-        if (($oldId = session_id()) !== false) {
+        if (($oldId = $this->session->getId()) !== false) {
             $this->flushSessionCache($oldId);
         }
 
-        // Completely destroy the session and restart the session.
+        // Completely destroy the session and restart the session, making sure
+        // to regenerate the session id to use for the remaining execution.
         $this->session->destroy();
         $this->session->start();
+        $this->session->regenerateId(true);
 
         // Dispatch logged out event.
         $this->eventDispatcher->dispatch(new UserLoggedOutEvent($currentUser));
@@ -334,7 +336,7 @@ class Authenticator
         if ($loginResult->isSuccess()) {
             // Update in session
             $key = strval($this->config->get('session.keys.current_user_id'));
-            $this->session[$key] = intval($loginResult->getCredential());
+            $this->session->set($key, intval($loginResult->getCredential()));
             // There is a chance that an attacker has stolen the login token,
             // so we store the fact that the user was logged in via RememberMe (instead of login form)
             $this->viaRemember = true;
